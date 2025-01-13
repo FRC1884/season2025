@@ -2,7 +2,7 @@ package frc.robot.subsystems.pivot;
 
 public interface PivotIO {
     public class PivotIOInputs {
-        private double degrees;
+        public double degrees;
     }
 
     default void getDegrees(double degrees) {};
