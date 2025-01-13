@@ -1,1 +1,1 @@
-im in the thick of it everybody knows
+Bro is not in the thick of it
