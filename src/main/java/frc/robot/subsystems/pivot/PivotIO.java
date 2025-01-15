@@ -5,7 +5,7 @@ public interface PivotIO {
         public double degrees;
     }
 
-    default void getDegrees(double degrees) {};
+    default void setDegrees(double degrees) {};
 
     default void updateInputs(PivotIOInputs io) {};
 }
