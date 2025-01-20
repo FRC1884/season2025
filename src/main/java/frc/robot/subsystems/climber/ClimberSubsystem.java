@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import lombok.RequiredArgsConstructor;
 
@@ -19,4 +20,7 @@ public class ClimberSubsystem extends SubsystemBase {
             return heightSupplier.getAsDouble();
         }
     }
+
+    private ClimberGoal goal = ClimberGoal.IDLING;
+    private Debouncer currentDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kFalling);
 }
