@@ -1,6 +1,5 @@
 package frc.robot.subsystems.pivot;
 
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -31,7 +30,6 @@ public class PivotSubsystem extends SubsystemBase {
   }
 
   private PivotGoal goal = PivotGoal.IDLING;
-  private Debouncer currentDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kFalling);
 
   public PivotSubsystem(PivotIO io) {
     this.io = io;
