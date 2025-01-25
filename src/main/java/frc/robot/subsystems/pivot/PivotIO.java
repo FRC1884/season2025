@@ -1,9 +1,13 @@
 package frc.robot.subsystems.pivot;
 
+import org.littletonrobotics.junction.AutoLog;
+
 public interface PivotIO {
-    public class PivotIOInputs {
-        public double degrees;
-    }
+
+  @AutoLog
+  public class PivotIOInputs {
+    public double degrees;
+  }
 
     default void setDegrees(double degrees) {};
 
