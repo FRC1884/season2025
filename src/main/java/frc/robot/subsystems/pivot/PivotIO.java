@@ -1,5 +1,5 @@
 package frc.robot.subsystems.pivot;
 
-import frc.robot.generic.elevators.GenericElevatorSystemIO;
+import frc.robot.generic.arm.GenericArmSystemIO;
 
-public interface PivotIO extends GenericElevatorSystemIO {}
+public interface PivotIO extends GenericArmSystemIO {}

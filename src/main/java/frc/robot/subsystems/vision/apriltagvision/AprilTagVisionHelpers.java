@@ -1,11 +1,12 @@
 package frc.robot.subsystems.vision.apriltagvision;
 
-import edu.wpi.first.math.MatBuilder;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.geometry.Pose3d;
+import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.ROTATION_EULER_MULTIPLIERS;
+import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.TRANSLATION_EULER_MULTIPLIERS;
+
+import edu.wpi.first.math.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import frc.robot.subsystems.vision.VisionIO.PoseObservation;
 
 /**
  * This class provides utility methods and record classes for vision-related operations,
@@ -21,17 +22,20 @@ public class AprilTagVisionHelpers {
     return MatBuilder.fill(
         Nat.N3(),
         Nat.N1(),
-        Math.exp(poseObservation.averageTagDistance / poseObservation.tagCount));
+        Math.exp(poseObservation.averageTagDistance() / poseObservation.tagCount()));
   }
 
-  public static double eulerScale(double eulerCoefficient, PoseObservation poseObservation) {
-    return eulerCoefficient
-        * poseObservation.ambiguity
-        / poseObservation.tagCount
-        * Math.exp(poseObservation.averageTagDistance / poseObservation.tagCount);
-  }
+  public static Matrix<N3, N1> generateDynamicStdDevs(PoseObservation poseObservation) {
+    var baseDev =
+        poseObservation.ambiguity()
+            / poseObservation.tagCount()
+            * Math.exp(poseObservation.averageTagDistance() / poseObservation.tagCount());
 
-  /** Represents a robot pose sample used for pose estimation. */
-  public static record PoseObservation(
-      double timestamp, Pose3d pose, double ambiguity, int tagCount, double averageTagDistance) {}
+    var tagCount = MathUtil.clamp(poseObservation.tagCount(), 1, 3);
+
+    var linearStdDev = baseDev * TRANSLATION_EULER_MULTIPLIERS[tagCount - 1].getAsDouble();
+    var angularStdDev = baseDev * ROTATION_EULER_MULTIPLIERS[tagCount - 1].getAsDouble();
+
+    return VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev);
+  }
 }

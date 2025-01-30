@@ -1,16 +1,15 @@
 package frc.robot.generic.elevators;
 
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.generic.rollers.Rollers;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public abstract class GenericPositionElevatorSystem<
     G extends GenericPositionElevatorSystem.ExtensionGoal> {
   public interface ExtensionGoal {
-    Distance getHeightSupplier();
+    DoubleSupplier getHeight();
   }
 
   public abstract G getGoal();
@@ -33,7 +32,7 @@ public abstract class GenericPositionElevatorSystem<
 
   /**
    * NOT the same as {@link edu.wpi.first.wpilibj2.command.Subsystem#periodic()}. This method will
-   * be called periodically in {@link Rollers}, hence why this subsystem does not extend {@link
+   * be called periodically in {@link Elevators}, hence why this subsystem does not extend {@link
    * SubsystemBase}.
    */
   public void periodic() {
@@ -46,7 +45,7 @@ public abstract class GenericPositionElevatorSystem<
       lastGoal = getGoal();
     }
 
-    io.runPosition(getGoal().getHeightSupplier().magnitude());
-    Logger.recordOutput("Rollers/" + name + "Goal", getGoal().toString());
+    io.runPosition(getGoal().getHeight().getAsDouble());
+    Logger.recordOutput("Elevators/" + name + "Goal", getGoal().toString());
   }
 }

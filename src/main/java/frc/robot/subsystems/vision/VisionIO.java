@@ -1,12 +1,12 @@
-package frc.robot.subsystems.vision.apriltagvision;
+package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
 
-public interface AprilTagVisionIO {
+public interface VisionIO {
   @AutoLog
-  public static class AprilTagVisionIOInputs {
+  public static class VisionIOInputs {
     public boolean connected = false;
     public TargetObservation latestTargetObservation =
         new TargetObservation(new Rotation2d(), new Rotation2d());
@@ -21,5 +21,5 @@ public interface AprilTagVisionIO {
   public static record PoseObservation(
       double timestamp, Pose3d pose, double ambiguity, int tagCount, double averageTagDistance) {}
 
-  public default void updateInputs(AprilTagVisionIOInputs inputs) {}
+  public default void updateInputs(VisionIOInputs inputs) {}
 }

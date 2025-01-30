@@ -1,11 +1,9 @@
 package frc.robot.subsystems.elevator;
 
-import static edu.wpi.first.units.Units.Meters;
+import static java.lang.Math.PI;
 
-import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.units.measure.Distance;
 import frc.robot.generic.elevators.GenericPositionElevatorSystem;
+import frc.robot.util.LoggedTunableNumber;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +16,22 @@ public class ElevatorSubsystem
   @RequiredArgsConstructor
   @Getter
   public enum ElevatorGoal implements GenericPositionElevatorSystem.ExtensionGoal {
-    IDLING(() -> 0.0), // Climber is off
-    DEEP_CLIMB(() -> 0.5), // Deep climb level
-    SHALLOW_CLIMB(() -> 10); // Deep climb level
+    IDLING(new LoggedTunableNumber("Elevator/Idling", 0.0)),
+    LEVEL_ONE(new LoggedTunableNumber("Elevator/Level_One", 0.46)),
+    LEVEL_TWO(new LoggedTunableNumber("Elevator/Level_Two", 0.81)),
+    LEVEL_THREE(new LoggedTunableNumber("Elevator/Level_Three", 1.21)),
+    LEVEL_FOUR(new LoggedTunableNumber("Elevator/Level_Four", 1.83)),
+    TESTING(new LoggedTunableNumber("Elevator/Test", 0.0));
 
     private final DoubleSupplier heightSupplier;
 
     @Override
-    public Distance getHeightSupplier() {
-      return Meters.of(heightSupplier.getAsDouble());
+    public DoubleSupplier getHeight() {
+      return () -> heightSupplier.getAsDouble() / (2 * PI * ElevatorConstants.PULLEY_RADIUS);
     }
   }
 
   private ElevatorGoal goal = ElevatorGoal.IDLING;
-  private Debouncer currentDebouncer = new Debouncer(0.25, DebounceType.kFalling);
 
   public ElevatorSubsystem(String name, ElevatorIO io) {
     super(name, io);

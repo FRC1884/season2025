@@ -13,7 +13,11 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,12 +32,17 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.DeferredCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import frc.robot.GlobalConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.util.RotationalAllianceFlipUtil;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -79,7 +88,7 @@ public class DriveCommands {
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
 
           // Apply rotation deadband
-          double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+          double omega = MathUtil.applyDeadband(-omegaSupplier.getAsDouble(), DEADBAND);
 
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);
@@ -101,6 +110,13 @@ public class DriveCommands {
                       : drive.getRotation()));
         },
         drive);
+  }
+
+  public static void chassisSpeedDrive(SwerveSubsystem drive, ChassisSpeeds speeds) {
+    boolean isFlipped =
+        DriverStation.getAlliance().isPresent()
+            && DriverStation.getAlliance().get() == Alliance.Red;
+    drive.runVelocity(ChassisSpeeds.fromRobotRelativeSpeeds(speeds, drive.getRotation()));
   }
 
   /**
@@ -155,6 +171,246 @@ public class DriveCommands {
 
         // Reset PID controller when command starts
         .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+  }
+
+  // use PID to align to a target
+  public static Command chasePoseRobotRelativeCommand(
+      SwerveSubsystem drive, Supplier<Transform2d> targetOffset) {
+    TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+    TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+    // TrapezoidProfile.Constraints OMEGA_CONSTRAINTS =   new TrapezoidProfile.Constraints(1, 1.5);
+
+    ProfiledPIDController xController = new ProfiledPIDController(0.5, 0, 0, X_CONSTRAINTS);
+    ProfiledPIDController yController = new ProfiledPIDController(0.5, 0, 0, Y_CONSTRAINTS);
+    PIDController omegaPID = new PIDController(0.01, 0, 0);
+
+    xController.setTolerance(0.10);
+    yController.setTolerance(0.03);
+    omegaPID.setTolerance(1.5);
+    omegaPID.enableContinuousInput(-180, 180);
+
+    return new DeferredCommand(
+        () ->
+            new FunctionalCommand(
+                () -> {
+                  // Init
+                },
+                () -> {
+                  double ySpeed = yController.calculate(0, targetOffset.get().getY());
+                  double xSpeed = xController.calculate(0, targetOffset.get().getX());
+                  double omegaSpeed =
+                      omegaPID.calculate(0, targetOffset.get().getRotation().getDegrees());
+
+                  DriveCommands.joystickDrive(drive, () -> xSpeed, () -> ySpeed, () -> omegaSpeed);
+                },
+                interrupted -> {
+                  DriveCommands.chassisSpeedDrive(drive, new ChassisSpeeds());
+                  omegaPID.close();
+                  System.out.println("aligned now");
+                },
+                () -> {
+                  return omegaPID.atSetpoint() && xController.atGoal() && yController.atGoal();
+                },
+                drive),
+        Set.of(drive));
+  }
+
+  /**
+   * Command to align the robot to a target with robot relative driving with an override of the
+   * robot's x direction using the driver's y axis
+   */
+  public static Command chasePoseRobotRelativeCommandYOverride(
+      SwerveSubsystem drive, Supplier<Transform2d> targetOffset, DoubleSupplier yDriver) {
+    TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+    TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+    // TrapezoidProfile.Constraints OMEGA_CONSTRAINTS =   new TrapezoidProfile.Constraints(1, 1.5);
+
+    ProfiledPIDController xController = new ProfiledPIDController(0.5, 0, 0, X_CONSTRAINTS);
+    ProfiledPIDController yController = new ProfiledPIDController(0.5, 0, 0, Y_CONSTRAINTS);
+    PIDController omegaPID = new PIDController(0.01, 0, 0);
+
+    xController.setTolerance(0.10);
+    yController.setTolerance(0.03);
+    omegaPID.setTolerance(1.5);
+    omegaPID.enableContinuousInput(-180, 180);
+
+    return new DeferredCommand(
+        () ->
+            new FunctionalCommand(
+                () -> {
+                  // Init
+                },
+                () -> {
+                  double driverInputFactor = 2;
+                  double ySpeed = -yDriver.getAsDouble() * driverInputFactor;
+                  double xSpeed = xController.calculate(0, targetOffset.get().getX());
+                  double omegaSpeed =
+                      omegaPID.calculate(0, targetOffset.get().getRotation().getRadians());
+
+                  DriveCommands.joystickDrive(drive, () -> xSpeed, () -> ySpeed, () -> omegaSpeed);
+                },
+                interrupted -> {
+                  DriveCommands.chassisSpeedDrive(drive, new ChassisSpeeds());
+                  omegaPID.close();
+                  System.out.println("aligned now");
+                },
+                () -> {
+                  return omegaPID.atSetpoint() && xController.atGoal() && yController.atGoal();
+                },
+                drive),
+        Set.of(drive));
+  }
+
+  /** Updates the path to override for the coral offset */
+  public static Command overridePathplannerCoralOffset(DoubleSupplier offset) {
+    return Commands.run(
+        () ->
+            PPHolonomicDriveController.overrideYFeedback(
+                () -> {
+                  // Calculate feedback from your custom PID controller
+                  return offset.getAsDouble();
+                }));
+  }
+
+  /** clears all x and y overrides */
+  public static Command clearXYOverrides() {
+    return Commands.run(() -> PPHolonomicDriveController.clearXYFeedbackOverride());
+  }
+
+  /** code for reef alignment */
+
+  // align to target face
+  public static Command alignToReefCommnd(SwerveSubsystem drive) {
+    // find the coordinates of the selected face
+    Pose2d targetFace;
+    if (targetReefFace == 1) targetFace = GlobalConstants.FieldMap.Coordinates.REEF1.getPose();
+    if (targetReefFace == 2) targetFace = GlobalConstants.FieldMap.Coordinates.REEF2.getPose();
+    if (targetReefFace == 3) targetFace = GlobalConstants.FieldMap.Coordinates.REEF3.getPose();
+    if (targetReefFace == 4) targetFace = GlobalConstants.FieldMap.Coordinates.REEF4.getPose();
+    if (targetReefFace == 5) targetFace = GlobalConstants.FieldMap.Coordinates.REEF5.getPose();
+    if (targetReefFace == 6) targetFace = GlobalConstants.FieldMap.Coordinates.REEF6.getPose();
+    else targetFace = findClosestReefFace(drive);
+
+    double xOffset = Units.feetToMeters(-GlobalConstants.AlignOffsets.BUMPER_TO_CENTER_OFFSET / 12);
+    double yOffset =
+        Units.feetToMeters(GlobalConstants.AlignOffsets.REEF_TO_BRANCH_OFFSET / 12)
+            * (leftAlign ? 1 : -1);
+    Rotation2d rotation = targetFace.getRotation();
+    Transform2d branchTransform =
+        new Transform2d(new Translation2d(xOffset, yOffset).rotateBy(rotation), new Rotation2d());
+    Pose2d target = targetFace.transformBy(branchTransform);
+
+    PathConstraints constraints =
+        new PathConstraints(
+            SwerveConstants.MAX_LINEAR_SPEED,
+            SwerveConstants.MAX_LINEAR_ACCELERATION,
+            SwerveConstants.MAX_ANGULAR_SPEED,
+            SwerveConstants.MAX_ANGULAR_ACCELERATION);
+
+    double endVelocity = 0.0;
+
+    if (targetReefFace > 0) {
+      // reset reef face
+      targetReefFace = 0;
+      return AutoBuilder.pathfindToPose(target, constraints, endVelocity);
+    }
+
+    Transform2d targetOffset = target.minus(drive.getPose());
+
+    return chasePoseRobotRelativeCommand(drive, () -> targetOffset);
+  }
+
+  /** helper methods for alignment */
+
+  // store the reef face target
+  private static int targetReefFace = 0;
+
+  private static boolean leftAlign = false;
+
+  public static void setTargetReefFace(int targetReefFace) {
+    DriveCommands.targetReefFace = targetReefFace;
+  }
+
+  public static void setLeftAlign(boolean leftAlign) {
+    DriveCommands.leftAlign = leftAlign;
+  }
+
+  // returns the nearest face of the reef
+  private static Pose2d findClosestReefFace(SwerveSubsystem drive) {
+    double reef1 =
+        drive
+            .getPose()
+            .getTranslation()
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF1.getPose().getTranslation());
+    double reef2 =
+        drive
+            .getPose()
+            .getTranslation()
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF2.getPose().getTranslation());
+    double reef3 =
+        drive
+            .getPose()
+            .getTranslation()
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF3.getPose().getTranslation());
+    double reef4 =
+        drive
+            .getPose()
+            .getTranslation()
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF4.getPose().getTranslation());
+    double reef5 =
+        drive
+            .getPose()
+            .getTranslation()
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF5.getPose().getTranslation());
+    double reef6 =
+        drive
+            .getPose()
+            .getTranslation()
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF6.getPose().getTranslation());
+
+    double closestFace =
+        Math.min(Math.min(Math.min(reef1, reef2), Math.min(reef3, reef4)), Math.min(reef5, reef6));
+    if (reef1 == closestFace) return GlobalConstants.FieldMap.Coordinates.REEF1.getPose();
+    if (reef2 == closestFace) return GlobalConstants.FieldMap.Coordinates.REEF2.getPose();
+    if (reef3 == closestFace) return GlobalConstants.FieldMap.Coordinates.REEF3.getPose();
+    if (reef4 == closestFace) return GlobalConstants.FieldMap.Coordinates.REEF4.getPose();
+    if (reef5 == closestFace) return GlobalConstants.FieldMap.Coordinates.REEF5.getPose();
+    return GlobalConstants.FieldMap.Coordinates.REEF6.getPose();
+  }
+  /**
+   * Command to align to the nearest coral station
+   *
+   * @param drive
+   * @return
+   */
+  public static Command alignToNearestCoralStationCommand(
+      SwerveSubsystem drive, DoubleSupplier yDriver) {
+    DoubleSupplier driver =
+        () -> yDriver.getAsDouble() * (shouldFlipDriverOverride(drive) ? -1 : 1);
+    Supplier<Transform2d> targetOffset =
+        () -> findClosestCoralStation(drive).minus(drive.getPose());
+
+    return chasePoseRobotRelativeCommandYOverride(drive, targetOffset, driver);
+  }
+
+  /** helper methods for alignment */
+
+  // returns the coordinates of the nearest coral station
+  private static Pose2d findClosestCoralStation(SwerveSubsystem drive) {
+    if (RotationalAllianceFlipUtil.apply(drive.getPose()).getTranslation().getY()
+        < GlobalConstants.FieldMap.FIELD_WIDTH_METERS / 2) {
+      return GlobalConstants.FieldMap.Coordinates.RIGHT_CORAL_STATION.getPose();
+    } else {
+      return GlobalConstants.FieldMap.Coordinates.LEFT_CORAL_STATION.getPose();
+    }
+  }
+
+  // returns whether the driver y-input for aligning should be flipped for the current coral station
+  private static boolean shouldFlipDriverOverride(SwerveSubsystem drive) {
+    return findClosestCoralStation(drive)
+            .equals(GlobalConstants.FieldMap.Coordinates.RIGHT_CORAL_STATION.getPose())
+        ? false
+        : true;
   }
 
   /**
@@ -272,8 +528,7 @@ public class DriveCommands {
                         wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
                       }
                       double wheelRadius =
-                          (state.gyroDelta * SwerveConstants.Hardware.DRIVE_BASE_RADIUS)
-                              / wheelDelta;
+                          (state.gyroDelta * SwerveConstants.DRIVE_BASE_RADIUS) / wheelDelta;
 
                       NumberFormat formatter = new DecimalFormat("#0.000");
                       System.out.println(

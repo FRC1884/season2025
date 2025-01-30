@@ -13,6 +13,8 @@
 
 package frc.robot.subsystems.swerve;
 
+import static frc.robot.subsystems.swerve.SwerveConstants.*;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -35,24 +37,20 @@ public class Module {
     this.io = io;
     this.index = index;
     driveDisconnectedAlert =
-        new Alert(
-            "Disconnected drive motor on module " + Integer.toString(index) + ".",
-            AlertType.kError);
+        new Alert("Disconnected drive motor on module " + index + ".", AlertType.kError);
     turnDisconnectedAlert =
-        new Alert(
-            "Disconnected turn motor on module " + Integer.toString(index) + ".", AlertType.kError);
+        new Alert("Disconnected turn motor on module " + index + ".", AlertType.kError);
   }
 
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+    Logger.processInputs("Swerve/Module" + index, inputs);
 
     // Calculate positions for odometry
     int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
-      double positionMeters =
-          inputs.odometryDrivePositionsRad[i] * SwerveConstants.Hardware.WHEEL_RADIUS;
+      double positionMeters = inputs.odometryDrivePositionsRad[i] * WHEEL_RADIUS;
       Rotation2d angle = inputs.odometryTurnPositions[i];
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
@@ -69,7 +67,7 @@ public class Module {
     state.cosineScale(inputs.turnPosition);
 
     // Apply setpoints
-    io.setDriveVelocity(state.speedMetersPerSecond / SwerveConstants.Hardware.WHEEL_RADIUS);
+    io.setDriveVelocity(state.speedMetersPerSecond / WHEEL_RADIUS);
     io.setTurnPosition(state.angle);
   }
 
@@ -92,12 +90,12 @@ public class Module {
 
   /** Returns the current drive position of the module in meters. */
   public double getPositionMeters() {
-    return inputs.drivePositionRad * SwerveConstants.Hardware.WHEEL_RADIUS;
+    return inputs.drivePositionRad * WHEEL_RADIUS;
   }
 
   /** Returns the current drive velocity of the module in meters per second. */
   public double getVelocityMetersPerSec() {
-    return inputs.driveVelocityRadPerSec * SwerveConstants.Hardware.WHEEL_RADIUS;
+    return inputs.driveVelocityRadPerSec * WHEEL_RADIUS;
   }
 
   /** Returns the module position (turn angle and drive position). */

@@ -1,8 +1,8 @@
 package frc.robot.subsystems.swerve;
 
 import static edu.wpi.first.math.util.Units.lbsToKilograms;
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.GlobalConstants.*;
-import static frc.robot.subsystems.swerve.SwerveConstants.Hardware.*;
 import static java.lang.Math.PI;
 
 import com.pathplanner.lib.config.ModuleConfig;
@@ -12,8 +12,32 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
 public final class SwerveConstants {
+  public static final boolean USING_VORTEX_DRIVE = true;
+  public static final DCMotor DRIVE_GEARBOX =
+      USING_VORTEX_DRIVE ? DCMotor.getNeoVortex(1) : DCMotor.getNEO(1);
+  /** Meters */
+  public static final double TRACK_WIDTH = Units.inchesToMeters(23.5);
+  /** Meters */
+  public static final double WHEEL_BASE = Units.inchesToMeters(23.5);
+  /** Meters */
+  public static final double BUMPER_LENGTH = Units.inchesToMeters(30);
+  /** Meters */
+  public static final double BUMPER_WIDTH = Units.inchesToMeters(30);
+
+  public static final Translation2d[] MODULE_TRANSLATIONS =
+      new Translation2d[] {
+        new Translation2d(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0),
+        new Translation2d(TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0),
+        new Translation2d(-TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0),
+        new Translation2d(-TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0)
+      };
+  /** Meters */
+  public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0);
+
   /**
    * Represents each module's constants on a NEO-based swerve.
    *
@@ -56,6 +80,19 @@ public final class SwerveConstants {
   public static final ModuleConstants BACK_RIGHT =
       new ModuleConstants("Back Right", BRD_ID, BRR_ID, BRR_ZERO);
 
+  /** Meters */
+  public static final double WHEEL_RADIUS = Units.inchesToMeters(1.5);
+  /** Meters per second */
+  public static final double MAX_LINEAR_SPEED = Units.feetToMeters(10);
+  /** Radians per second */
+  public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
+
+  public static final double WHEEL_FRICTION_COEFF = 1.2;
+  /** Kilogram per square meter */
+  public static final double ROBOT_INERTIA = 6.883;
+  /** Kilograms */
+  public static final double ROBOT_MASS = lbsToKilograms(110);
+
   // Drive motor configuration
   /** Amps */
   static final int DRIVE_MOTOR_CURRENT_LIMIT = 40;
@@ -64,9 +101,17 @@ public final class SwerveConstants {
 
   // Drive motor PID configuration
   static final Gains DRIVE_GAINS = new Gains(0.0, 0.0, 0.0, 0.1);
-  static final Gains DRIVE_SIM_GAINS = new Gains(0.05, 0.0, 0.0, 0.0789);
+  static final Gains DRIVE_SIM_GAINS = new Gains(0.05, 0.0, 0.0, 0.085);
 
   // Drive encoder configuration
+  // this and below for choreo and pathfinding
+  public static final double DRIVE_GEAR_RATIO = 5.08;
+  /** Radians per second per second */
+  public static final double MAX_ANGULAR_ACCELERATION =
+      4 * (DRIVE_GEAR_RATIO * DRIVE_MOTOR_MAX_TORQUE) / WHEEL_RADIUS * DRIVE_BASE_RADIUS / 15.0;
+  /** Meters per second per second */
+  public static final double MAX_LINEAR_ACCELERATION =
+      4 * (DRIVE_GEAR_RATIO * DRIVE_MOTOR_MAX_TORQUE) / WHEEL_RADIUS / ROBOT_MASS;
   /** Wheel radians */
   static final double DRIVE_ENCODER_POSITION_FACTOR = 2 * Math.PI / DRIVE_GEAR_RATIO;
   /** Wheel radians per second */
@@ -111,6 +156,25 @@ public final class SwerveConstants {
               1),
           MODULE_TRANSLATIONS);
 
+  public static final double TURN_GEAR_RATIO = 9424.0 / 203.0;
+
+  public static final DCMotor TURN_GEARBOX = DCMotor.getNeo550(1);
+  public static final DriveTrainSimulationConfig mapleSimConfig =
+      new DriveTrainSimulationConfig(
+          Kilograms.of(ROBOT_MASS),
+          Meters.of(BUMPER_LENGTH),
+          Meters.of(BUMPER_WIDTH),
+          Meters.of(WHEEL_BASE),
+          Meters.of(TRACK_WIDTH),
+          () ->
+              COTS.ofMAXSwerve(
+                      DRIVE_GEARBOX, // Drive motor is a Neo Vortex
+                      TURN_GEARBOX, // Steer motor is a Neo 550
+                      WHEEL_FRICTION_COEFF, // Use the COF for Colson Wheels
+                      2) // Medium Gear ratio
+                  .get(),
+          COTS.ofNav2X());
+
   // Gyro
   static enum GyroType {
     PIGEON,
@@ -119,51 +183,4 @@ public final class SwerveConstants {
   }
 
   static final GyroType GYRO_TYPE = GyroType.NAVX;
-
-  public static final class Hardware {
-    public static final boolean USING_VORTEX_DRIVE = true;
-    public static final DCMotor DRIVE_GEARBOX =
-        USING_VORTEX_DRIVE ? DCMotor.getNeoVortex(1) : DCMotor.getNEO(1);
-    public static final DCMotor TURN_GEARBOX = DCMotor.getNeo550(1);
-    public static final double TURN_GEAR_RATIO = 9424.0 / 203.0;
-
-    // Dimensions (meters)
-    /** Meters */
-    public static final double TRACK_WIDTH = Units.inchesToMeters(23.5);
-    /** Meters */
-    public static final double WHEEL_BASE = Units.inchesToMeters(23.5);
-    /** Meters */
-    public static final double DRIVE_BASE_RADIUS = Math.hypot(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0);
-
-    public static final Translation2d[] MODULE_TRANSLATIONS =
-        new Translation2d[] {
-          new Translation2d(TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0),
-          new Translation2d(TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0),
-          new Translation2d(-TRACK_WIDTH / 2.0, WHEEL_BASE / 2.0),
-          new Translation2d(-TRACK_WIDTH / 2.0, -WHEEL_BASE / 2.0)
-        };
-
-    // physics
-    /** Kilograms */
-    public static final double ROBOT_MASS = lbsToKilograms(110);
-    /** Kilogram per square meter */
-    public static final double ROBOT_INERTIA = 6.883;
-
-    public static final double WHEEL_FRICTION_COEFF = 1.2;
-    /** Meters per second */
-    public static final double MAX_LINEAR_SPEED = Units.feetToMeters(10);
-    /** Radians per second */
-    public static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
-    /** Meters */
-    public static final double WHEEL_RADIUS = Units.inchesToMeters(1.5);
-
-    // this and below for choreo and pathfinding
-    public static final double DRIVE_GEAR_RATIO = 4.0;
-    /** Meters per second per second */
-    public static final double MAX_LINEAR_ACCELERATION =
-        4 * (DRIVE_GEAR_RATIO * DRIVE_MOTOR_MAX_TORQUE) / WHEEL_RADIUS / ROBOT_MASS;
-    /** Radians per second per second */
-    public static final double MAX_ANGULAR_ACCELERATION =
-        4 * (DRIVE_GEAR_RATIO * DRIVE_MOTOR_MAX_TORQUE) / WHEEL_RADIUS * DRIVE_BASE_RADIUS / 15.0;
-  }
 }

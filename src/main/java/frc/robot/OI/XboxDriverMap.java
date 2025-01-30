@@ -64,6 +64,16 @@ public class XboxDriverMap extends CommandXboxController implements DriverMap {
   }
 
   @Override
+  public Trigger coralStation() {
+    return new Trigger(() -> this.getRightTriggerAxis() > 0.5);
+  }
+
+  @Override
+  public Trigger slowMode() {
+    return new Trigger(() -> this.getLeftTriggerAxis() > 0.5);
+  }
+
+  @Override
   public Command rumble() {
     return startEnd(
         () -> getHID().setRumble(kBothRumble, 1), () -> getHID().setRumble(kBothRumble, 0));

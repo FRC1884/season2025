@@ -18,7 +18,7 @@ public class GenericRollerSystemIOSim implements GenericRollerSystemIO {
   @Override
   public void updateInputs(GenericRollerSystemIOInputs inputs) {
     if (DriverStation.isDisabled()) {
-      runVolts(0.0);
+      runVolts(appliedVoltage);
     }
 
     sim.update(0.02);

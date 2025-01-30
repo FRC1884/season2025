@@ -11,19 +11,23 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.vision.apriltagvision;
+package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import frc.robot.subsystems.vision.VisionConstants.CameraConstants;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
 
-/** IO implementation for real PhotonVision hardware. */
-public class AprilTagVisionIOPhotonReal implements AprilTagVisionIO {
+/**
+ * IO implementation for real PhotonVision hardware. On the AprilTag pipeline, PhotonVision still
+ * publishes the angles to each tag, which can be helpful for robot-relative tag alignment.
+ */
+public class AprilTagVisionIOPhotonVision implements VisionIO {
   protected final PhotonCamera camera;
   protected final Transform3d robotToCamera;
 
@@ -31,22 +35,24 @@ public class AprilTagVisionIOPhotonReal implements AprilTagVisionIO {
    * Creates a new VisionIOPhotonVision.
    *
    * @param name The configured name of the camera.
-   * @param rotationSupplier The 3D position of the camera relative to the robot.
+   * @param robotToCamera The 3D position of the camera relative to the robot.
    */
-  public AprilTagVisionIOPhotonReal(String name, Transform3d robotToCamera) {
-    camera = new PhotonCamera(name);
-    this.robotToCamera = robotToCamera;
+  public AprilTagVisionIOPhotonVision(CameraConstants cameraConstants) {
+    camera = new PhotonCamera(cameraConstants.cameraName());
+    this.robotToCamera = cameraConstants.robotToCamera();
   }
 
   @Override
-  public void updateInputs(AprilTagVisionIOInputs inputs) {
+  public void updateInputs(VisionIOInputs inputs) {
     inputs.connected = camera.isConnected();
 
     // Read new camera observations
     Set<Short> tagIds = new HashSet<>();
     List<PoseObservation> poseObservations = new LinkedList<>();
+
     for (var result : camera.getAllUnreadResults()) {
       // Update latest target observation
+
       if (result.hasTargets()) {
         inputs.latestTargetObservation =
             new TargetObservation(
@@ -55,8 +61,9 @@ public class AprilTagVisionIOPhotonReal implements AprilTagVisionIO {
       } else {
         inputs.latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
       }
+      System.out.println(result.multitagResult.isPresent());
 
-      // Add pose observation
+      // Add pose observation (multitag only)
       if (result.multitagResult.isPresent()) {
         var multitagResult = result.multitagResult.get();
 

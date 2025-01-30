@@ -27,7 +27,7 @@ public abstract class GenericRollerSystemIOSparkFlex implements GenericRollerSys
             .inverted(invert)
             .idleMode(brake ? IdleMode.kBrake : IdleMode.kCoast);
 
-    motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     encoder = motor.getEncoder();
   }

@@ -2,11 +2,10 @@
 
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.math.system.plant.DCMotor;
-import frc.robot.generic.rollers.GenericRollerSystemIOSim;
+import frc.robot.generic.elevators.GenericElevatorSystemIOSim;
 
-public class ClimberIOSim extends GenericRollerSystemIOSim implements ClimberIO {
-  public ClimberIOSim(DCMotor motorModel, double reduction, double moi) {
-    super(motorModel, reduction, moi);
+public class ClimberIOSim extends GenericElevatorSystemIOSim implements ClimberIO {
+  public ClimberIOSim(int numMotors, double startingAngle) {
+    super(numMotors, startingAngle);
   }
 }

@@ -30,12 +30,12 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
 
   @Override
   public DoubleSupplier getXAxis() {
-    return () -> -getLeftY();
+    return () -> -getLeftX();
   }
 
   @Override
   public DoubleSupplier getYAxis() {
-    return () -> -getLeftX();
+    return () -> -getLeftY();
   }
 
   @Override

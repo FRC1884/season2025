@@ -3,6 +3,8 @@ package frc.robot.subsystems.feeder;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import frc.robot.generic.rollers.GenericVoltageRollerSystem;
+import frc.robot.generic.rollers.GenericVoltageRollerSystem.VoltageGoal;
+import frc.robot.util.LoggedTunableNumber;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,9 @@ public class FeederSubsystem extends GenericVoltageRollerSystem<FeederSubsystem.
   @RequiredArgsConstructor
   @Getter
   public enum FeederGoal implements VoltageGoal {
-    IDLING(() -> 0.0), // Intake is off
-    FORWARD(() -> 12.0), // Maximum forward voltage
-    REVERSE(() -> -12.0); // Maximum reverse voltage
+    IDLING(new LoggedTunableNumber("Feeder/IdleVoltage", 0.0)), // Intake is off
+    FORWARD(new LoggedTunableNumber("Feeder/ForwardVoltage", 12.0)), // Maximum forward voltage
+    REVERSE(new LoggedTunableNumber("Feeder/ReverseVoltage", -12.0)); // Maximum reverse voltage
 
     private final DoubleSupplier voltageSupplier;
   }

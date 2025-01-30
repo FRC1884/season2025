@@ -13,26 +13,48 @@
 
 package frc.robot;
 
+import static frc.robot.Config.Controllers.getDriverController;
+import static frc.robot.Config.Controllers.getOperatorController;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
-import static frc.robot.subsystems.swerve.SwerveConstants.*;
+import static frc.robot.subsystems.swerve.SwerveConstants.BACK_LEFT;
+import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
+import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_LEFT;
+import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_RIGHT;
+import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.LEFT_CAM_CONSTANTS;
+import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.LEFT_CAM_ENABLED;
+import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.RIGHT_CAM_CONSTANTS;
+import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.RIGHT_CAM_ENABLED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.GlobalConstants.RobotMode;
+import frc.robot.OI.DriverMap;
+import frc.robot.OI.OperatorMap;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.swerve.GyroIO;
-import frc.robot.subsystems.swerve.GyroIOPigeon2;
+import frc.robot.subsystems.swerve.GyroIONavX;
+import frc.robot.subsystems.swerve.GyroIOSim;
 import frc.robot.subsystems.swerve.ModuleIO;
 import frc.robot.subsystems.swerve.ModuleIOSim;
 import frc.robot.subsystems.swerve.ModuleIOSpark;
+import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.vision.AprilTagVisionIOPhotonVision;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -44,12 +66,18 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final SwerveSubsystem drive;
+  private SwerveDriveSimulation driveSimulation;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final DriverMap driver = getDriverController();
+
+  private final OperatorMap operaterController = getOperatorController();
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
+
+  private final Superstructure superstructure = new Superstructure(null);
+  private final Vision vision;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -59,22 +87,44 @@ public class RobotContainer {
           // Real robot, instantiate hardware IO implementations
           drive =
               new SwerveSubsystem(
-                  new GyroIOPigeon2(),
+                  new GyroIONavX(),
                   new ModuleIOSpark(FRONT_LEFT),
                   new ModuleIOSpark(FRONT_RIGHT),
                   new ModuleIOSpark(BACK_LEFT),
                   new ModuleIOSpark(BACK_RIGHT));
+          vision =
+              new Vision(
+                  drive,
+                  new AprilTagVisionIOPhotonVision(LEFT_CAM_CONSTANTS),
+                  new AprilTagVisionIOPhotonVision(RIGHT_CAM_CONSTANTS)
+                  /*new GamePieceVisionIOLimelight("limelight", drive::getRotation)*/
+                  );
           break;
 
         case SIM:
+          // create a maple-sim swerve drive simulation instance
+          this.driveSimulation =
+              new SwerveDriveSimulation(
+                  SwerveConstants.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
+          // add the simulated drivetrain to the simulation field
+          SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
           // Sim robot, instantiate physics sim IO implementations
           drive =
               new SwerveSubsystem(
-                  new GyroIO() {},
-                  new ModuleIOSim(),
-                  new ModuleIOSim(),
-                  new ModuleIOSim(),
-                  new ModuleIOSim());
+                  new GyroIOSim(driveSimulation.getGyroSimulation()),
+                  new ModuleIOSim(driveSimulation.getModules()[0]),
+                  new ModuleIOSim(driveSimulation.getModules()[1]),
+                  new ModuleIOSim(driveSimulation.getModules()[2]),
+                  new ModuleIOSim(driveSimulation.getModules()[3]));
+          vision =
+              new Vision(
+                  drive,
+                  LEFT_CAM_ENABLED
+                      ? new VisionIOPhotonVisionSim(LEFT_CAM_CONSTANTS, drive::getPose)
+                      : new VisionIO() {},
+                  RIGHT_CAM_ENABLED
+                      ? new VisionIOPhotonVisionSim(RIGHT_CAM_CONSTANTS, drive::getPose)
+                      : new VisionIO() {});
           break;
 
         default:
@@ -86,8 +136,10 @@ public class RobotContainer {
                   new ModuleIO() {},
                   new ModuleIO() {},
                   new ModuleIO() {});
+          vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
           break;
       }
+
       // Set up auto routines
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -106,9 +158,17 @@ public class RobotContainer {
           "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
       autoChooser.addOption(
           "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
       // Configure the button bindings
-      configureButtonBindings();
-    } else drive = null;
+      configureDriveButtonBindings();
+      configureOperatorButtonBindings();
+      // Register the auto commands
+    } else {
+      drive = null;
+      autoChooser = null;
+      vision = null;
+      configureOperatorButtonBindings();
+    }
   }
 
   /**
@@ -117,38 +177,76 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
+  private void configureDriveButtonBindings() {
     // Default command, normal field-relative drive
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            drive, driver.getYAxis(), driver.getXAxis(), driver.getRotAxis()));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // driver
+    //     .alignToSpeaker()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive, driver.getYAxis(), driver.getXAxis(), () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    driver.stopWithX().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
+    // align to right side of reef face
+    driver
+        .alignToSpeaker()
+        .whileTrue(Commands.repeatingSequence(Commands.run(() -> DriveCommands.setLeftAlign(false)), 
+        DriveCommands.alignToReefCommnd(drive)));
+
+    // align to left side of reef face
+    driver
+        .alignToGamePiece()
+        .whileTrue(Commands.repeatingSequence(Commands.run(() -> DriveCommands.setLeftAlign(true)), 
+        DriveCommands.alignToReefCommnd(drive)));
+
+    // align to face 2
+    driver
+        .slowMode()
+        .onTrue(Commands.run(() -> DriveCommands.setTargetReefFace(2)));
+
+    // align to coral station with position customization when right trigger is pressed
+    driver
+        .coralStation()
+        .whileTrue(DriveCommands.alignToNearestCoralStationCommand(drive, driver.getYAxis()));
+
+    // Reset gyro to 0° when B button is pressed
+    driver
+        .resetOdometry()
         .onTrue(
             Commands.runOnce(
                     () ->
-                        drive.setPose(
+                        drive.resetOdometry(
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
+
+    // align to the target reef face or closest reef face if no face was selected by the operator
+    driver.alignToSpeaker().whileTrue(DriveCommands.alignToReefCommnd(drive));
+  }
+
+  private void configureOperatorButtonBindings() {
+    operaterController
+        .shoot()
+        .whileFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING))
+        .whileTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.RUNNING));
+  }
+
+  /** Write all the auto named commands here */
+  private void registerAutoCommands() {
+    /** Overriding commands */
+
+    // overrides the x axis
+    NamedCommands.registerCommand(
+        "OverrideCoralOffset", DriveCommands.overridePathplannerCoralOffset(() -> 2.0));
+
+    // clears all override commands in the x and y direction
+    NamedCommands.registerCommand("Clear XY Override", DriveCommands.clearXYOverrides());
   }
 
   /**
@@ -158,5 +256,24 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+  }
+
+  public void resetSimulationField() {
+    if (MODE != RobotMode.SIM) return;
+
+    driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+    drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose());
+    SimulatedArena.getInstance().resetFieldForAuto();
+  }
+
+  public void displaySimFieldToAdvantageScope() {
+    if (MODE != RobotMode.SIM) return;
+
+    Logger.recordOutput(
+        "FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+    Logger.recordOutput(
+        "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+    Logger.recordOutput(
+        "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
   }
 }

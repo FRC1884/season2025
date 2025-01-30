@@ -25,6 +25,10 @@ public interface DriverMap {
 
   Trigger testButton();
 
+  Trigger coralStation();
+
+  Trigger slowMode();
+
   default Command rumble() {
     return none();
   }
