@@ -8,7 +8,9 @@ public interface ClimberIO {
     public double position;
   }
 
-    default void setPosition(double position) {};
+  default void setPosition(double position) {}
+  ;
 
-    default void updateInputs(ClimberIOInputs io) {};
+  default void updateInputs(ClimberIOInputs io) {}
+  ;
 }
