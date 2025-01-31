@@ -15,7 +15,7 @@ public class PivotIOReal implements PivotIO {
   private RelativeEncoder encoder = motor.getEncoder();
 
   public void setDegrees(double degrees) {
-    controller.setReference(degrees, SparkBase.ControlType.kMAXMotionVelocityControl);
+    controller.setReference(degrees, SparkBase.ControlType.kMAXMotionPositionControl);
   }
   ;
 
