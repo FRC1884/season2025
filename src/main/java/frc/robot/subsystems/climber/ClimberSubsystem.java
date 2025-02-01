@@ -1,9 +1,7 @@
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -29,7 +27,6 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   private ClimberGoal goal = ClimberGoal.IDLING;
-  private Debouncer currentDebouncer = new Debouncer(0.25, Debouncer.DebounceType.kFalling);
 
   public ClimberSubsystem(ClimberIO io) {
     this.io = io;

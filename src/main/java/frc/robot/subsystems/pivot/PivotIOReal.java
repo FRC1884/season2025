@@ -1,21 +1,48 @@
 package frc.robot.subsystems.pivot;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.math.controller.PIDController;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.units.Units;
 
-public class PivotIOReal implements PivotIO{
+import static frc.robot.subsystems.pivot.PivotConstants.*;
 
-    private SparkMax motor = new SparkMax(PivotConstants.PIVOT_ID, SparkLowLevel.MotorType.kBrushless);
-    private PIDController pid = new PIDController(PivotConstants.kp, PivotConstants.ki, PivotConstants.kd);
-    private RelativeEncoder encoder = motor.getEncoder();
+public class PivotIOReal implements PivotIO {
 
-    public void setDegrees(double degrees) {
-        motor.setVoltage(pid.calculate(encoder.getPosition(), degrees));
-    };
+  private SparkMax motor;
+  private SparkClosedLoopController controller;
+  private RelativeEncoder encoder;
+  private SparkMaxConfig config;
 
-    public void updateInputs(PivotIOInputs io) {
-        io.degrees = encoder.getPosition();
-    };
+  public PivotIOReal() {
+    motor = new SparkMax(PivotConstants.PIVOT_ID, SparkLowLevel.MotorType.kBrushless);
+    config = new SparkMaxConfig();
+    config.closedLoop
+            .p(kp)
+            .i(ki)
+            .d(kd);
+    config.closedLoop.maxMotion
+            .maxVelocity(6000)
+            .maxAcceleration(6000)
+            .allowedClosedLoopError(0.02);
+    motor.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+    controller = motor.getClosedLoopController();
+    encoder = motor.getEncoder();
+  }
+
+  public void setDegrees(double degrees) {
+    controller.setReference(degrees, SparkBase.ControlType.kMAXMotionPositionControl);
+  }
+  ;
+
+  public void updateInputs(PivotIOInputs io) {
+    io.degrees = encoder.getPosition();
+    io.velocityRadsPerSec = Units.RadiansPerSecond.convertFrom(encoder.getVelocity(), Units.RotationsPerSecond);
+    io.appliedVoltage = motor.getAppliedOutput() + motor.getBusVoltage();
+    io.tempCelsius = motor.getMotorTemperature();
+  }
+  ;
 }
