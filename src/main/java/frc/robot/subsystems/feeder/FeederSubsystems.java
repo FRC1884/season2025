@@ -23,16 +23,4 @@ public class FeederSubsystems extends SubsystemBase {
     }
 
     private FeederState feederState = FeederState.IDLING;
-
-
-
-   // void setvoltage(double v){}
-
-
-
-
 }
-// make a constructor
-// make a method set voltage
-
-// feeder io change voltage

@@ -12,14 +12,4 @@ public final class FeederConstants {
     public static final double kp = 1;
     public static final double ki = 1;
     public static final double kd = 1;
-
-    //public class FeederIOInputs {
-      //  public double voltage;
-        // public static double feederVelocity;
-      //  public static double appliedCurrent;
-        // applied current
-        // make the two methods
-
-
-    // voltage
 }
