@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static frc.robot.Config.Controllers.getOperatorController;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.OI.OperatorMap;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.swerve.GyroIO;
@@ -48,7 +50,9 @@ public class RobotContainer {
   private final SwerveSubsystem drive;
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final OperatorMap operatorController = getOperatorController();
+
+
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -128,49 +132,74 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+//    drive.setDefaultCommand(
+//        DriveCommands.joystickDrive(
+//            drive,
+//            () -> -controller.getLeftY(),
+//            () -> -controller.getLeftX(),
+//            () -> -controller.getRightX()));
 
     //Super States
-    controller
-            .y()
+    operatorController
+            .level_four()
             .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_FOUR))
             .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
 
+    operatorController
+            .level_three()
+            .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_THREE))
+            .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+    operatorController
+            .level_two()
+            .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_TWO))
+            .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+    operatorController
+            .level_one()
+            .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_ONE))
+            .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+    operatorController
+            .deep()
+            .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.DEEP_CLIMB))
+            .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+    operatorController
+            .shallow()
+            .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.SHALLOW_CLIMB))
+            .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+    operatorController
+            .source()
+            .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.SOURCE))
+            .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
-
-    // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-
-    // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
-
-    // align to coral station with position customization when LB is pressed
-    controller
-        .leftBumper()
-        .whileTrue(
-            DriveCommands.chasePoseRobotRelativeCommandXOverride(
-                drive, () -> new Pose2d(), () -> controller.getLeftY()));
+//    controller
+//        .a()
+//        .whileTrue(
+//            DriveCommands.joystickDriveAtAngle(
+//                drive,
+//                () -> -controller.getLeftY(),
+//                () -> -controller.getLeftX(),
+//                () -> new Rotation2d()));
+//
+//    // Switch to X pattern when X button is pressed
+//    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+//
+//    // Reset gyro to 0° when B button is pressed
+//    controller
+//        .b()
+//        .onTrue(
+//            Commands.runOnce(
+//                    () ->
+//                        drive.setPose(
+//                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+//                    drive)
+//                .ignoringDisable(true));
+//
+//    // align to coral station with position customization when LB is pressed
+//    controller
+//        .leftBumper()
+//        .whileTrue(
+//            DriveCommands.chasePoseRobotRelativeCommandXOverride(
+//                drive, () -> new Pose2d(), () -> controller.getLeftY()));
   }
 
   /** Write all the auto named commands here */
