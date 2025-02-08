@@ -9,18 +9,52 @@ public class BoardOperatorMap extends CommandGenericHID implements OperatorMap {
   }
 
   @Override
-  public Trigger shoot() {
+  public Trigger TESTING() {
+    return button(1);
+  }
+
+  @Override
+  public Trigger level_one() {
+    return button(2);
+  }
+
+  @Override
+  public Trigger level_two() {
+    return button(3);
+  }
+
+  @Override
+  public Trigger level_three() {
+    return button(4);
+  }
+
+  @Override
+  public Trigger level_four() {
     return button(5);
   }
 
   @Override
-  public Trigger prepShot() {
+  public Trigger source() {
+    return button(6);
+  }
+
+  @Override
+  public Trigger shallow() {
     return button(7);
   }
 
-  // TODO: add intake button
+  @Override
+  public Trigger deep() {
+    return button(8);
+  }
+
   @Override
   public Trigger intake() {
-    return button(8);
+    return button(9);
+  }
+
+  @Override
+  public Trigger outake() {
+    return button(10);
   }
 }

@@ -33,8 +33,8 @@ import lombok.Getter;
  * constants are needed, to reduce verbosity.
  */
 public final class GlobalConstants {
-  public static final RobotMode MODE = RobotMode.SIM;
-  public static final RobotType ROBOT = RobotType.SIMBOT;
+  public static final RobotMode MODE = RobotMode.REAL;
+  public static final RobotType ROBOT = RobotType.COMPBOT;
   public static final double ODOMETRY_FREQUENCY = 100.0;
 
   public static boolean TUNING_MODE = true;

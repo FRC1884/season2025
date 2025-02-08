@@ -54,18 +54,8 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
   }
 
   @Override
-  public Trigger prepShot() {
-    return button(9);
-  }
-
-  @Override
   public Trigger resetOdometry() {
     return button(11);
-  }
-
-  @Override
-  public Trigger shoot() {
-    return button(1);
   }
 
   @Override
@@ -86,6 +76,11 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
   }
 
   @Override
+  public Trigger TESTING() {
+    return null;
+  }
+
+  @Override
   public Trigger coralStation() {
     return button(2);
   }
@@ -93,5 +88,45 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
   @Override
   public Trigger slowMode() {
     return button(3);
+  }
+
+  @Override
+  public Trigger level_one() {
+    return button(9);
+  }
+
+  @Override
+  public Trigger level_two() {
+    return button(10);
+  }
+
+  @Override
+  public Trigger level_three() {
+    return button(11);
+  }
+
+  @Override
+  public Trigger level_four() {
+    return button(12);
+  }
+
+  @Override
+  public Trigger source() {
+    return button(5);
+  }
+
+  @Override
+  public Trigger shallow() {
+    return button(6);
+  }
+
+  @Override
+  public Trigger deep() {
+    return button(13);
+  }
+
+  @Override
+  public Trigger outake() {
+    return button(14);
   }
 }

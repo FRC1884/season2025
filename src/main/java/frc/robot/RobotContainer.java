@@ -237,9 +237,26 @@ public class RobotContainer {
 
   private void configureOperatorButtonBindings() {
     operator
-        .shoot()
-        .whileFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING))
-        .whileTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.RUNNING));
+        .level_four()
+        .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_FOUR))
+        .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+    operator
+        .level_four()
+        .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_FOUR))
+        .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+
+    operator
+        .level_three()
+        .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_THREE))
+        .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+    operator
+        .level_two()
+        .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_TWO))
+        .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
+    operator
+        .level_one()
+        .onTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.LEVEL_ONE))
+        .onFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING));
   }
 
   /** Write all the auto named commands here */
