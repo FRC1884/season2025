@@ -49,9 +49,11 @@ public class Superstructure extends SubsystemBase {
 
   public static enum SuperStates {
     IDLING,
-    RUNNING,
-    INTAKING,
-    OUTTAKING
+    TESTING,
+    LEVEL_ONE,
+    LEVEL_TWO,
+    LEVEL_THREE,
+    LEVEL_FOUR
   }
 
   /**
@@ -87,30 +89,35 @@ public class Superstructure extends SubsystemBase {
               5,
               1);
       }
-      case RUNNING -> {
+      case TESTING -> {
         if (FEEDER_ENABLED) rollers.getFeeder().setGoal(FeederSubsystem.FeederGoal.FORWARD);
         if (ELEVATOR_ENABLED)
           elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.TESTING);
         if (CLIMBER_ENABLED) elevators.getClimber().setGoal(ClimberSubsystem.ClimberGoal.TESTING);
-        if (PIVOT_ENABLED) arms.getPivot().setGoal(PivotSubsystem.PivotGoal.LEVEL_FOUR);
+        if (PIVOT_ENABLED) arms.getPivot().setGoal(PivotSubsystem.PivotGoal.TESTING);
       }
-      case INTAKING -> {
-        if (FEEDER_ENABLED) rollers.getFeeder().setGoal(FeederSubsystem.FeederGoal.FORWARD);
+      case LEVEL_ONE -> {
         if (ELEVATOR_ENABLED)
-          elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.TESTING);
-        if (CLIMBER_ENABLED) elevators.getClimber().setGoal(ClimberSubsystem.ClimberGoal.TESTING);
-        if (PIVOT_ENABLED) arms.getPivot().setGoal(PivotSubsystem.PivotGoal.LEVEL_FOUR);
+          elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.LEVEL_ONE);
+        if (PIVOT_ENABLED) arms.getPivot().setGoal(PivotSubsystem.PivotGoal.LEVEL_ONE);
       }
-      case OUTTAKING -> {
-        if (FEEDER_ENABLED) rollers.getFeeder().setGoal(FeederSubsystem.FeederGoal.REVERSE);
+      case LEVEL_TWO -> {
+        if (ELEVATOR_ENABLED)
+          elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.LEVEL_TWO);
+        if (PIVOT_ENABLED) arms.getPivot().setGoal(PivotSubsystem.PivotGoal.LEVEL_TWO);
+      }
+      case LEVEL_THREE -> {
+        if (ELEVATOR_ENABLED)
+          elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.LEVEL_THREE);
+        if (PIVOT_ENABLED) arms.getPivot().setGoal(PivotSubsystem.PivotGoal.LEVEL_THREE);
+      }
+      case LEVEL_FOUR -> {
+        if (ELEVATOR_ENABLED)
+          elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.LEVEL_FOUR);
+        if (PIVOT_ENABLED) arms.getPivot().setGoal(PivotSubsystem.PivotGoal.LEVEL_FOUR);
       }
     }
   }
-
-  // public Command setLEDBlinkingCmd(Color onColor, Color offColor, double frequency) {
-  //   if (leds != null) return leds.setBlinkingCmd(onColor, offColor, frequency);
-  //   else return null;
-  // }
 
   public void registerSuperstructureCharacterization(
       Supplier<LoggedDashboardChooser<Command>> autoChooser) {}
