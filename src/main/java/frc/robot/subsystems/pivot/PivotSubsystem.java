@@ -1,7 +1,7 @@
 package frc.robot.subsystems.pivot;
 
-import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import static frc.robot.subsystems.pivot.PivotConstants.RESTING_ANGLE;
+
 import frc.robot.generic.arm.GenericPositionArmSystem;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.DoubleSupplier;
@@ -15,22 +15,18 @@ public class PivotSubsystem extends GenericPositionArmSystem<PivotSubsystem.Pivo
   @RequiredArgsConstructor
   @Getter
   public enum PivotGoal implements GenericPositionArmSystem.PivotGoal {
-    IDLING(new LoggedTunableNumber("Pivot/RestingAngle", 0)),
-    LEVEL_ONE(() -> PivotConstants.Hardware.RESTING_ANGLE + 10),
-    LEVEL_TWO(() -> PivotConstants.Hardware.RESTING_ANGLE + 20),
-    LEVEL_THREE(() -> PivotConstants.Hardware.RESTING_ANGLE + 30),
-    LEVEL_FOUR(new LoggedTunableNumber("Pivot/L4Angle", 50));
+    IDLING(new LoggedTunableNumber("Pivot/RestingAngle", RESTING_ANGLE)),
+    LEVEL_ONE(new LoggedTunableNumber("Pivot/Level1Angle", RESTING_ANGLE + 10)),
+    LEVEL_TWO(new LoggedTunableNumber("Pivot/Leve2Angle", RESTING_ANGLE + 30)),
+    LEVEL_THREE(new LoggedTunableNumber("Pivot/Level3Angle", RESTING_ANGLE + 30)),
+    LEVEL_FOUR(new LoggedTunableNumber("Pivot/Level4Angle", RESTING_ANGLE + 50)),
+    TESTING(new LoggedTunableNumber("Pivot/Level4Angle", 0.0));
+
 
     private final DoubleSupplier angleSupplier;
-
-    @Override
-    public DoubleSupplier getAngleSupplier() {
-      return angleSupplier;
-    }
   }
 
   private PivotGoal goal = PivotGoal.IDLING;
-  private Debouncer currentDebouncer = new Debouncer(0.25, DebounceType.kFalling);
 
   public PivotSubsystem(String name, PivotIO io) {
     super(name, io);

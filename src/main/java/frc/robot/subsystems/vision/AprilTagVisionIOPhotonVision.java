@@ -18,12 +18,12 @@ import static frc.robot.GlobalConstants.FieldMap.APRIL_TAG_FIELD_LAYOUT;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import lombok.Getter;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.MultiTargetPNPResult;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /**
  * IO implementation for a real PhotonVision camera running an AprilTag pipeline on the coprocessor.
@@ -31,7 +31,7 @@ import org.photonvision.PhotonCamera;
  * tracking and alignment.
  */
 public class AprilTagVisionIOPhotonVision implements VisionIO {
-  protected final PhotonCamera camera;
+  protected final PhotonCamera camera; // We want the camera to be available in the sim wrapper too
   @Getter private final CameraConstants cameraConstants;
 
   /**
@@ -55,8 +55,11 @@ public class AprilTagVisionIOPhotonVision implements VisionIO {
 
     // Read new camera observations
     Set<Short> tagIds = new HashSet<>();
-    List<PoseObservation> poseObservations = new LinkedList<>();
-    for (var result : camera.getAllUnreadResults()) {
+    List<PoseObservation> poseObservations = new ArrayList<>();
+
+    var pipelineResults = camera.getAllUnreadResults(); // Call this ONCE per robot loop!
+
+    for (PhotonPipelineResult result : pipelineResults) {
       // Update latest target observation (not for pose estimation)
       if (result.hasTargets()) {
         inputs.latestTargetObservation =
@@ -72,7 +75,7 @@ public class AprilTagVisionIOPhotonVision implements VisionIO {
 
       if (result.multitagResult.isPresent()) {
         // Process multi-tag estimations
-        var multitagResult = result.multitagResult.get();
+        MultiTargetPNPResult multitagResult = result.multitagResult.get();
 
         // Calculate field-relative robot pose using PnP on all tags
         Transform3d fieldToCamera = multitagResult.estimatedPose.best;
@@ -81,32 +84,30 @@ public class AprilTagVisionIOPhotonVision implements VisionIO {
 
         // Calculate average tag distance
         double totalTagDistance = 0.0;
-        var fiducialIDsUsed = multitagResult.fiducialIDsUsed;
-        for (var target : result.targets) {
+        for (PhotonTrackedTarget target : result.targets) {
           double distanceToTarget;
           if ((distanceToTarget = target.bestCameraToTarget.getTranslation().getNorm())
               < cameraConstants.cameraType().noisyDistance) {
             totalTagDistance += distanceToTarget;
             // Add detected tag IDs
-            tagIds.addAll(fiducialIDsUsed);
+            tagIds.add((short) target.fiducialId);
           }
         }
 
-        if (fiducialIDsUsed.size() > 0)
-          // Add observation
-          poseObservations.add(
-              new PoseObservation(
-                  result.getTimestampSeconds(), // Timestamp
-                  robotPose, // 3D pose estimate
-                  multitagResult.estimatedPose.ambiguity, // Ambiguity
-                  fiducialIDsUsed.size(), // Tag count
-                  totalTagDistance / fiducialIDsUsed.size() // Average tag distance
-                  ));
+        // Add observation
+        poseObservations.add(
+            new PoseObservation(
+                result.getTimestampSeconds(), // Timestamp
+                robotPose, // 3D pose estimate
+                multitagResult.estimatedPose.ambiguity, // Ambiguity
+                tagIds.size(), // Tag count
+                totalTagDistance / tagIds.size() // Average tag distance
+                ));
 
       } else if (!result.targets.isEmpty()) {
         // Process single-tag estimations
-        var target = result.targets.get(0);
-        var tagPose = APRIL_TAG_FIELD_LAYOUT.getTagPose(target.fiducialId);
+        PhotonTrackedTarget target = result.targets.get(0);
+        Optional<Pose3d> tagPose = APRIL_TAG_FIELD_LAYOUT.getTagPose(target.fiducialId);
 
         if (tagPose.isPresent()) {
           // Calculate field-relative robot pose using a single tag
@@ -128,7 +129,7 @@ public class AprilTagVisionIOPhotonVision implements VisionIO {
                     result.getTimestampSeconds(), // Timestamp
                     robotPose, // 3D pose estimate
                     target.poseAmbiguity, // Ambiguity
-                    1, // Tag count
+                    1, // One tag seen
                     cameraToTarget.getTranslation().getNorm() // Average tag distance
                     ));
           }
@@ -136,13 +137,13 @@ public class AprilTagVisionIOPhotonVision implements VisionIO {
       }
     }
 
-    // Save pose observations to inputs object
+    // Save pose observations to inputs
     inputs.poseObservations = new PoseObservation[poseObservations.size()];
     for (int i = 0; i < poseObservations.size(); i++) {
       inputs.poseObservations[i] = poseObservations.get(i);
     }
 
-    // Save tag IDs to inputs object
+    // Save tag IDs to inputs
     inputs.tagIds = new int[tagIds.size()];
     int i = 0;
     for (int id : tagIds) {

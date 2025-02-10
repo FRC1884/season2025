@@ -3,7 +3,6 @@ package frc.robot.generic.arm;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.generic.rollers.Rollers;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -26,19 +25,27 @@ public abstract class GenericPositionArmSystem<G extends GenericPositionArmSyste
     this.name = name;
     this.io = io;
 
-    disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
+    disconnected = new Alert("Motor(s) disconnected on " + name + "!", Alert.AlertType.kError);
     stateTimer.start();
   }
 
   /**
-   * NOT the same as {@link edu.wpi.first.wpilibj2.command.Subsystem#periodic()}. This method will
-   * be called periodically in {@link Rollers}, hence why this subsystem does not extend {@link
-   * SubsystemBase}.
+   * NOT the same as {@link edu.wpi.first.wpilibj2.command.Subsystem#periodic()}. This method should
+   * be called periodically by children of this class in {@link Arms}, hence why this subsystem does
+   * not extend {@link SubsystemBase}.
    */
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(name, inputs);
-    disconnected.set(!inputs.connected);
+
+    boolean anyDisconnected = false;
+    for (boolean isConnected : inputs.connected) {
+      if (!isConnected) {
+        anyDisconnected = true;
+        break;
+      }
+    }
+    disconnected.set(anyDisconnected);
 
     if (getGoal() != lastGoal) {
       stateTimer.reset();
@@ -47,6 +54,6 @@ public abstract class GenericPositionArmSystem<G extends GenericPositionArmSyste
 
     io.runToDegree(getGoal().getAngleSupplier().getAsDouble());
 
-    Logger.recordOutput("Arm/" + name + "Goal", getGoal().toString());
+    Logger.recordOutput(name + "/Goal", getGoal().toString());
   }
 }

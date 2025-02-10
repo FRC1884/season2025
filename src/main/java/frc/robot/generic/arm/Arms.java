@@ -18,7 +18,7 @@ public class Arms extends SubsystemBase {
   private final PivotSubsystem pivot =
       Config.Subsystems.PIVOT_ENABLED
           ? (MODE == GlobalConstants.RobotMode.REAL
-              ? PivotConstants.Hardware.isFlex
+              ? PivotConstants.IS_FLEX
                   ? new PivotSubsystem("Pivot", new PivotIOFlex())
                   : new PivotSubsystem("Pivot", new PivotIOMax())
               : new PivotSubsystem("Pivot Sim", new PivotIOSim(2, 0.0)))

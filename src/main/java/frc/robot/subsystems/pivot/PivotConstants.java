@@ -1,40 +1,24 @@
 package frc.robot.subsystems.pivot;
 
+import static frc.robot.GlobalConstants.*;
 import static frc.robot.GlobalConstants.ROBOT;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-
 public final class PivotConstants {
+  public static final int PIVOT_ID = 24;
+  // Whether the motors on the Pivot are flex motors
+  public static final boolean IS_FLEX = true;
 
-  private PivotConstants() {
-    System.out.println("What are you trying to do?");
-  }
+  // Tuned in REV Hardware Client for real bots, but should we use LTNs?
+  public static final Gains GAINS =
+      switch (ROBOT) {
+        case COMPBOT -> new Gains(0.02, 0, 0.0, 0, 0.5, 1.3); // 0.4 kP for NEO
+        case DEVBOT -> new Gains(0, 0, 0, 0, 0, 0);
+        case SIMBOT -> new Gains(0, 0, 0, 0, 0, 0);
+      };
+  public static final double MAX_VELOCITY = 6000;
+  public static final double MAX_ACCELERATION = 6000;
+  public static final double POSITION_TOLERANCE = 0.05;
 
-  public static final class Software {
-
-    public static final Gains gains =
-        switch (ROBOT) {
-          case COMPBOT -> new Gains(0.02, 0, 0.0, 0, 0.5, 1.3); // 0.4 kP for neo
-          case DEVBOT -> new Gains(0, 0, 0, 0, 0, 0);
-          case SIMBOT -> new Gains(0, 0, 0, 0, 0, 0);
-        };
-    public static final double kIZone = 0.08;
-    public static final double POSITION_TOLERANCE = 0.05;
-    public static final double VELOCITY_TOLERANCE = 0.1;
-    public static final int LEFT_PIVOT_ID = 24;
-    public static final int RIGHT_PIVOT_ID = 23;
-
-    public static final int ENCODER_PORT = 2;
-    public static TrapezoidProfile.Constraints profileConstraints =
-        new TrapezoidProfile.Constraints(200, 1);
-
-    public record Gains(double kP, double kI, double kD, double kS, double kV, double kG) {}
-  }
-
-  public static final class Hardware {
-    public static final double ABSOLUTE_ENCODER_OFFSET = 0.38;
-    public static final double RESTING_ANGLE = 0.0;
-    public static final double radius = 0.016;
-    public static final boolean isFlex = true; // if the motors on the Pivot are flex motors
-  }
+  public static final double ABSOLUTE_ENCODER_OFFSET = 0.38;
+  public static final double RESTING_ANGLE = 0.0;
 }

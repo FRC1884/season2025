@@ -282,17 +282,17 @@ public class DriveCommands {
           // find the coordinates of the selected face
           Supplier<Pose2d> targetFace;
           if (targetReefFace == 1)
-            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF1.getPose();
+            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF_1.getPose();
           else if (targetReefFace == 2)
-            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF2.getPose();
+            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF_2.getPose();
           else if (targetReefFace == 3)
-            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF3.getPose();
+            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF_3.getPose();
           else if (targetReefFace == 4)
-            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF4.getPose();
+            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF_4.getPose();
           else if (targetReefFace == 5)
-            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF5.getPose();
+            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF_5.getPose();
           else if (targetReefFace == 6)
-            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF6.getPose();
+            targetFace = () -> GlobalConstants.FieldMap.Coordinates.REEF_6.getPose();
           else targetFace = findClosestReefFace(drive);
 
           double xOffset =
@@ -353,41 +353,41 @@ public class DriveCommands {
         drive
             .getPose()
             .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF1.getPose().getTranslation());
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_1.getPose().getTranslation());
     double reef2 =
         drive
             .getPose()
             .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF2.getPose().getTranslation());
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_2.getPose().getTranslation());
     double reef3 =
         drive
             .getPose()
             .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF3.getPose().getTranslation());
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_3.getPose().getTranslation());
     double reef4 =
         drive
             .getPose()
             .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF4.getPose().getTranslation());
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_4.getPose().getTranslation());
     double reef5 =
         drive
             .getPose()
             .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF5.getPose().getTranslation());
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_5.getPose().getTranslation());
     double reef6 =
         drive
             .getPose()
             .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF6.getPose().getTranslation());
+            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_6.getPose().getTranslation());
 
     double closestFace =
         Math.min(Math.min(Math.min(reef1, reef2), Math.min(reef3, reef4)), Math.min(reef5, reef6));
-    if (reef1 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF1.getPose();
-    if (reef2 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF2.getPose();
-    if (reef3 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF3.getPose();
-    if (reef4 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF4.getPose();
-    if (reef5 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF5.getPose();
-    return () -> GlobalConstants.FieldMap.Coordinates.REEF6.getPose();
+    if (reef1 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_1.getPose();
+    if (reef2 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_2.getPose();
+    if (reef3 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_3.getPose();
+    if (reef4 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_4.getPose();
+    if (reef5 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_5.getPose();
+    return () -> GlobalConstants.FieldMap.Coordinates.REEF_6.getPose();
   }
   /**
    * Command to align to the nearest coral station

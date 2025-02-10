@@ -67,20 +67,23 @@ public final class GlobalConstants {
     }
   }
 
+  // Blue origin, so we use blue side coords
   public static final class FieldMap {
+    // TODO Change coordinates based on robot offset
+    @Getter
     public static enum Coordinates {
-      REEF1(new Pose2d(3.6576, 4.0259, Rotation2d.fromDegrees(0))),
-      REEF2(new Pose2d(4.073905999999999, 3.3063179999999996, Rotation2d.fromDegrees(60))),
-      REEF3(new Pose2d(4.904739999999999, 3.3063179999999996, Rotation2d.fromDegrees(120))),
-      REEF4(new Pose2d(5.321046, 4.0259, Rotation2d.fromDegrees(180))),
-      REEF5(new Pose2d(4.904739999999999, 4.745482, Rotation2d.fromDegrees(240))),
-      REEF6(new Pose2d(4.073905999999999, 4.745482, Rotation2d.fromDegrees(300))),
+      REEF_1(new Pose2d(3.6576, 4.0259, Rotation2d.fromDegrees(0))),
+      REEF_2(new Pose2d(4.073905999999999, 3.3063179999999996, Rotation2d.fromDegrees(60))),
+      REEF_3(new Pose2d(4.904739999999999, 3.3063179999999996, Rotation2d.fromDegrees(120))),
+      REEF_4(new Pose2d(5.321046, 4.0259, Rotation2d.fromDegrees(180))),
+      REEF_5(new Pose2d(4.904739999999999, 4.745482, Rotation2d.fromDegrees(240))),
+      REEF_6(new Pose2d(4.073905999999999, 4.745482, Rotation2d.fromDegrees(300))),
       LEFT_CORAL_STATION(
           new Pose2d(0.851154, 7.3964799999999995, Rotation2d.fromDegrees(-54.011392 + 180))),
       RIGHT_CORAL_STATION(new Pose2d(0.851154, 0.65532, Rotation2d.fromDegrees(54.011392 + 180))),
       PROCESSOR(new Pose2d(5.9875419999999995, -0.0038099999999999996, Rotation2d.fromDegrees(90)));
 
-      @Getter private final Pose2d pose;
+      private final Pose2d pose;
 
       Coordinates(Pose2d pose) {
         this.pose = RotationalAllianceFlipUtil.apply(pose);

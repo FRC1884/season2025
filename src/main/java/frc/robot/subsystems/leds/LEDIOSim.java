@@ -1,10 +1,13 @@
 package frc.robot.subsystems.leds;
 
+import static edu.wpi.first.units.Units.Second;
 import static frc.robot.subsystems.leds.LEDConstants.LED_LENGTH;
 import static frc.robot.subsystems.leds.LEDConstants.LED_PORT;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 
 /**
@@ -18,22 +21,52 @@ public class LEDIOSim implements LEDIO {
 
   private final AddressableLED led;
   private final AddressableLEDBuffer buffer;
+  private final AddressableLEDBufferView[] views;
+
+  private final LEDPattern[] patterns;
 
   public LEDIOSim() {
     led = new AddressableLED(LED_PORT);
     buffer = new AddressableLEDBuffer(LED_LENGTH);
+
+    views = new AddressableLEDBufferView[LEDConstants.SEGMENTS.length];
+    patterns = new LEDPattern[LEDConstants.SEGMENTS.length];
+
+    for (int i = 0; i < LEDConstants.SEGMENTS.length; i++) {
+      LEDConstants.Segment segment = LEDConstants.SEGMENTS[i];
+      views[i] = buffer.createView(segment.start(), segment.start() + segment.length());
+
+      if (segment.reversed()) {
+        views[i] = views[i].reversed();
+      }
+
+      patterns[i] = LEDPattern.solid(Color.kBlue).breathe(Second.of(1));
+      patterns[i].applyTo(views[i]);
+    }
+
     led.setLength(buffer.getLength());
     led.start();
   }
 
-  /** Write data from buffer to leds */
-  @Override
-  public void updateInputs(LEDIO.LEDIOInputs inputs) {
-    led.setData(buffer);
+  public void setPattern(int idx, LEDPattern pattern) {
+    pattern.applyTo(views[idx]);
   }
 
-  @Override
-  public void setLED(int i, Color color) {
-    buffer.setLED(i, color);
+  public void setPatterns(LEDPattern[] patterns) {
+    System.arraycopy(patterns, 0, this.patterns, 0, LEDConstants.SEGMENTS.length);
+  }
+
+  public void setAllPattern(LEDPattern pattern) {
+    for (int i = 0; i < LEDConstants.SEGMENTS.length; i++) {
+      this.patterns[i] = pattern;
+    }
+  }
+
+  public void periodic() {
+    for (int i = 0; i < LEDConstants.SEGMENTS.length; i++) {
+      patterns[i].applyTo(views[i]);
+    }
+
+    led.setData(buffer);
   }
 }
