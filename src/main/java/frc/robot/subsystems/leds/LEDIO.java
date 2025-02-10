@@ -1,7 +1,6 @@
 package frc.robot.subsystems.leds;
 
-import static frc.robot.subsystems.leds.LEDConstants.LED_LENGTH;
-
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -16,20 +15,15 @@ public interface LEDIO {
     // No sensors so no inputs
   }
 
-  /**
-   * Updates the LEDs using any inputs provided. This runs once every loop, whether in sim mode or
-   * real.
-   *
-   * @param inputs the inputs to read. See the note at {@link LEDIOInputs} to understand why
-   *     inheritors likely won't use this param.
-   */
-  void updateInputs(LEDIOInputs inputs);
+  default void setPattern(int idx, LEDPattern pattern) {
+  }
 
-  void setLED(int i, Color color);
+  default void setPatterns(LEDPattern[] patterns) {
+  }
 
-  default void setColor(Color color) {
-    for (int i = 0; i < LED_LENGTH; i++) {
-      setLED(i, color);
-    }
+  default void setAllPattern(LEDPattern pattern) {
+  }
+
+  default public void periodic() {
   }
 }

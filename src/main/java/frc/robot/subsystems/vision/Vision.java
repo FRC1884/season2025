@@ -17,7 +17,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
   private final VisionConsumer consumer;
-  private final VisionIO[] ios;
+  private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
   private final Alert[] disconnectedAlerts;
 
@@ -25,25 +25,25 @@ public class Vision extends SubsystemBase {
    * Creates a Vision system.
    *
    * @param consumer an object that processes the vision pose estimate (should be the drivetrain)
-   * @param ios the collection of {@link VisionIO}s instances that represent the cameras in the
+   * @param io the collection of {@link VisionIO}s instances that represent the cameras in the
    *     system.
    */
-  public Vision(VisionConsumer consumer, VisionIO... ios) {
+  public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
-    this.ios = ios;
+    this.io = io;
 
     // Initialize inputs
-    this.inputs = new VisionIOInputsAutoLogged[ios.length];
+    this.inputs = new VisionIOInputsAutoLogged[io.length];
     for (int i = 0; i < inputs.length; i++) {
       inputs[i] = new VisionIOInputsAutoLogged();
     }
 
     // Initialize disconnected alerts
-    this.disconnectedAlerts = new Alert[ios.length];
+    this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < inputs.length; i++) {
       disconnectedAlerts[i] =
           new Alert(
-              "Vision camera \"" + ios[i].getCameraConstants().cameraName() + "\" is disconnected.",
+              "Vision camera \"" + io[i].getCameraConstants().cameraName() + "\" is disconnected.",
               Alert.AlertType.kWarning);
     }
   }
@@ -82,9 +82,9 @@ public class Vision extends SubsystemBase {
    */
   @Override
   public void periodic() {
-    for (int i = 0; i < ios.length; i++) {
-      ios[i].updateInputs(inputs[i]);
-      Logger.processInputs("AprilTagVision/" + ios[i].getCameraConstants().cameraName(), inputs[i]);
+    for (int i = 0; i < io.length; i++) {
+      io[i].updateInputs(inputs[i]);
+      Logger.processInputs("AprilTagVision/" + io[i].getCameraConstants().cameraName(), inputs[i]);
     }
 
     // Initialize logging values
@@ -94,7 +94,7 @@ public class Vision extends SubsystemBase {
     List<Pose3d> allRobotPosesRejected = new LinkedList<>();
 
     // Loop over cameras
-    for (int cameraIndex = 0; cameraIndex < ios.length; cameraIndex++) {
+    for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
       // Update alert status for disconnected cameras
       disconnectedAlerts[cameraIndex].set(!inputs[cameraIndex].connected);
 
@@ -107,9 +107,7 @@ public class Vision extends SubsystemBase {
       // Add tag poses
       for (int tagId : inputs[cameraIndex].tagIds) {
         var tagPose = APRIL_TAG_FIELD_LAYOUT.getTagPose(tagId);
-        if (tagPose.isPresent()) {
-          tagPoses.add(tagPose.get());
-        }
+        tagPose.ifPresent(tagPoses::add);
       }
 
       // Loop over pose observations
@@ -123,7 +121,7 @@ public class Vision extends SubsystemBase {
                 || Math.abs(observation.pose().getZ())
                     > MAX_Z_ERROR // Must have realistic Z coordinate
                 || observation.averageTagDistance()
-                    > ios[cameraIndex]
+                    > io[cameraIndex]
                         .getCameraConstants()
                         .cameraType()
                         .noisyDistance // Must be reliably detectable by this camera
@@ -155,19 +153,19 @@ public class Vision extends SubsystemBase {
 
       // Log camera datadata
       Logger.recordOutput(
-          "AprilTagVision/" + ios[cameraIndex].getCameraConstants().cameraName() + "/TagPoses",
+          "AprilTagVision/" + io[cameraIndex].getCameraConstants().cameraName() + "/TagPoses",
           tagPoses.toArray(new Pose3d[tagPoses.size()]));
       Logger.recordOutput(
-          "AprilTagVision/" + ios[cameraIndex].getCameraConstants().cameraName() + "/RobotPoses",
+          "AprilTagVision/" + io[cameraIndex].getCameraConstants().cameraName() + "/RobotPoses",
           robotPoses.toArray(new Pose3d[robotPoses.size()]));
       Logger.recordOutput(
           "AprilTagVision/"
-              + ios[cameraIndex].getCameraConstants().cameraName()
+              + io[cameraIndex].getCameraConstants().cameraName()
               + "/RobotPosesAccepted",
           robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
       Logger.recordOutput(
           "AprilTagVision/"
-              + ios[cameraIndex].getCameraConstants().cameraName()
+              + io[cameraIndex].getCameraConstants().cameraName()
               + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
       allTagPoses.addAll(tagPoses);

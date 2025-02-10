@@ -4,115 +4,168 @@
 
 package frc.robot.subsystems.leds;
 
-import static edu.wpi.first.wpilibj2.command.Commands.either;
-import static edu.wpi.first.wpilibj2.command.Commands.repeatingSequence;
-import static frc.robot.subsystems.leds.LEDConstants.LED_LENGTH;
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
+import static frc.robot.subsystems.leds.LEDConstants.*;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.*;
+
+import java.util.Arrays;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 public class LEDSubsystem extends SubsystemBase {
+  private record LEDOutputValue(LEDPattern pattern, int index) {
+    LEDOutputValue(LEDPattern pattern) {
+      this(pattern, -1);
+    }
+
+    static LEDOutputValue[] all(LEDPattern pattern) {
+      return new LEDOutputValue[]{new LEDOutputValue(pattern)};
+    }
+  }
+
+
   private final LEDIO io;
   private final LEDIOInputsAutoLogged inputs = new LEDIOInputsAutoLogged();
 
   private double rainbowStart = 0;
   private double dashStart = 0;
 
-  /** Creates a new LEDSubsystem. */
+  /**
+   * Creates a new LEDSubsystem.
+   */
   public LEDSubsystem(LEDIO io) {
+    super();
     this.io = io;
   }
 
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
+    io.periodic();
     Logger.processInputs("LED", inputs);
   }
 
-  private void setIndex(int i, Color color) {
-    io.setLED(i, color);
+
+  private void setPattern(LEDOutputValue[] values) {
+    if (Arrays.stream(values).anyMatch(value -> value.index == -1)) {
+      var opt = Arrays.stream(values).filter(value -> value.index == -1).findFirst();
+
+      if (opt.isPresent()) {
+        var value = opt.get();
+
+        io.setAllPattern(value.pattern);
+      }
+    }
+
+    for (LEDOutputValue value : values) {
+      io.setPattern(value.index(), value.pattern());
+    }
   }
 
-  private void setSolid(Color color) {
-    io.setColor(color);
+  public Command ledCommand(BooleanSupplier isEnabled, BooleanSupplier hasFMS, BooleanSupplier isEndgame, BooleanSupplier isCoral, BooleanSupplier isAligned, BooleanSupplier hasAlgae, BooleanSupplier hasCoral) {
+    return this.run(() -> {
+      if (isEnabled.getAsBoolean()) {
+        var patterns = getPattern(isEndgame.getAsBoolean(), isCoral.getAsBoolean(), isAligned.getAsBoolean(), hasAlgae.getAsBoolean(), hasCoral.getAsBoolean());
+        setPattern(patterns);
+      } else if (!hasFMS.getAsBoolean()) {
+        setPattern(LEDOutputValue.all(LEDPattern.solid(Color.kBlue).breathe(Second.of(1))));
+      }
+      else {
+        // get pose, get first pose of auto somehow
+        var patterns = getFieldAlignPattern(new Pose2d(), new Pose2d());
+        setPattern(patterns);
+      }
+
+    });
   }
 
-  public Command setSolidCmd(Color color) {
-    return this.run(() -> setSolid(color));
+  private enum ErrDir {
+    POS, NEG, NONE;
   }
 
-  public Command setBlinkingCmd(Color onColor, Color offColor, double frequency) {
-    return repeatingSequence(
-        setSolidCmd(onColor).withTimeout(1.0 / frequency),
-        setSolidCmd(offColor).withTimeout(1.0 / frequency));
+  private ErrDir getError(double error, double tolerance) {
+    if (error > tolerance) {
+      return ErrDir.POS;
+    } else if (error < -tolerance) {
+      return ErrDir.NEG;
+    } else {
+      return ErrDir.NONE;
+    }
   }
 
-  /** Sets the first portion of the leds to a color, and the rest off */
-  public Command setProgressCmd(Color color, DoubleSupplier progress) {
-    return this.run(
-        () -> {
-          for (int i = 0; i < LED_LENGTH; i++) {
-            setIndex(i, i < progress.getAsDouble() * LED_LENGTH ? color : Color.kBlack);
-          }
-        });
+  private LEDOutputValue[] getFieldAlignPattern(Pose2d realPose, Pose2d targetPose) {
+    var errors = targetPose.relativeTo(realPose);
+
+    var dist = Math.min(Math.abs(targetPose.getTranslation().getDistance(realPose.getTranslation())), FLASHING_MAX);
+    var blinkSpeed = Second.of(1 / (5 * dist));
+
+    var xError = getError(errors.getTranslation().getX(), TRANSLATION_TOLERANCE);
+    var yError = getError(errors.getTranslation().getY(), TRANSLATION_TOLERANCE);
+    var rotError = getError(errors.getRotation().getRadians(), ROTATION_TOLERANCE);
+
+    if (xError == ErrDir.NONE && yError == ErrDir.NONE && rotError == ErrDir.NONE) {
+      return LEDOutputValue.all(LEDPattern.solid(OK_COLOR));
+    }
+
+    if (rotError != ErrDir.NONE) {
+      // check if CW or CCW
+      if (rotError == ErrDir.POS) {
+        return LEDOutputValue.all(LEDPattern.solid(MORE_COLOR));
+      } else {
+        return LEDOutputValue.all(LEDPattern.solid(LESS_COLOR));
+      }
+    }
+
+    var frontLeft = (xError == ErrDir.POS || yError == ErrDir.POS) ? LEDPattern.solid(MORE_COLOR) : LEDPattern.solid(LESS_COLOR);
+    var frontRight = (xError == ErrDir.POS || yError == ErrDir.NEG) ? LEDPattern.solid(MORE_COLOR) : LEDPattern.solid(LESS_COLOR);
+    var backLeft = (xError == ErrDir.NEG || yError == ErrDir.POS) ? LEDPattern.solid(MORE_COLOR) : LEDPattern.solid(LESS_COLOR);
+    var backRight = (xError == ErrDir.NEG || yError == ErrDir.NEG) ? LEDPattern.solid(MORE_COLOR) : LEDPattern.solid(LESS_COLOR);
+
+    return new LEDOutputValue[] {
+      new LEDOutputValue(frontLeft.breathe(blinkSpeed), FRONT_LEFT),
+      new LEDOutputValue(frontRight.breathe(blinkSpeed), FRONT_RIGHT),
+      new LEDOutputValue(backLeft.breathe(blinkSpeed), BACK_LEFT),
+      new LEDOutputValue(backRight.breathe(blinkSpeed), BACK_RIGHT)
+    };
   }
 
-  public Command setRainbowCmd() {
-    return this.run(
-        () -> {
-          for (int i = 0; i < LED_LENGTH; i++) {
-            setIndex(i, Color.fromHSV((int) rainbowStart % 180 + i, 255, 255));
-          }
-          rainbowStart += 1;
-        });
+  private LEDOutputValue[] getPattern(Boolean isEndgame, Boolean isCoral, Boolean isAligned, Boolean hasAlgae, Boolean hasCoral) {
+    if (isEndgame) {
+      return endgameColor();
+    } else {
+      return teleopColor(isCoral, isAligned, hasAlgae, hasCoral);
+    }
   }
 
-  public Command setRunAlongCmd(
-      Supplier<Color> colorDash, Supplier<Color> colorBg, int dashLength, double frequency) {
-    return this.run(
-        () -> {
-          setSolid(colorBg.get());
-          for (int i = (int) dashStart; i < dashStart + dashLength; i++) {
-            setIndex(i % LED_LENGTH, colorDash.get());
-          }
-
-          dashStart += LED_LENGTH * frequency * 0.020;
-          dashStart %= LED_LENGTH;
-        });
+  private LEDOutputValue[] endgameColor() {
+    return LEDOutputValue.all(LEDPattern.rainbow(255, 255).scrollAtRelativeSpeed(Percent.per(Second).of(25)));
   }
 
-  public Command defaultStateDisplayCmd(BooleanSupplier enabled, BooleanSupplier targetIsSpeaker) {
-    return either(
-            either(
-                this.setBlinkingCmd(new Color("#ffff00"), new Color(), 10.0)
-                    .until(() -> !targetIsSpeaker.getAsBoolean() || !enabled.getAsBoolean()),
-                this.setBlinkingCmd(new Color("#ff7777"), new Color(), 10.0)
-                    .until(() -> targetIsSpeaker.getAsBoolean() || !enabled.getAsBoolean()),
-                targetIsSpeaker),
-            this.setRunAlongCmd(
-                    // Set color to be purple with a moving dash corresponding to alliance color
-                    () -> {
-                      if (DriverStation.getAlliance().isEmpty()) {
-                        return new Color("#b59aff");
-                      } else if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-                        return new Color("#ff0000");
-                      } else { // Blue
-                        return new Color("#0000ff");
-                      }
-                    },
-                    () -> new Color("#350868"),
-                    10,
-                    1.0)
-                .until(enabled),
-            enabled)
-        .ignoringDisable(true)
-        .withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf)
-        .repeatedly();
+  private LEDOutputValue[] teleopColor(Boolean isCoral, Boolean isAligned, Boolean hasAlgae, Boolean hasCoral) {
+    if (isCoral) {
+      return gamePieceColor(CORAL_COLOR, isAligned, hasCoral);
+    } else {
+      return gamePieceColor(ALGAE_COLOR, isAligned, hasAlgae);
+    }
   }
+
+  private LEDOutputValue[] gamePieceColor(Color color, Boolean isAligned, Boolean hasPiece) {
+    if (isAligned) {
+      return LEDOutputValue.all(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, color, Color.kBlack).scrollAtRelativeSpeed(Percent.per(Second).of(25)));
+    } else if (hasPiece) {
+      return LEDOutputValue.all(LEDPattern.solid(color));
+    } else {
+      return LEDOutputValue.all(LEDPattern.solid(color).breathe(Second.of(1)));
+    }
+  }
+
+
 }
+
+

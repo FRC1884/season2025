@@ -16,6 +16,7 @@ package frc.robot;
 import static frc.robot.Config.Controllers.getDriverController;
 import static frc.robot.Config.Controllers.getOperatorController;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
+import static frc.robot.Config.Subsystems.VISION_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
 import static frc.robot.subsystems.swerve.SwerveConstants.*;
 import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.*;
@@ -68,11 +69,11 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     if (DRIVETRAIN_ENABLED) {
-      switch (MODE) {
-        case REAL:
-          // Real robot, instantiate hardware IO implementations
-          drive =
-              new SwerveSubsystem(
+      drive =
+          switch (MODE) {
+            case REAL:
+              // Real robot, instantiate hardware IO implementations
+              yield new SwerveSubsystem(
                   switch (GYRO_TYPE) {
                     case PIGEON -> new GyroIOPigeon2();
                     case NAVX -> new GyroIONavX();
@@ -82,66 +83,32 @@ public class RobotContainer {
                   new ModuleIOSpark(FRONT_RIGHT),
                   new ModuleIOSpark(BACK_LEFT),
                   new ModuleIOSpark(BACK_RIGHT));
-          vision =
-              new Vision(
-                  drive,
-                  LEFT_CAM_ENABLED
-                      ? new VisionIOPhotonVisionSim(LEFT_CAM_CONSTANTS, drive::getPose)
-                      : new VisionIO() {},
-                  RIGHT_CAM_ENABLED
-                      ? new VisionIOPhotonVisionSim(RIGHT_CAM_CONSTANTS, drive::getPose)
-                      : new VisionIO() {},
-                  BACK_CAM_ENABLED
-                      ? new VisionIOPhotonVisionSim(
-                          BACK_CAM_CONSTANTS, driveSimulation::getSimulatedDriveTrainPose)
-                      : new VisionIO() {}
-                  );
-          break;
 
-        case SIM:
-          // create a maple-sim swerve drive simulation instance
-          this.driveSimulation =
-              new SwerveDriveSimulation(
-                  SwerveConstants.MAPLE_SIM_CONFIG, new Pose2d(3, 3, new Rotation2d()));
-          // add the simulated drivetrain to the simulation field
-          SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
-          // Sim robot, instantiate physics sim IO implementations
-          drive =
-              new SwerveSubsystem(
+            case SIM:
+              // Create a maple-sim swerve drive simulation instance
+              this.driveSimulation =
+                  new SwerveDriveSimulation(
+                      SwerveConstants.MAPLE_SIM_CONFIG, new Pose2d(3, 3, new Rotation2d()));
+              // Add the simulated drivetrain to the simulation field
+              SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+
+              // Sim robot, instantiate physics sim IO implementations
+              yield new SwerveSubsystem(
                   new GyroIOSim(driveSimulation.getGyroSimulation()),
                   new ModuleIOSim(driveSimulation.getModules()[0]),
                   new ModuleIOSim(driveSimulation.getModules()[1]),
                   new ModuleIOSim(driveSimulation.getModules()[2]),
                   new ModuleIOSim(driveSimulation.getModules()[3]));
-          vision =
-              new Vision(
-                  drive,
-                  LEFT_CAM_ENABLED
-                      ? new VisionIOPhotonVisionSim(
-                          LEFT_CAM_CONSTANTS, driveSimulation::getSimulatedDriveTrainPose)
-                      : new VisionIO() {},
-                  RIGHT_CAM_ENABLED
-                      ? new VisionIOPhotonVisionSim(
-                          RIGHT_CAM_CONSTANTS, driveSimulation::getSimulatedDriveTrainPose)
-                      : new VisionIO() {},
-                  BACK_CAM_ENABLED
-                      ? new VisionIOPhotonVisionSim(
-                          BACK_CAM_CONSTANTS, driveSimulation::getSimulatedDriveTrainPose)
-                      : new VisionIO() {});
-          break;
 
-        default:
-          // Replayed robot, disable IO implementations
-          drive =
-              new SwerveSubsystem(
+            default:
+              // Replayed robot, disable IO implementations
+              yield new SwerveSubsystem(
                   new GyroIO() {},
                   new ModuleIO() {},
                   new ModuleIO() {},
                   new ModuleIO() {},
                   new ModuleIO() {});
-          vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
-          break;
-      }
+          };
 
       // Set up auto routines
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -161,17 +128,51 @@ public class RobotContainer {
           "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
       autoChooser.addOption(
           "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-      // Configure the button bindings
-      configureDriveButtonBindings();
-      configureOperatorButtonBindings();
-      // Register the auto commands
     } else {
       drive = null;
       autoChooser = null;
-      vision = null;
-      configureOperatorButtonBindings();
     }
+
+    if (VISION_ENABLED) {
+      vision =
+          switch (MODE) {
+            case REAL -> new Vision(
+                drive,
+                LEFT_CAM_ENABLED
+                    ? new VisionIOPhotonVisionSim(LEFT_CAM_CONSTANTS, drive::getPose)
+                    : new VisionIO() {},
+                RIGHT_CAM_ENABLED
+                    ? new VisionIOPhotonVisionSim(RIGHT_CAM_CONSTANTS, drive::getPose)
+                    : new VisionIO() {},
+                BACK_CAM_ENABLED
+                    ? new VisionIOPhotonVisionSim(
+                        BACK_CAM_CONSTANTS, driveSimulation::getSimulatedDriveTrainPose)
+                    : new VisionIO() {});
+            case SIM -> new Vision(
+                drive,
+                LEFT_CAM_ENABLED
+                    ? new VisionIOPhotonVisionSim(
+                        LEFT_CAM_CONSTANTS, driveSimulation::getSimulatedDriveTrainPose)
+                    : new VisionIO() {},
+                RIGHT_CAM_ENABLED
+                    ? new VisionIOPhotonVisionSim(
+                        RIGHT_CAM_CONSTANTS, driveSimulation::getSimulatedDriveTrainPose)
+                    : new VisionIO() {},
+                BACK_CAM_ENABLED
+                    ? new VisionIOPhotonVisionSim(
+                        BACK_CAM_CONSTANTS, driveSimulation::getSimulatedDriveTrainPose)
+                    : new VisionIO() {});
+            default -> new Vision(drive, new VisionIO() {}, new VisionIO() {});
+          };
+    } else vision = null;
+
+    configureOperatorButtonBindings();
+
+    // Configure the button bindings
+    configureDriverButtonBindings();
+    configureOperatorButtonBindings();
+
+    // Register the auto commands
   }
 
   /**
@@ -180,63 +181,62 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureDriveButtonBindings() {
-    // Default command, normal field-relative drive
-    drive.setDefaultCommand(
-        Commands.run(
-            () ->
-                DriveCommands.joystickDrive(
-                    drive, driver.getYAxis(), driver.getXAxis(), driver.getRotAxis()),
-            drive));
+  private void configureDriverButtonBindings() {
+    if (DRIVETRAIN_ENABLED) {
+      // Default command, normal field-relative drive
+      drive.setDefaultCommand(
+          Commands.run(
+              () ->
+                  DriveCommands.joystickDrive(
+                      drive, driver.getYAxis(), driver.getXAxis(), driver.getRotAxis()),
+              drive));
 
-    // Lock to 0° when A button is held
-    // driver
-    //     .alignToSpeaker()
-    //     .whileTrue(
-    //         DriveCommands.joystickDriveAtAngle(
-    //             drive, driver.getYAxis(), driver.getXAxis(), () -> new Rotation2d()));
+      // Lock to 0° when A button is held
+      // driver
+      //     .alignToSpeaker()
+      //     .whileTrue(
+      //         DriveCommands.joystickDriveAtAngle(
+      //             drive, driver.getYAxis(), driver.getXAxis(), () -> new Rotation2d()));
 
-    // Switch to X pattern when X button is pressed
-    driver.stopWithX().onTrue(Commands.runOnce(drive::stopWithX, drive));
+      // Switch to X pattern when X button is pressed
+      driver.stopWithX().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-    // align to right side of reef face
-    driver.alignToSpeaker().whileTrue(DriveCommands.alignToReefCommand(drive));
+      // align to right side of reef face
+      driver.alignToSpeaker().whileTrue(DriveCommands.alignToReefCommand(drive));
 
-    driver.alignToSpeaker().onTrue(Commands.run(() -> DriveCommands.setLeftAlign(false)));
+      driver.alignToSpeaker().onTrue(Commands.run(() -> DriveCommands.setLeftAlign(false)));
 
-    // align to left side of reef face
-    driver
-        .alignToGamePiece()
-        .whileTrue(
-            Commands.repeatingSequence(
-                Commands.run(() -> DriveCommands.setLeftAlign(true)),
-                DriveCommands.alignToReefCommand(drive)));
+      // align to left side of reef face
+      driver
+          .alignToGamePiece()
+          .whileTrue(
+              Commands.repeatingSequence(
+                  Commands.run(() -> DriveCommands.setLeftAlign(true)),
+                  DriveCommands.alignToReefCommand(drive)));
 
-    // align to face 2
-    driver.slowMode().onTrue(Commands.run(() -> DriveCommands.setTargetReefFace(1)));
+      // align to face 2
+      driver.slowMode().onTrue(Commands.run(() -> DriveCommands.setTargetReefFace(1)));
 
-    // align to coral station with position customization when right trigger is pressed
-    driver
-        .coralStation()
-        .whileTrue(DriveCommands.alignToNearestCoralStationCommand(drive, driver.getYAxis()));
+      // align to coral station with position customization when right trigger is pressed
+      driver
+          .coralStation()
+          .whileTrue(DriveCommands.alignToNearestCoralStationCommand(drive, driver.getYAxis()));
 
-    // Reset gyro to 0° when B button is pressed
-    driver
-        .resetOdometry()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.resetOdometry(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+      // Reset gyro to 0° when B button is pressed
+      driver
+          .resetOdometry()
+          .onTrue(
+              Commands.runOnce(
+                      () ->
+                          drive.resetOdometry(
+                              new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                      drive)
+                  .ignoringDisable(true));
+    }
   }
 
   private void configureOperatorButtonBindings() {
-    operator
-        .shoot()
-        .whileFalse(superstructure.setSuperStateCmd(Superstructure.SuperStates.IDLING))
-        .whileTrue(superstructure.setSuperStateCmd(Superstructure.SuperStates.RUNNING));
+
   }
 
   /** Write all the auto named commands here */
@@ -254,9 +254,10 @@ public class RobotContainer {
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
-   * @return the command to run in autonomous
+   * @return the command to run in autonomous, or null if the auto chooser is not initialized.
    */
   public Command getAutonomousCommand() {
+    if (autoChooser == null) return null;
     return autoChooser.get();
   }
 

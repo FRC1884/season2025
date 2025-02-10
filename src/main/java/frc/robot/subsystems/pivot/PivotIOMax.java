@@ -1,18 +1,11 @@
 package frc.robot.subsystems.pivot;
 
-import frc.robot.generic.arm.GenericArmSystemIOSparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import frc.robot.generic.arm.GenericArmSystemIOSparkFlex;
+import java.util.Map;
 
-public class PivotIOMax extends GenericArmSystemIOSparkMax implements PivotIO {
+public class PivotIOMax extends GenericArmSystemIOSparkFlex implements PivotIO {
   public PivotIOMax() {
-    super(
-        new int[] {PivotConstants.Software.LEFT_PIVOT_ID},
-        40,
-        PivotConstants.Hardware.RESTING_ANGLE,
-        false,
-        true,
-        1.0,
-        PivotConstants.Software.gains.kP(),
-        PivotConstants.Software.gains.kI(),
-        PivotConstants.Software.gains.kD());
+    super(1.0, new SparkMaxConfig(), Map.of(40, false));
   }
 }
