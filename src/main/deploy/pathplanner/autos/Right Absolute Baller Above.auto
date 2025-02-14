@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle Side Preload 4L"
+            "pathName": "Middle Side Preload 4R"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side Sneak Above 4L - 1R"
+            "pathName": "Right Side Sneak Above 4R - 1R"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side 1R - 2L"
+            "pathName": "Right Side 1R - 4L"
           }
         }
       ]
