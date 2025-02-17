@@ -9,6 +9,7 @@ public final class ClimberConstants {
   public static final int RIGHT_CLIMBER = 24; // TODO: Change to correct Motor ID's
   public static final boolean RIGHT_INVERTED = true;
   public static final double PULLEY_RADIUS = 0.016;
+  public static final int DIOPort = 2;
 
   public static final boolean isFlex = false; // if the motors on the climber are flex motors
 

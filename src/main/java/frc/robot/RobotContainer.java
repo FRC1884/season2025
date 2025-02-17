@@ -18,16 +18,7 @@ import static frc.robot.Config.Controllers.getOperatorController;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.Config.Subsystems.VISION_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
-import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
-import static frc.robot.subsystems.Superstructure.SuperStates.INTAKE;
-import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_FOUR;
-import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_ONE;
-import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_THREE;
-import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_TWO;
-import static frc.robot.subsystems.Superstructure.SuperStates.OUTAKE;
-import static frc.robot.subsystems.Superstructure.SuperStates.SOURCE;
-import static frc.robot.subsystems.Superstructure.SuperStates.STOP_INTAKE;
-import static frc.robot.subsystems.Superstructure.SuperStates.TESTING;
+import static frc.robot.subsystems.Superstructure.SuperStates.*;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_LEFT;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
 import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_LEFT;
@@ -41,7 +32,7 @@ import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants
 import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.RIGHT_CAM_ENABLED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -52,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.GlobalConstants.RobotMode;
 import frc.robot.OI.DriverMap;
 import frc.robot.OI.OperatorMap;
+import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.swerve.GyroIO;
@@ -137,6 +129,8 @@ public class RobotContainer {
                   new ModuleIO() {},
                   new ModuleIO() {});
           };
+
+      AutoCommands.registerAutoCommands(superstructure);
 
       // Set up auto routines
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -237,16 +231,14 @@ public class RobotContainer {
           .coralStation()
           .whileTrue(DriveCommands.alignToNearestCoralStationCommand(drive, driver.getYAxis()));
 
-      driver
-          .rightAlign()
-          .and(superstructure.algaeScoringMode())
-          .whileTrue(DriveCommands.alignToProcessorCommand());
+      PathConstraints constraints = new PathConstraints(0.5, 1, 0.5, 0.5);
 
-      driver
-          .leftAlign()
-          .or(driver.rightAlign())
-          .and(superstructure.algaeIntakeMode())
-          .whileTrue(DriveCommands.alignToReefCommand(drive, () -> false, () -> true));
+      //   driver
+      //       .leftAlign()
+      //       .and(superstructure.coralMode().negate())
+      //       .whileTrue(
+      //           AutoBuilder.pathfindToPose(
+      //               GlobalConstants.FieldMap.Coordinates.PROCESSOR.getPose(), constraints));
 
       driver
           .slowMode()
@@ -286,29 +278,14 @@ public class RobotContainer {
 
     operator.Intake()
         .whileTrue(superstructure.setSuperStateCmd(INTAKE))
-        .whileFalse(superstructure.setSuperStateCmd(STOP_INTAKE));
-
+        .onFalse(superstructure.setSuperStateCmd(STOP_INTAKE));
     operator.Outake()
         .whileTrue(superstructure.setSuperStateCmd(OUTAKE))
-        .whileFalse(superstructure.setSuperStateCmd(STOP_INTAKE));
+        .onFalse(superstructure.setSuperStateCmd(STOP_INTAKE));
 
     operator.Testing().whileTrue(superstructure.setSuperStateCmd(TESTING));
 
     operator.Source().whileTrue(superstructure.setSuperStateCmd(SOURCE));
-
-    operator.ModeSwitch().onTrue(superstructure.switchCoralMode());
-  }
-
-  /** Write all the auto named commands here */
-  private void registerAutoCommands() {
-    /** Overriding commands */
-
-    // overrides the x axis
-    NamedCommands.registerCommand(
-        "OverrideCoralOffset", DriveCommands.overridePathplannerCoralOffset(() -> 2.0));
-
-    // clears all override commands in the x and y direction
-    NamedCommands.registerCommand("Clear XY Override", DriveCommands.clearXYOverrides());
   }
 
   /**

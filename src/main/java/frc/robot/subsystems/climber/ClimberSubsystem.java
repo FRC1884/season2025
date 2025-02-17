@@ -32,6 +32,6 @@ public class ClimberSubsystem extends GenericPositionElevatorSystem<ClimberSubsy
   private Debouncer currentDebouncer = new Debouncer(0.25, DebounceType.kFalling);
 
   public ClimberSubsystem(String name, ClimberIO io) {
-    super(name, io);
+    super(name, io, ClimberConstants.DIOPort);
   }
 }

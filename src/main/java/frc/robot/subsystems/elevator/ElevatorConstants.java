@@ -9,6 +9,7 @@ public final class ElevatorConstants {
   public static final boolean RIGHT_INVERTED = true;
   public static final double PULLEY_RADIUS = 0.016;
   public static final double restingRot = -0.8;
+  public static final int DIOPort = 1;
 
   public static final boolean isFlex = true; // if the motors on the Elevator are flex motors
 

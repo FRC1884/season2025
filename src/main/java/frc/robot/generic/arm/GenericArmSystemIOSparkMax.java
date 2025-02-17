@@ -40,10 +40,7 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
             .smartCurrentLimit(currentLimitAmps)
             .idleMode(brake ? SparkBaseConfig.IdleMode.kBrake : SparkBaseConfig.IdleMode.kCoast);
     config.absoluteEncoder.inverted(true);
-    config
-        .closedLoop
-        .pid(kP.getAsDouble(), 0,0)
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+    config.closedLoop.pid(kP.getAsDouble(), 0, 0).feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
     config.softLimit.forwardSoftLimit(forwardLimit).reverseSoftLimit(reverseLimit);
 
     for (int i = 0; i < id.length; i++) {
@@ -79,7 +76,7 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
   @Override
   public void runToDegree(double angle) {
     if (TUNING_MODE) {
-      config.closedLoop.pid(kp.getAsDouble(), 0,0);
+      config.closedLoop.pid(kp.getAsDouble(), 0, 0);
       motors[0].configure(
           config.inverted(inverted[0]),
           ResetMode.kNoResetSafeParameters,

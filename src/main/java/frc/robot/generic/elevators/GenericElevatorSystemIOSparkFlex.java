@@ -83,4 +83,9 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
     controller.setReference(position, ControlType.kPosition);
     goal = position;
   }
+
+  @Override
+  public void resetEncoder() {
+    encoder.setPosition(0.0);
+  }
 }

@@ -1,6 +1,7 @@
 package frc.robot.generic.elevators;
 
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
@@ -21,13 +22,15 @@ public abstract class GenericPositionElevatorSystem<
   private final Alert disconnected;
   protected final Timer stateTimer = new Timer();
   private G lastGoal;
+  private DigitalInput limitSwitch;
 
-  public GenericPositionElevatorSystem(String name, GenericElevatorSystemIO io) {
+  public GenericPositionElevatorSystem(String name, GenericElevatorSystemIO io, int DIOPort) {
     this.name = name;
     this.io = io;
 
     disconnected = new Alert(name + " motor disconnected!", Alert.AlertType.kWarning);
     stateTimer.start();
+    limitSwitch = new DigitalInput(DIOPort);
   }
 
   /**
@@ -44,6 +47,8 @@ public abstract class GenericPositionElevatorSystem<
       stateTimer.reset();
       lastGoal = getGoal();
     }
+
+    if (limitSwitch.get()) io.resetEncoder();
 
     io.runPosition(getGoal().getHeight().getAsDouble());
     Logger.recordOutput("Elevators/" + name + "Goal", getGoal().toString());

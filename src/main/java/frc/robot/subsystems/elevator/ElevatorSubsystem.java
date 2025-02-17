@@ -34,6 +34,6 @@ public class ElevatorSubsystem
   private ElevatorGoal goal = ElevatorGoal.IDLING;
 
   public ElevatorSubsystem(String name, ElevatorIO io) {
-    super(name, io);
+    super(name, io, ElevatorConstants.DIOPort);
   }
 }

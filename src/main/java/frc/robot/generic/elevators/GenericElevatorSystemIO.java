@@ -20,5 +20,5 @@ public interface GenericElevatorSystemIO {
   /** Run elevator system to a height */
   default void runPosition(double height) {}
   /** Stop elevator system */
-  default void stop() {}
+  default void resetEncoder() {}
 }
