@@ -7,25 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side Preload 3L"
+            "pathName": "Right Side Preload 3L.0"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side 3L - 2R"
+            "pathName": "Right Side 3L - 3R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side 2R - 2L"
+            "pathName": "Right Side 3R - 2R"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side 2L - 1R"
+            "pathName": "Right Side 2R - 2L.0"
           }
         }
       ]
