@@ -13,9 +13,11 @@
 
 package frc.robot;
 
-import static edu.wpi.first.apriltag.AprilTagFieldLayout.loadField;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import static edu.wpi.first.apriltag.AprilTagFieldLayout.loadField;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -93,13 +95,22 @@ public final class GlobalConstants {
     public static final double FIELD_WIDTH_METERS = Units.feetToMeters(26 + (5.0 / 12));
     public static final double FIELD_LENGTH_METERS = Units.feetToMeters(57 + (6.875 / 12));
 
-    public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT =
-        loadField(AprilTagFields.kDefaultField);
+    public static AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
+
+    static {
+      try {
+        // Path reads from the working directory, and splices at `/src/main/deploy/`
+        APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(Path.of("tagfields/home_testing_1.json"));
+      } catch (IOException e) {
+        System.err.println("Custom tag map not found, using default layout!");
+        APRIL_TAG_FIELD_LAYOUT = loadField(AprilTagFields.kDefaultField);
+      }
+    }
   }
 
   public static final class AlignOffsets {
     public static final double BUMPER_TO_CENTER_OFFSET =
-        Units.inchesToMeters(ROBOT == RobotType.DEVBOT ? -(26 / 2 + 3) : -(28 / 2 + 3));
+        Units.inchesToMeters(ROBOT == RobotType.DEVBOT ? -(26.0 / 2 + 3) : -(28.0 / 2 + 3));
     public static final double REEF_TO_BRANCH_OFFSET = Units.inchesToMeters(13.0 / 2);
   }
 
