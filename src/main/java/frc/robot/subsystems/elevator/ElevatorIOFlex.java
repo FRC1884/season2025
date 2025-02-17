@@ -5,14 +5,17 @@ import frc.robot.generic.elevators.GenericElevatorSystemIOSparkFlex;
 public class ElevatorIOFlex extends GenericElevatorSystemIOSparkFlex implements ElevatorIO {
   public ElevatorIOFlex() {
     super(
-        new int[] {ElevatorConstants.RIGHT_ELEVATOR, ElevatorConstants.LEFT_ELEVATOR},
-        new boolean[] {ElevatorConstants.RIGHT_INVERTED, ElevatorConstants.LEFT_INVERTED},
+        new int[] {ElevatorConstants.LEFT_ELEVATOR, ElevatorConstants.RIGHT_ELEVATOR},
+        new boolean[] {ElevatorConstants.LEFT_INVERTED, ElevatorConstants.RIGHT_INVERTED},
         40,
         0.0,
         true,
         1.0,
-        ElevatorConstants.kP,
-        ElevatorConstants.kI,
-        ElevatorConstants.kD);
+        ElevatorConstants.kPUp,
+        ElevatorConstants.kIUp,
+        ElevatorConstants.kDUp,
+        ElevatorConstants.kPDown,
+        ElevatorConstants.kIDown,
+        ElevatorConstants.kDDown);
   }
 }

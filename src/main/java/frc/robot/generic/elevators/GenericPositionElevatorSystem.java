@@ -46,9 +46,10 @@ public abstract class GenericPositionElevatorSystem<
     if (getGoal() != lastGoal) {
       stateTimer.reset();
       lastGoal = getGoal();
+      io.updatePID();
     }
 
-    if (limitSwitch.get()) io.resetEncoder();
+    // if (limitSwitch.get()) io.resetEncoder();
 
     io.runPosition(getGoal().getHeight().getAsDouble());
     Logger.recordOutput("Elevators/" + name + "Goal", getGoal().toString());

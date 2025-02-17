@@ -12,7 +12,7 @@ public class CoralPivotIOMax extends GenericArmSystemIOSparkMax implements Coral
         new int[] {CoralPivotConstants.PIVOT_ID},
         new boolean[] {CoralPivotConstants.INVERTED},
         40,
-        true,
+        false,
         FORWARD_LIMIT,
         REVERSE_LIMIT,
         CoralPivotConstants.kP);

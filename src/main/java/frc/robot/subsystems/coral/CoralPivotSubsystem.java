@@ -13,12 +13,15 @@ public class CoralPivotSubsystem extends GenericPositionArmSystem<CoralPivotSubs
   @RequiredArgsConstructor
   @Getter
   public enum PivotGoal implements GenericPositionArmSystem.PivotGoal {
-    IDLING(new LoggedTunableNumber("Pivot/idle", 0.0)),
-    SOURCE(() -> 0.38),
-    LEVEL_ONE(() -> 0.255),
-    LEVEL_TWO(() -> 0.17),
-    LEVEL_THREE(() -> 0.17),
-    LEVEL_FOUR(() -> 0.23),
+    IDLING(() -> 0.48),
+    SOURCE(() -> 0.33),
+    LEVEL_ONE(() -> 0.24),
+    LEVEL_TWO(() -> 0.195),
+    LEVEL_THREE(() -> 0.205),
+    LEVEL_FOUR(() -> 0.25),
+    LEVEL_FOUR_FLICK(() -> 0.5),
+    DEALGAEFY_L2(() -> 0.28),
+    DEALGAEFY_L3(() -> 0.28),
     TESTING(new LoggedTunableNumber("Pivot/TESTING", 0.0));
 
     private final DoubleSupplier angleSupplier;

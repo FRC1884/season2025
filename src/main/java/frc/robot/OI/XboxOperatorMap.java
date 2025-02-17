@@ -95,4 +95,10 @@ public class XboxOperatorMap extends CommandXboxController implements OperatorMa
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'ModeSwitch'");
   }
+
+  @Override
+  public Trigger StopIntake() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'StopIntake'");
+  }
 }

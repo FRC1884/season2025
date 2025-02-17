@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import java.util.function.DoubleSupplier;
 
 public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO {
@@ -38,7 +39,7 @@ public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO 
     this.inverted = inverted;
     motors = new SparkMax[id.length];
     config =
-        new SparkFlexConfig()
+        new SparkMaxConfig()
             .smartCurrentLimit(currentLimitAmps)
             .idleMode(brake ? SparkBaseConfig.IdleMode.kBrake : SparkBaseConfig.IdleMode.kCoast);
     config.closedLoop.pid(kP.getAsDouble(), kI.getAsDouble(), kD.getAsDouble());

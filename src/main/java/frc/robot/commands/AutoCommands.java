@@ -2,8 +2,6 @@ package frc.robot.commands;
 
 import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
 import static frc.robot.subsystems.Superstructure.SuperStates.INTAKE;
-import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_FOUR;
-import static frc.robot.subsystems.Superstructure.SuperStates.OUTAKE;
 import static frc.robot.subsystems.Superstructure.SuperStates.SOURCE;
 
 import com.pathplanner.lib.auto.NamedCommands;
@@ -26,9 +24,7 @@ public class AutoCommands {
     NamedCommands.registerCommand(
         "L4 Score",
         Commands.sequence(
-            superstructure.setSuperStateCmd(LEVEL_FOUR),
-            Commands.waitSeconds(0.5),
-            superstructure.setSuperStateCmd(OUTAKE),
+            superstructure.lFScore(),
             Commands.waitUntil(superstructure.hasGamePiece().negate()),
             superstructure.setSuperStateCmd(IDLING),
             Commands.waitSeconds(0.5)));

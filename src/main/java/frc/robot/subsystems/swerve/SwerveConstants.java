@@ -62,14 +62,14 @@ public final class SwerveConstants {
 
   // Device CAN IDs
   static final int PIGEON_ID = 60;
-  private static final int FRD_ID = 31;
-  private static final int FRR_ID = 13;
-  private static final int FLD_ID = 32;
-  private static final int FLR_ID = 11;
-  private static final int BRD_ID = 33;
-  private static final int BRR_ID = 14;
-  private static final int BLD_ID = 34;
-  private static final int BLR_ID = 12;
+  private static final int FRD_ID = 11;
+  private static final int FRR_ID = 21;
+  private static final int FLD_ID = 12;
+  private static final int FLR_ID = 22;
+  private static final int BRD_ID = 14;
+  private static final int BRR_ID = 24;
+  private static final int BLD_ID = 13;
+  private static final int BLR_ID = 23;
 
   // Zeroed rotation values for each module, see setup instructions
   private static final Rotation2d FLR_ZERO = Rotation2d.fromRadians(-PI / 2);
@@ -105,7 +105,7 @@ public final class SwerveConstants {
 
   public static final double DRIVE_GEAR_RATIO = 5.08;
 
-  static final boolean DRIVE_INVERTED = true;
+  static final boolean DRIVE_INVERTED = false;
 
   /** Amps */
   static final int DRIVE_MOTOR_CURRENT_LIMIT = 40;

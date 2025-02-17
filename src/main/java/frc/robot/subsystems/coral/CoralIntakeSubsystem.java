@@ -1,9 +1,8 @@
 package frc.robot.subsystems.coral;
 
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import frc.robot.generic.rollers.GenericVoltageRollerSystem;
-import frc.robot.util.LoggedTunableNumber;
+import frc.robot.generic.rollers.GenericVoltageRollerSystem.VoltageGoal;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -17,15 +16,15 @@ public class CoralIntakeSubsystem
   @RequiredArgsConstructor
   @Getter
   public enum CoralIntakeGoal implements VoltageGoal {
-    IDLING(new LoggedTunableNumber("Feeder/IdleVoltage", 0.0)), // Intake is off
-    FORWARD(new LoggedTunableNumber("Feeder/ForwardVoltage", 12.0)), // Maximum forward voltage
-    REVERSE(new LoggedTunableNumber("Feeder/ReverseVoltage", -12.0)); // Maximum reverse voltage
-
+    IDLING(() -> 0.0), // Intake is off
+    FORWARD(() -> 12.0), // Maximum forward voltage
+    REVERSE(() -> -12.0), // Maximum reverse voltage
+    LFOUTAKE(() -> -4);
     private final DoubleSupplier voltageSupplier;
   }
 
   @Setter private CoralIntakeGoal goal = CoralIntakeGoal.IDLING;
-  private Debouncer currentDebouncer = new Debouncer(0.25, DebounceType.kFalling);
+  private Debouncer debouncer = new Debouncer(0.1);
 
   public CoralIntakeSubsystem(String name, CoralIntakeIO io) {
     super(name, io);
@@ -34,7 +33,7 @@ public class CoralIntakeSubsystem
   public BooleanSupplier hasCoral() {
     return () ->
         (goal == CoralIntakeGoal.FORWARD
-            && stateTimer.hasElapsed(0.25)
-            && currentDebouncer.calculate(inputs.torqueCurrentAmps > 45.0));
+            && debouncer.calculate(
+                inputs.torqueCurrentAmps > CoralIntakeConstants.currentLimit.getAsDouble()));
   }
 }

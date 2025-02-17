@@ -21,7 +21,10 @@ public final class AprilTagVisionConstants {
       new VisionIO.CameraConstants(
           "lefttagcam",
           new Transform3d(
-              0.3102, 0.3102, 0.26, new Rotation3d(0, degreesToRadians(-20), degreesToRadians(0))),
+              0.2752,
+              0.2852,
+              0.2375,
+              new Rotation3d(0, degreesToRadians(-20), degreesToRadians(0))),
           VisionIO.CameraType.OV9281);
 
   public static final boolean RIGHT_CAM_ENABLED = true;
@@ -29,7 +32,10 @@ public final class AprilTagVisionConstants {
       new VisionIO.CameraConstants(
           "righttagcam",
           new Transform3d(
-              0.3102, -0.3102, 0.26, new Rotation3d(0, degreesToRadians(-20), degreesToRadians(0))),
+              0.2752,
+              -0.2852,
+              0.2375,
+              new Rotation3d(0, degreesToRadians(-20), degreesToRadians(0))),
           VisionIO.CameraType.OV9281);
 
   public static final boolean BACK_CAM_ENABLED = true;

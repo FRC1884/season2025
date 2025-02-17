@@ -32,5 +32,7 @@ public interface OperatorMap {
 
   Trigger Source();
 
+  Trigger StopIntake();
+
   Trigger ModeSwitch();
 }

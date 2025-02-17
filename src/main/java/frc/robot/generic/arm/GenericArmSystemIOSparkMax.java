@@ -23,6 +23,8 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
   private double goal;
   private DoubleSupplier kp;
   private boolean[] inverted;
+  private double forwardLimit;
+  private double reverseLimit;
 
   public GenericArmSystemIOSparkMax(
       int[] id,
@@ -34,6 +36,8 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
       DoubleSupplier kP) {
     this.kp = kP;
     this.inverted = inverted;
+    this.reverseLimit = reverseLimit;
+    this.forwardLimit = forwardLimit;
     motors = new SparkMax[id.length];
     config =
         new SparkFlexConfig()
@@ -70,6 +74,8 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
       inputs.supplyCurrentAmps = motors[0].getOutputCurrent();
       inputs.tempCelsius = motors[0].getMotorTemperature();
       inputs.goal = goal;
+      if (encoder.getPosition() < reverseLimit || encoder.getPosition() > forwardLimit)
+        motors[0].stopMotor();
     }
   }
 

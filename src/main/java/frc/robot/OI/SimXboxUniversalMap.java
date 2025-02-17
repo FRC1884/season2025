@@ -151,4 +151,10 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'ModeSwitch'");
   }
+
+  @Override
+  public Trigger StopIntake() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'StopIntake'");
+  }
 }

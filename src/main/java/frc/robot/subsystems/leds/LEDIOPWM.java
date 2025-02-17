@@ -32,9 +32,9 @@ public class LEDIOPWM implements LEDIO {
     views = new AddressableLEDBufferView[LEDConstants.SEGMENTS.length];
     patterns = new LEDPattern[LEDConstants.SEGMENTS.length];
 
-    for (int i = 0; i < LEDConstants.SEGMENTS.length - 1; i++) {
+    for (int i = 0; i < LEDConstants.SEGMENTS.length; i++) {
       LEDConstants.Segment segment = LEDConstants.SEGMENTS[i];
-      views[i] = buffer.createView(segment.start(), segment.start() + segment.length());
+      views[i] = buffer.createView(segment.start(), segment.start() + segment.length() - 1);
 
       if (segment.reversed()) {
         views[i] = views[i].reversed();
@@ -43,6 +43,8 @@ public class LEDIOPWM implements LEDIO {
       patterns[i] = LEDPattern.solid(Color.kBlue).breathe(Second.of(1));
       patterns[i].applyTo(views[i]);
     }
+
+    System.out.println(patterns.length);
 
     led.setLength(buffer.getLength());
     led.start();

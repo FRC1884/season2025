@@ -1,7 +1,5 @@
 package frc.robot.generic.arm;
 
-import static frc.robot.GlobalConstants.TUNING_MODE;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -77,13 +75,13 @@ public class GenericArmSystemIOSparkFlex implements GenericArmSystemIO {
 
   @Override
   public void runToDegree(double position) {
-    if (TUNING_MODE) {
-      config.closedLoop.pid(kp.getAsDouble(), 0, 0);
-      motors[0].configure(
-          config.inverted(inverted[0]),
-          ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
-    }
+    // if (TUNING_MODE) {
+    //   config.closedLoop.pid(kp.getAsDouble(), 0, 0);
+    //   motors[0].configure(
+    //       config.inverted(inverted[0]),
+    //       ResetMode.kNoResetSafeParameters,
+    //       PersistMode.kNoPersistParameters);
+    // }
     controller.setReference(position, ControlType.kPosition);
     goal = position;
   }

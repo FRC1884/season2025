@@ -3,6 +3,9 @@ package frc.robot.subsystems;
 import static frc.robot.Config.Subsystems.*;
 import static frc.robot.GlobalConstants.MODE;
 import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
+import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_FOUR;
+import static frc.robot.subsystems.Superstructure.SuperStates.LFOUTAKE;
+import static frc.robot.subsystems.Superstructure.SuperStates.LF_FLICK;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -17,10 +20,11 @@ import frc.robot.generic.elevators.Elevators;
 import frc.robot.generic.rollers.Rollers;
 import frc.robot.subsystems.algae.AlgaeIntakeSubsystem;
 import frc.robot.subsystems.algae.AlgaePivotSubsystem;
-import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.coral.CoralIntakeSubsystem;
+import frc.robot.subsystems.coral.CoralIntakeSubsystem.CoralIntakeGoal;
 import frc.robot.subsystems.coral.CoralPivotSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorGoal;
 import frc.robot.subsystems.leds.LEDIOPWM;
 import frc.robot.subsystems.leds.LEDIOSim;
 import frc.robot.subsystems.leds.LEDSubsystem;
@@ -70,6 +74,10 @@ public class Superstructure extends SubsystemBase {
     INTAKE,
     STOP_INTAKE,
     SOURCE,
+    LFOUTAKE,
+    LF_FLICK,
+    DEALGAEFY_L2,
+    DEALGAEFY_L3,
     PROCESSOR
   }
 
@@ -93,7 +101,7 @@ public class Superstructure extends SubsystemBase {
   private SuperStates currentState = IDLING;
 
   public Command setSuperStateCmd(SuperStates stateRequest) {
-    return Commands.run(() -> currentState = stateRequest);
+    return Commands.runOnce(() -> currentState = stateRequest);
   }
 
   /**
@@ -112,18 +120,19 @@ public class Superstructure extends SubsystemBase {
           rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.IDLING);
         if (ELEVATOR_ENABLED)
           elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.IDLING);
-        if (CLIMBER_ENABLED) elevators.getClimber().setGoal(ClimberSubsystem.ClimberGoal.IDLING);
+        // if (CLIMBER_ENABLED) elevators.getClimber().setGoal(ClimberSubsystem.ClimberGoal.IDLING);
         if (CORAL_PIVOT_ENABLED) arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.IDLING);
         if (ALGAE_PIVOT_ENABLED) arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.IDLING);
       }
       case TESTING -> {
-        if (CORAL_INTAKE_ENABLED)
-          rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.FORWARD);
+        // if (CORAL_INTAKE_ENABLED)
+        // rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.FORWARD);
         if (ALGAE_INTAKE_ENABLED)
           rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.FORWARD);
         if (ELEVATOR_ENABLED)
           elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.TESTING);
-        if (CLIMBER_ENABLED) elevators.getClimber().setGoal(ClimberSubsystem.ClimberGoal.TESTING);
+        // if (CLIMBER_ENABLED)
+        // elevators.getClimber().setGoal(ClimberSubsystem.ClimberGoal.TESTING);
         if (CORAL_PIVOT_ENABLED)
           arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.TESTING);
       }
@@ -153,22 +162,18 @@ public class Superstructure extends SubsystemBase {
       }
       case INTAKE -> {
         if (wantsCoral)
-          if (CORAL_INTAKE_ENABLED)
+          if (CORAL_INTAKE_ENABLED) {
             rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.FORWARD);
-          else if (ALGAE_INTAKE_ENABLED)
+          } else if (ALGAE_INTAKE_ENABLED)
             rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.FORWARD);
       }
       case OUTAKE -> {
         if (wantsCoral) {
           if (CORAL_INTAKE_ENABLED)
-            if (!rollers.getCoralIntake().hasCoral().getAsBoolean())
-              rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.IDLING);
-            else rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.REVERSE);
+            rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.REVERSE);
         } else {
           if (ALGAE_INTAKE_ENABLED)
-            if (!rollers.getAlgaeIntake().hasAlgae().getAsBoolean())
-              rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.IDLING);
-            else rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.REVERSE);
+            rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.IDLING);
         }
       }
       case SOURCE -> {
@@ -176,9 +181,7 @@ public class Superstructure extends SubsystemBase {
           elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.SOURCE);
         if (CORAL_PIVOT_ENABLED) arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.SOURCE);
         if (CORAL_INTAKE_ENABLED)
-          if (rollers.getCoralIntake().hasCoral().getAsBoolean())
-            rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.IDLING);
-          else rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.FORWARD);
+          rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.FORWARD);
       }
       case PROCESSOR -> {
         if (ALGAE_PIVOT_ENABLED)
@@ -188,9 +191,29 @@ public class Superstructure extends SubsystemBase {
       }
       case STOP_INTAKE -> {
         if (CORAL_INTAKE_ENABLED)
-          rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.FORWARD);
+          rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.IDLING);
         else if (ALGAE_INTAKE_ENABLED)
-          rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.FORWARD);
+          rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.IDLING);
+      }
+      case LFOUTAKE -> {
+        if (CORAL_INTAKE_ENABLED)
+          rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.LFOUTAKE);
+      }
+      case LF_FLICK -> {
+        if (CORAL_PIVOT_ENABLED)
+          arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.LEVEL_FOUR_FLICK);
+      }
+      case DEALGAEFY_L2 -> {
+        if (CORAL_PIVOT_ENABLED)
+          arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.DEALGAEFY_L2);
+        if (CORAL_INTAKE_ENABLED) rollers.getCoralIntake().setGoal(CoralIntakeGoal.FORWARD);
+        if (ELEVATOR_ENABLED) elevators.getElevator().setGoal(ElevatorGoal.DEALGAEFY_L2);
+      }
+      case DEALGAEFY_L3 -> {
+        if (CORAL_PIVOT_ENABLED)
+          arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.DEALGAEFY_L3);
+        if (CORAL_INTAKE_ENABLED) rollers.getCoralIntake().setGoal(CoralIntakeGoal.FORWARD);
+        if (ELEVATOR_ENABLED) elevators.getElevator().setGoal(ElevatorGoal.DEALGAEFY_L3);
       }
     }
   }
@@ -200,8 +223,21 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Trigger hasGamePiece() {
-    if (wantsCoral) return new Trigger(rollers.getCoralIntake().hasCoral());
-    return new Trigger(rollers.getAlgaeIntake().hasAlgae());
+    if (CORAL_INTAKE_ENABLED) {
+      if (wantsCoral) return new Trigger(rollers.getCoralIntake().hasCoral());
+    } else if (ALGAE_INTAKE_ENABLED) {
+      return new Trigger(rollers.getAlgaeIntake().hasAlgae());
+    } else return new Trigger(() -> false);
+    return new Trigger(() -> false);
+  }
+
+  public Command lFScore() {
+    return Commands.sequence(
+        setSuperStateCmd(LEVEL_FOUR),
+        Commands.waitSeconds(1.1),
+        setSuperStateCmd(LFOUTAKE),
+        Commands.waitSeconds(0.38),
+        setSuperStateCmd(LF_FLICK));
   }
 
   public void registerSuperstructureCharacterization(

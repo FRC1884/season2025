@@ -1,5 +1,23 @@
 package frc.robot.subsystems.climber;
 
-import frc.robot.generic.elevators.GenericElevatorSystemIO;
+import org.littletonrobotics.junction.AutoLog;
 
-public interface ClimberIO extends GenericElevatorSystemIO {}
+public interface ClimberIO {
+
+  @AutoLog
+  public static class ClimberIOInputs {
+    public boolean connected = true;
+    public double positionMeters = 0.0;
+    public double velocityMetersPerSec = 0.0;
+    public double appliedVoltage = 0.0;
+    public double supplyCurrentAmps = 0.0;
+    public double torqueCurrentAmps = 0.0;
+    public double tempCelsius = 0.0;
+    public double tempEncod = 0.0;
+    public double goal = 0.0;
+  }
+
+  default void updateInputs(ClimberIOInputs inputs) {}
+
+  default void runVolts(double voltage) {}
+}

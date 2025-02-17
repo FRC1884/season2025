@@ -274,18 +274,17 @@ public class RobotContainer {
 
     operator.LevelThree().whileTrue(superstructure.setSuperStateCmd(LEVEL_THREE));
 
-    operator.LevelFour().whileTrue(superstructure.setSuperStateCmd(LEVEL_FOUR));
+    operator.LevelFour().onTrue(superstructure.lFScore());
 
-    operator.Intake()
-        .whileTrue(superstructure.setSuperStateCmd(INTAKE))
-        .onFalse(superstructure.setSuperStateCmd(STOP_INTAKE));
-    operator.Outake()
-        .whileTrue(superstructure.setSuperStateCmd(OUTAKE))
-        .onFalse(superstructure.setSuperStateCmd(STOP_INTAKE));
+    operator.StopIntake().whileTrue(superstructure.setSuperStateCmd(STOP_INTAKE));
+
+    operator.Intake().whileTrue(superstructure.setSuperStateCmd(INTAKE));
+
+    operator.Outake().whileTrue(superstructure.setSuperStateCmd(OUTAKE));
 
     operator.Testing().whileTrue(superstructure.setSuperStateCmd(TESTING));
 
-    operator.Source().whileTrue(superstructure.setSuperStateCmd(SOURCE));
+    // operator.Source().whileTrue(superstructure.setSuperStateCmd(SOURCE));
   }
 
   /**

@@ -26,7 +26,15 @@ public final class LEDConstants {
   public static int BACK_LEFT = 2;
   public static int BACK_RIGHT = 3;
 
-  public static final Segment[] SEGMENTS = new Segment[] {new Segment(0, 16, false)};
+  public static final Segment[] SEGMENTS =
+      new Segment[] {
+        new Segment(0, 30, false),
+        new Segment(30, 34, false),
+        new Segment(64, 30, false),
+        new Segment(94, 30, false),
+        new Segment(124, 34, false),
+        new Segment(158, 30, false)
+      };
 
   public record Segment(int start, int length, boolean reversed) {}
 

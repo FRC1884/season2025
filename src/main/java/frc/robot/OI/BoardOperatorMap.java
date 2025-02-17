@@ -67,4 +67,9 @@ public class BoardOperatorMap extends CommandGenericHID implements OperatorMap {
   public Trigger ModeSwitch() {
     return button(1);
   }
+
+  @Override
+  public Trigger StopIntake() {
+    return button(12);
+  }
 }

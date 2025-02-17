@@ -1,7 +1,5 @@
 package frc.robot.generic.elevators;
 
-import static frc.robot.GlobalConstants.TUNING_MODE;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -19,8 +17,9 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
   private SparkBaseConfig config;
   private SparkClosedLoopController controller;
   private double goal;
-  private DoubleSupplier kp, ki, kd;
+  private DoubleSupplier kpUp, kiUp, kdUp, kpDown, kiDown, kdDown;
   private boolean[] inverted;
+  private boolean firstRun;
 
   public GenericElevatorSystemIOSparkFlex(
       int[] id,
@@ -29,19 +28,25 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
       double restingAngle,
       boolean brake,
       double reduction,
-      DoubleSupplier kP,
-      DoubleSupplier kI,
-      DoubleSupplier kD) {
-    this.kp = kP;
-    this.ki = kI;
-    this.kd = kD;
+      DoubleSupplier kPUp,
+      DoubleSupplier kIUp,
+      DoubleSupplier kDUp,
+      DoubleSupplier kPDown,
+      DoubleSupplier kIDown,
+      DoubleSupplier kDDown) {
+    this.kpUp = kPUp;
+    this.kiUp = kIUp;
+    this.kdUp = kDUp;
+    this.kpDown = kPDown;
+    this.kiDown = kIDown;
+    this.kdDown = kDDown;
     this.inverted = inverted;
     motors = new SparkFlex[id.length];
     config =
         new SparkFlexConfig()
             .smartCurrentLimit(currentLimitAmps)
             .idleMode(brake ? SparkBaseConfig.IdleMode.kBrake : SparkBaseConfig.IdleMode.kCoast);
-    config.closedLoop.pid(kP.getAsDouble(), kI.getAsDouble(), kD.getAsDouble());
+    config.closedLoop.pid(kPUp.getAsDouble(), kIUp.getAsDouble(), kDUp.getAsDouble());
 
     for (int i = 0; i < id.length; i++) {
       motors[i] = new SparkFlex(id[i], SparkLowLevel.MotorType.kBrushless);
@@ -49,12 +54,12 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
       if (i == 0)
         motors[i].configure(
             config.inverted(inverted[i]),
-            ResetMode.kResetSafeParameters,
+            ResetMode.kNoResetSafeParameters,
             PersistMode.kPersistParameters);
       else
         motors[i].configure(
-            new SparkFlexConfig().apply(config).follow(motors[0], inverted[i]),
-            ResetMode.kResetSafeParameters,
+            (new SparkFlexConfig().apply(config).follow(motors[0], inverted[i])),
+            ResetMode.kNoResetSafeParameters,
             PersistMode.kPersistParameters);
     }
     encoder = motors[0].getEncoder();
@@ -73,12 +78,22 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
 
   @Override
   public void runPosition(double position) {
-    if (TUNING_MODE) {
-      config.closedLoop.pid(kp.getAsDouble(), ki.getAsDouble(), kd.getAsDouble());
-      motors[0].configure(
-          config.inverted(inverted[0]),
-          ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
+    if (firstRun) {
+      if (position > encoder.getPosition()) {
+        config.closedLoop.pid(kpUp.getAsDouble(), kiUp.getAsDouble(), kdUp.getAsDouble());
+        motors[0].configure(
+            config.inverted(inverted[0]),
+            ResetMode.kNoResetSafeParameters,
+            PersistMode.kNoPersistParameters);
+        firstRun = false;
+      } else if (position < encoder.getPosition()) {
+        config.closedLoop.pid(kpDown.getAsDouble(), kiDown.getAsDouble(), kdDown.getAsDouble());
+        motors[0].configure(
+            config.inverted(inverted[0]),
+            ResetMode.kNoResetSafeParameters,
+            PersistMode.kNoPersistParameters);
+        firstRun = false;
+      }
     }
     controller.setReference(position, ControlType.kPosition);
     goal = position;
@@ -87,5 +102,10 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
   @Override
   public void resetEncoder() {
     encoder.setPosition(0.0);
+  }
+
+  @Override
+  public void updatePID() {
+    firstRun = true;
   }
 }
