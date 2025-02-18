@@ -13,19 +13,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side 3L - 3R"
+            "pathName": "Right Side 3L - Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side 3R - 2R"
+            "pathName": "Right Side Intake - 2L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side 2R - 2L.0"
+            "pathName": "Right Side 2L - Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Side Intake - 2R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Side 2R - Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Side Intake - 3R"
           }
         }
       ]
