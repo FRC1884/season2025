@@ -19,67 +19,66 @@ import frc.robot.util.LoggedTunableNumber;
 public final class AprilTagVisionConstants {
   public static final boolean LEFT_CAM_ENABLED = true;
   public static final VisionIO.CameraConstants LEFT_CAM_CONSTANTS =
-  switch (ROBOT) {
-    case DEVBOT -> new VisionIO.CameraConstants(
-        "lefttagcam",
-        new Transform3d(
-            0.2752,
-            0.2852,
-            0.2375,
-            new Rotation3d(0, degreesToRadians(20), degreesToRadians(0))),
-        VisionIO.CameraType.OV9281);
-    case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
-        "lefttagcam",
-        new Transform3d(
-            0.3006,
-            0.3056,
-            0.245,
-            new Rotation3d(0, degreesToRadians(5), degreesToRadians(-20))),
-        VisionIO.CameraType.OV9281);
-  };
+      switch (ROBOT) {
+        case DEVBOT -> new VisionIO.CameraConstants(
+            "lefttagcam",
+            new Transform3d(
+                0.2752,
+                0.2852,
+                0.2375,
+                new Rotation3d(0, degreesToRadians(-20), degreesToRadians(-20))),
+            VisionIO.CameraType.OV9281);
+        case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
+            "lefttagcam",
+            new Transform3d(
+                0.3006,
+                0.3056,
+                0.245,
+                new Rotation3d(0, degreesToRadians(-5), degreesToRadians(-20))),
+            VisionIO.CameraType.OV9281);
+      };
 
   public static final boolean RIGHT_CAM_ENABLED = true;
   public static final VisionIO.CameraConstants RIGHT_CAM_CONSTANTS =
-  switch (ROBOT) {
-    case DEVBOT -> new VisionIO.CameraConstants(
-        "righttagcam",
-        new Transform3d(
-            0.2752,
-            -0.2852,
-            0.2375,
-            new Rotation3d(0, degreesToRadians(20), degreesToRadians(0))),
-        VisionIO.CameraType.OV9281);
-    case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
-        "righttagcam",
-        new Transform3d(
-            0.3006,
-            -0.3056,
-            0.245,
-            new Rotation3d(0, degreesToRadians(5), degreesToRadians(20))),
-        VisionIO.CameraType.OV9281);
-  };
+      switch (ROBOT) {
+        case DEVBOT -> new VisionIO.CameraConstants(
+            "righttagcam",
+            new Transform3d(
+                0.2752,
+                -0.2852,
+                0.2375,
+                new Rotation3d(0, degreesToRadians(-20), degreesToRadians(20))),
+            VisionIO.CameraType.OV9281);
+        case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
+            "righttagcam",
+            new Transform3d(
+                0.3006,
+                -0.3056,
+                0.245,
+                new Rotation3d(0, degreesToRadians(-5), degreesToRadians(20))),
+            VisionIO.CameraType.OV9281);
+      };
 
   public static final boolean BACK_CAM_ENABLED = true;
-  public static final VisionIO.CameraConstants BACK_CAM_CONSTANTS = 
-  switch (ROBOT) {
-    case DEVBOT -> new VisionIO.CameraConstants(
-        "backtagcam",
-        new Transform3d(
-            -0.2927,
-            0.3127,
-            0.275,
-            new Rotation3d(0, degreesToRadians(-14), degreesToRadians(205))),
-        VisionIO.CameraType.OV9281);
-    case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
-        "backtagcam",
-        new Transform3d(
-            -0.3006,
-            0.3056,
-            0.245,
-            new Rotation3d(0, degreesToRadians(-20), degreesToRadians(180))),
-        VisionIO.CameraType.OV9281);
-  };
-      
+  public static final VisionIO.CameraConstants BACK_CAM_CONSTANTS =
+      switch (ROBOT) {
+        case DEVBOT -> new VisionIO.CameraConstants(
+            "backtagcam",
+            new Transform3d(
+                -0.2927,
+                0.3127,
+                0.275,
+                new Rotation3d(0, degreesToRadians(-14), degreesToRadians(180))),
+            VisionIO.CameraType.OV9281);
+        case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
+            "backtagcam",
+            new Transform3d(
+                -0.3006,
+                0.3056,
+                0.245,
+                new Rotation3d(0, degreesToRadians(-20), degreesToRadians(180))),
+            VisionIO.CameraType.OV9281);
+      };
 
   public static final DoubleSupplier TRANSLATION_EULER_MULTIPLIER =
       new LoggedTunableNumber("AprilTagVision/EulerMultipliers/Translation", 0.02);

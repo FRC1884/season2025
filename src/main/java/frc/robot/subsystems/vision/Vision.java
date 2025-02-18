@@ -154,7 +154,7 @@ public class Vision extends SubsystemBase {
             generateDynamicStdDevs(observation, io[cameraIndex].getCameraConstants().cameraType()));
       }
 
-      // Log camera datadata
+      // Log camera data
       Logger.recordOutput(
           "AprilTagVision/" + io[cameraIndex].getCameraConstants().cameraName() + "/TagPoses",
           tagPoses.toArray(new Pose3d[tagPoses.size()]));
@@ -171,6 +171,9 @@ public class Vision extends SubsystemBase {
               + io[cameraIndex].getCameraConstants().cameraName()
               + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
+      Logger.recordOutput(
+          "AprilTagVision/" + io[cameraIndex].getCameraConstants().cameraName() + "/CameraPose",
+          io[cameraIndex].getCameraConstants().robotToCamera());
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
       allRobotPosesAccepted.addAll(robotPosesAccepted);
