@@ -15,11 +15,11 @@ public final class Config {
     public static final boolean DRIVETRAIN_ENABLED = true;
     public static final boolean VISION_ENABLED = true;
     public static final boolean GAME_PIECE_VISION_ENABLED = false;
-    public static final boolean ALGAE_INTAKE_ENABLED = false;
+    public static final boolean ALGAE_INTAKE_ENABLED = true;
     public static final boolean CORAL_INTAKE_ENABLED = true;
     public static final boolean CORAL_PIVOT_ENABLED = true;
-    public static final boolean ALGAE_PIVOT_ENABLED = false;
-    public static final boolean CLIMBER_ENABLED = false;
+    public static final boolean ALGAE_PIVOT_ENABLED = true;
+    public static final boolean CLIMBER_ENABLED = true;
     public static final boolean LEDS_ENABLED = true;
     public static final boolean ELEVATOR_ENABLED = true;
   }

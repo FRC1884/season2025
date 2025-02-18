@@ -15,9 +15,12 @@ public interface ClimberIO {
     public double tempCelsius = 0.0;
     public double tempEncod = 0.0;
     public double goal = 0.0;
+    public boolean limitSwitch = false;
   }
 
   default void updateInputs(ClimberIOInputs inputs) {}
 
   default void runVolts(double voltage) {}
+
+  default void resetEncoder() {}
 }

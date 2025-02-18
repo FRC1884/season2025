@@ -54,6 +54,7 @@ public class LEDSubsystem extends SubsystemBase {
 
         io.setAllPattern(value.pattern);
       }
+      return;
     }
 
     for (LEDOutputValue value : values) {
@@ -81,7 +82,7 @@ public class LEDSubsystem extends SubsystemBase {
                     hasCoral.getAsBoolean());
             setPattern(patterns);
           } else if (!hasFMS.getAsBoolean()) {
-            setPattern(LEDOutputValue.all(LEDPattern.solid(Color.kBlue).breathe(Second.of(1))));
+            setPattern(LEDOutputValue.all(LEDPattern.solid(Color.kBlue).breathe(BREATHE_SPEED)));
           } else {
             // get pose, get first pose of auto somehow
             var patterns = getFieldAlignPattern(new Pose2d(), new Pose2d());
@@ -150,10 +151,10 @@ public class LEDSubsystem extends SubsystemBase {
             : LEDPattern.solid(LESS_COLOR);
 
     return new LEDOutputValue[] {
-      new LEDOutputValue(frontLeft.breathe(blinkSpeed), FRONT_LEFT),
-      new LEDOutputValue(frontRight.breathe(blinkSpeed), FRONT_RIGHT),
-      new LEDOutputValue(backLeft.breathe(blinkSpeed), BACK_LEFT),
-      new LEDOutputValue(backRight.breathe(blinkSpeed), BACK_RIGHT)
+      new LEDOutputValue(frontLeft.blink(blinkSpeed), FRONT_LEFT),
+      new LEDOutputValue(frontRight.blink(blinkSpeed), FRONT_RIGHT),
+      new LEDOutputValue(backLeft.blink(blinkSpeed), BACK_LEFT),
+      new LEDOutputValue(backRight.blink(blinkSpeed), BACK_RIGHT)
     };
   }
 
@@ -188,7 +189,7 @@ public class LEDSubsystem extends SubsystemBase {
     } else if (hasPiece) {
       return LEDOutputValue.all(LEDPattern.solid(color));
     } else {
-      return LEDOutputValue.all(LEDPattern.solid(color).breathe(Second.of(1)));
+      return LEDOutputValue.all(LEDPattern.solid(color).breathe(BREATHE_SPEED));
     }
   }
 }

@@ -1,6 +1,6 @@
 package frc.robot.subsystems.leds;
 
-import static edu.wpi.first.units.Units.Second;
+import static frc.robot.subsystems.leds.LEDConstants.BREATHE_SPEED;
 import static frc.robot.subsystems.leds.LEDConstants.LED_LENGTH;
 import static frc.robot.subsystems.leds.LEDConstants.LED_PORT;
 
@@ -40,7 +40,7 @@ public class LEDIOPWM implements LEDIO {
         views[i] = views[i].reversed();
       }
 
-      patterns[i] = LEDPattern.solid(Color.kBlue).breathe(Second.of(1));
+      patterns[i] = LEDPattern.solid(Color.kBlue).breathe(BREATHE_SPEED);
       patterns[i].applyTo(views[i]);
     }
 

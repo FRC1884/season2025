@@ -21,8 +21,8 @@ public class ElevatorSubsystem
     LEVEL_TWO(() -> 12),
     LEVEL_THREE(() -> 24.5),
     LEVEL_FOUR(() -> 38.5),
-    DEALGAEFY_L2(() -> 12),
-    DEALGAEFY_L3(() -> 24.5),
+    DEALGAEFY_L2(() -> 8),
+    DEALGAEFY_L3(() -> 22),
     TESTING(new LoggedTunableNumber("Elevator/Test", 10.0));
 
     private final DoubleSupplier heightSupplier;

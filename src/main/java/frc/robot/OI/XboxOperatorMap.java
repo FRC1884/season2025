@@ -101,4 +101,28 @@ public class XboxOperatorMap extends CommandXboxController implements OperatorMa
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'StopIntake'");
   }
+
+  @Override
+  public Trigger DeAlgaefyL2() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'DeAlgaefyL2'");
+  }
+
+  @Override
+  public Trigger DeAlgaefyL3() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'DeAlgaefyL3'");
+  }
+
+  @Override
+  public Trigger ClimberUp() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'ClimberUp'");
+  }
+
+  @Override
+  public Trigger ClimberDown() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'ClimberDown'");
+  }
 }

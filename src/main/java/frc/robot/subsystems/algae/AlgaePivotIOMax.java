@@ -12,9 +12,12 @@ public class AlgaePivotIOMax extends GenericArmSystemIOSparkMax implements Algae
         new int[] {AlgaePivotConstants.PIVOT_ID},
         new boolean[] {AlgaePivotConstants.INVERTED},
         40,
-        false,
+        true,
         FORWARD_LIMIT,
         REVERSE_LIMIT,
-        AlgaePivotConstants.kP);
+        AlgaePivotConstants.kP,
+        AlgaePivotConstants.kI,
+        AlgaePivotConstants.kD,
+        false);
   }
 }

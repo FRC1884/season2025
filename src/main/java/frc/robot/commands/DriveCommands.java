@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.GlobalConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.RotationalAllianceFlipUtil;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -53,6 +54,9 @@ public class DriveCommands {
   private static final double DEADBAND = 0.1;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
+  private static final DoubleSupplier kp1 = new LoggedTunableNumber("swervealign/kp1", 0.7);
+  private static final DoubleSupplier kp2 = new LoggedTunableNumber("swervealign/kp2", 0.7);
+  private static final DoubleSupplier kp3 = new LoggedTunableNumber("swervealign/kp3", 0.08);
   // characterization
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
@@ -172,13 +176,15 @@ public class DriveCommands {
   // use PID to align to a target
   public static Command chasePoseRobotRelativeCommand(
       SwerveSubsystem drive, Supplier<Transform2d> targetOffset) {
-    TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 3);
-    TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 3);
+    TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(10, 10);
+    TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(10, 10);
     // TrapezoidProfile.Constraints OMEGA_CONSTRAINTS =   new TrapezoidProfile.Constraints(1, 1.5);
 
-    ProfiledPIDController xController = new ProfiledPIDController(0.5, 0, 0, X_CONSTRAINTS);
-    ProfiledPIDController yController = new ProfiledPIDController(0.5, 0, 0, Y_CONSTRAINTS);
-    PIDController omegaPID = new PIDController(0.01, 0, 0);
+    ProfiledPIDController xController =
+        new ProfiledPIDController(kp1.getAsDouble(), 0, 0, X_CONSTRAINTS);
+    ProfiledPIDController yController =
+        new ProfiledPIDController(kp2.getAsDouble(), 0, 0, Y_CONSTRAINTS);
+    PIDController omegaPID = new PIDController(kp3.getAsDouble(), 0, 0);
 
     xController.setTolerance(0.03);
     yController.setTolerance(0.03);
@@ -329,7 +335,9 @@ public class DriveCommands {
                 default -> findClosestReefFace(drive);
               };
 
-          double xOffset = GlobalConstants.AlignOffsets.BUMPER_TO_CENTER_OFFSET;
+          double xOffset =
+              GlobalConstants.AlignOffsets.BUMPER_TO_CENTER_OFFSET
+                  + GlobalConstants.AlignOffsets.REEF_TO_BUMPER_OFFSET;
           double yOffset =
               algaeMode.getAsBoolean()
                   ? 0
@@ -342,26 +350,10 @@ public class DriveCommands {
                   new Pose2d(
                       targetFace.get().getTranslation().plus(branchTransform),
                       targetFace.get().getRotation());
-          Logger.recordOutput(
-              "Targets/Left align", isFieldRelativeLeftAlign(targetFace, leftInput).getAsBoolean());
-          // PathConstraints constraints =
-          //     new PathConstraints(
-          //         SwerveConstants.MAX_LINEAR_SPEED,
-          //         SwerveConstants.MAX_LINEAR_ACCELERATION,
-          //         SwerveConstants.MAX_ANGULAR_SPEED,
-          //         SwerveConstants.MAX_ANGULAR_ACCELERATION);
 
-          PathConstraints constraints = new PathConstraints(3, 2, 3, 3);
+          Supplier<Transform2d> targetOffset = () -> target.get().minus(drive.getPose());
 
-          double endVelocity = 0.0;
-
-          // reset reef face
-
-          return AutoBuilder.pathfindToPose(target.get(), constraints, endVelocity);
-
-          // Supplier<Transform2d> targetOffset = () -> target.get().minus(drive.getPose());
-
-          // return chasePoseRobotRelativeCommand(drive, targetOffset);
+          return chasePoseRobotRelativeCommand(drive, targetOffset);
         },
         Set.of(drive));
   }

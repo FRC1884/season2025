@@ -1,7 +1,5 @@
 package frc.robot.generic.elevators;
 
-import static frc.robot.GlobalConstants.TUNING_MODE;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -74,13 +72,13 @@ public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO 
 
   @Override
   public void runPosition(double position) {
-    if (TUNING_MODE) {
-      config.closedLoop.pid(kp.getAsDouble(), ki.getAsDouble(), kd.getAsDouble());
-      motors[0].configure(
-          config.inverted(inverted[0]),
-          ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
-    }
+    // if (TUNING_MODE) {
+    //   config.closedLoop.pid(kp.getAsDouble(), ki.getAsDouble(), kd.getAsDouble());
+    //   motors[0].configure(
+    //       config.inverted(inverted[0]),
+    //       ResetMode.kNoResetSafeParameters,
+    //       PersistMode.kNoPersistParameters);
+    // }
     controller.setReference(position, ControlType.kPosition);
     goal = position;
   }

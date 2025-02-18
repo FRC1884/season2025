@@ -70,6 +70,25 @@ public class BoardOperatorMap extends CommandGenericHID implements OperatorMap {
 
   @Override
   public Trigger StopIntake() {
+    return button(6);
+  }
+
+  @Override
+  public Trigger DeAlgaefyL3() {
+    return button(8);
+  }
+
+  public Trigger DeAlgaefyL2() {
     return button(12);
+  }
+
+  @Override
+  public Trigger ClimberUp() {
+    return axisGreaterThan(0, 0.5);
+  }
+
+  @Override
+  public Trigger ClimberDown() {
+    return axisLessThan(0, -0.5);
   }
 }

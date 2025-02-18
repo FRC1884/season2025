@@ -1,8 +1,10 @@
 package frc.robot.subsystems.leds;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Second;
 
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.util.Color;
 
 public final class LEDConstants {
@@ -16,6 +18,8 @@ public final class LEDConstants {
   public static Color MORE_COLOR = Color.kGreen;
   public static Color LESS_COLOR = Color.kRed;
   public static Color OK_COLOR = Color.kBlue;
+
+  public static Time BREATHE_SPEED = Second.of(2.5);
 
   public static double TRANSLATION_TOLERANCE = 0.1;
   public static double ROTATION_TOLERANCE = 0.1;

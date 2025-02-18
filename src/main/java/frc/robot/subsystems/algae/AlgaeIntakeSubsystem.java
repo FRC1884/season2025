@@ -4,7 +4,6 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import frc.robot.generic.rollers.GenericVoltageRollerSystem;
 import frc.robot.generic.rollers.GenericVoltageRollerSystem.VoltageGoal;
-import frc.robot.util.LoggedTunableNumber;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -18,9 +17,9 @@ public class AlgaeIntakeSubsystem
   @RequiredArgsConstructor
   @Getter
   public enum AlgaeIntakeGoal implements VoltageGoal {
-    IDLING(new LoggedTunableNumber("Feeder/IdleVoltage", 0.0)), // Intake is off
-    FORWARD(new LoggedTunableNumber("Feeder/ForwardVoltage", 12.0)), // Maximum forward voltage
-    REVERSE(new LoggedTunableNumber("Feeder/ReverseVoltage", -12.0)); // Maximum reverse voltage
+    IDLING(() -> 0.0), // Intake is off
+    FORWARD(() -> 4), // Maximum forward voltage
+    REVERSE(() -> -4); // Maximum reverse voltage
 
     private final DoubleSupplier voltageSupplier;
   }

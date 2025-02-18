@@ -1,3 +1,5 @@
 package frc.robot.subsystems.climber;
 
-public class ClimberIOFlex {}
+public class ClimberIOFlex implements ClimberIO {
+  public ClimberIOFlex() {}
+}

@@ -21,10 +21,10 @@ public final class AprilTagVisionConstants {
       new VisionIO.CameraConstants(
           "lefttagcam",
           new Transform3d(
-              0.2752,
-              0.2852,
+              0.3006,
+              0.3056,
               0.2375,
-              new Rotation3d(0, degreesToRadians(-20), degreesToRadians(0))),
+              new Rotation3d(0, degreesToRadians(-5), degreesToRadians(-20))), // 30 degree
           VisionIO.CameraType.OV9281);
 
   public static final boolean RIGHT_CAM_ENABLED = true;
@@ -32,10 +32,10 @@ public final class AprilTagVisionConstants {
       new VisionIO.CameraConstants(
           "righttagcam",
           new Transform3d(
-              0.2752,
-              -0.2852,
+              0.3006,
+              -0.3056,
               0.2375,
-              new Rotation3d(0, degreesToRadians(-20), degreesToRadians(0))),
+              new Rotation3d(0, degreesToRadians(-5), degreesToRadians(20))), // -30 degree
           VisionIO.CameraType.OV9281);
 
   public static final boolean BACK_CAM_ENABLED = true;
@@ -43,10 +43,10 @@ public final class AprilTagVisionConstants {
       new VisionIO.CameraConstants(
           "backtagcam",
           new Transform3d(
-              -0.2927,
-              0.3127,
-              0.275,
-              new Rotation3d(0, degreesToRadians(-14), degreesToRadians(180 + 25))),
+              -0.3006,
+              0.3056,
+              0.245,
+              new Rotation3d(0, degreesToRadians(-20), degreesToRadians(180))),
           VisionIO.CameraType.OV9281);
 
   public static final DoubleSupplier TRANSLATION_EULER_MULTIPLIER =

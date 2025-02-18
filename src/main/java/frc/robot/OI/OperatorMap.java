@@ -34,5 +34,13 @@ public interface OperatorMap {
 
   Trigger StopIntake();
 
+  Trigger DeAlgaefyL2();
+
+  Trigger DeAlgaefyL3();
+
   Trigger ModeSwitch();
+
+  Trigger ClimberUp();
+
+  Trigger ClimberDown();
 }

@@ -1,6 +1,6 @@
 package frc.robot.subsystems.climber;
 
-import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel;
@@ -8,15 +8,18 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.DigitalInput;
 
-public abstract class ClimberIOMax implements ClimberIO {
+public class ClimberIOMax implements ClimberIO {
   private final SparkMax[] motors;
-  private final AbsoluteEncoder encoder;
+  private RelativeEncoder encoder;
   private SparkBaseConfig config;
+  private DigitalInput limitSwitch;
   private boolean[] inverted;
 
   public ClimberIOMax(int[] id, boolean[] inverted, int currentLimitAmps, boolean brake) {
     this.inverted = inverted;
+    this.limitSwitch = new DigitalInput(ClimberConstants.DIOPort);
     motors = new SparkMax[id.length];
     config =
         new SparkMaxConfig()
@@ -37,7 +40,7 @@ public abstract class ClimberIOMax implements ClimberIO {
             ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
     }
-    encoder = motors[0].getAbsoluteEncoder();
+    encoder = motors[0].getEncoder();
   }
 
   @Override
@@ -47,10 +50,14 @@ public abstract class ClimberIOMax implements ClimberIO {
     inputs.appliedVoltage = motors[0].getAppliedOutput() * motors[0].getBusVoltage();
     inputs.supplyCurrentAmps = motors[0].getOutputCurrent();
     inputs.tempCelsius = motors[0].getMotorTemperature();
+    inputs.limitSwitch = limitSwitch.get();
   }
 
   @Override
   public void runVolts(double volts) {
-    motors[0].setVoltage(volts);
+    if (limitSwitch.get()) {
+      motors[0].stopMotor();
+      motors[1].stopMotor();
+    } else motors[0].setVoltage(volts);
   }
 }

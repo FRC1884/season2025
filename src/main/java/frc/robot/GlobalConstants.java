@@ -13,17 +13,17 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import static edu.wpi.first.apriltag.AprilTagFieldLayout.loadField;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import static edu.wpi.first.apriltag.AprilTagFieldLayout.loadField;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import frc.robot.util.RotationalAllianceFlipUtil;
+import java.io.IOException;
+import java.nio.file.Path;
 import lombok.Getter;
 
 /**
@@ -36,7 +36,7 @@ import lombok.Getter;
  */
 public final class GlobalConstants {
   public static final RobotMode MODE = RobotMode.REAL;
-  public static final RobotType ROBOT = RobotType.DEVBOT;
+  public static final RobotType ROBOT = RobotType.COMPBOT;
   public static final double ODOMETRY_FREQUENCY = 100.0;
 
   public static boolean TUNING_MODE = true;
@@ -111,7 +111,9 @@ public final class GlobalConstants {
   public static final class AlignOffsets {
     public static final double BUMPER_TO_CENTER_OFFSET =
         Units.inchesToMeters(ROBOT == RobotType.DEVBOT ? -(26.0 / 2 + 3) : -(28.0 / 2 + 3));
-    public static final double REEF_TO_BRANCH_OFFSET = Units.inchesToMeters(13.0 / 2);
+
+    public static final double REEF_TO_BUMPER_OFFSET = -32.0 / 100;
+    public static final double REEF_TO_BRANCH_OFFSET = Units.inchesToMeters(15.0 / 2);
   }
 
   /** PID + FF gains, with overloaded constructors for disabling each term. */

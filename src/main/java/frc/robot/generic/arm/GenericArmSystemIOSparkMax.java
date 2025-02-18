@@ -1,7 +1,5 @@
 package frc.robot.generic.arm;
 
-import static frc.robot.GlobalConstants.TUNING_MODE;
-
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -21,7 +19,7 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
   private SparkBaseConfig config;
   private SparkClosedLoopController controller;
   private double goal;
-  private DoubleSupplier kp;
+  private DoubleSupplier kp, ki, kd;
   private boolean[] inverted;
   private double forwardLimit;
   private double reverseLimit;
@@ -33,8 +31,13 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
       boolean brake,
       double forwardLimit,
       double reverseLimit,
-      DoubleSupplier kP) {
+      DoubleSupplier kP,
+      DoubleSupplier kI,
+      DoubleSupplier kD,
+      boolean absInverted) {
     this.kp = kP;
+    this.ki = kI;
+    this.kd = kD;
     this.inverted = inverted;
     this.reverseLimit = reverseLimit;
     this.forwardLimit = forwardLimit;
@@ -43,7 +46,7 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
         new SparkFlexConfig()
             .smartCurrentLimit(currentLimitAmps)
             .idleMode(brake ? SparkBaseConfig.IdleMode.kBrake : SparkBaseConfig.IdleMode.kCoast);
-    config.absoluteEncoder.inverted(true);
+    config.absoluteEncoder.inverted(absInverted);
     config.closedLoop.pid(kP.getAsDouble(), 0, 0).feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
     config.softLimit.forwardSoftLimit(forwardLimit).reverseSoftLimit(reverseLimit);
 
@@ -81,13 +84,13 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
 
   @Override
   public void runToDegree(double angle) {
-    if (TUNING_MODE) {
-      config.closedLoop.pid(kp.getAsDouble(), 0, 0);
-      motors[0].configure(
-          config.inverted(inverted[0]),
-          ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
-    }
+    // if (TUNING_MODE) {
+    //   config.closedLoop.pid(kp.getAsDouble(), ki.getAsDouble(), kd.getAsDouble());
+    //   motors[0].configure(
+    //       config.inverted(inverted[0]),
+    //       ResetMode.kNoResetSafeParameters,
+    //       PersistMode.kNoPersistParameters);
+    // }
     controller.setReference(angle, ControlType.kPosition);
     goal = angle;
   }
