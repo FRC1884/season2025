@@ -17,6 +17,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Right Side Intake - 2L"
@@ -29,6 +35,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Right Side Intake - 2R"
@@ -38,6 +50,12 @@
           "type": "path",
           "data": {
             "pathName": "Right Side 2R - Intake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
           }
         },
         {
