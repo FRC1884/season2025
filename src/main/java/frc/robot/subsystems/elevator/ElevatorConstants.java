@@ -7,7 +7,7 @@ public final class ElevatorConstants {
   public static final boolean LEFT_INVERTED = true;
   public static final int RIGHT_ELEVATOR = 32; // TODO: Change to correct Motor ID's
   public static final boolean RIGHT_INVERTED = true;
-  public static final int DIOPort = 1;
+  public static final int DIOPort = 0;
 
   public static final boolean isFlex = true; // if the motors on the Elevator are flex motors
 

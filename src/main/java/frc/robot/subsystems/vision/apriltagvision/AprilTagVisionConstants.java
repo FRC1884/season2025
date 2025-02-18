@@ -1,6 +1,6 @@
 package frc.robot.subsystems.vision.apriltagvision;
 
-import static edu.wpi.first.math.util.Units.degreesToRadians;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
@@ -9,45 +9,77 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import static edu.wpi.first.math.util.Units.degreesToRadians;
+import static frc.robot.GlobalConstants.ROBOT;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.util.LoggedTunableNumber;
-import java.util.function.DoubleSupplier;
 
 // TODO tune all of these!! Make sure that the robot-relative coords are correct - this will cause
 // rapid pose oscillation
 public final class AprilTagVisionConstants {
   public static final boolean LEFT_CAM_ENABLED = true;
   public static final VisionIO.CameraConstants LEFT_CAM_CONSTANTS =
-      new VisionIO.CameraConstants(
-          "lefttagcam",
-          new Transform3d(
-              0.3006,
-              0.3056,
-              0.2375,
-              new Rotation3d(0, degreesToRadians(-5), degreesToRadians(-20))), // 30 degree
-          VisionIO.CameraType.OV9281);
+  switch (ROBOT) {
+    case DEVBOT -> new VisionIO.CameraConstants(
+        "lefttagcam",
+        new Transform3d(
+            0.2752,
+            0.2852,
+            0.2375,
+            new Rotation3d(0, degreesToRadians(20), degreesToRadians(0))),
+        VisionIO.CameraType.OV9281);
+    case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
+        "lefttagcam",
+        new Transform3d(
+            0.3006,
+            0.3056,
+            0.245,
+            new Rotation3d(0, degreesToRadians(5), degreesToRadians(-20))),
+        VisionIO.CameraType.OV9281);
+  };
 
   public static final boolean RIGHT_CAM_ENABLED = true;
   public static final VisionIO.CameraConstants RIGHT_CAM_CONSTANTS =
-      new VisionIO.CameraConstants(
-          "righttagcam",
-          new Transform3d(
-              0.3006,
-              -0.3056,
-              0.2375,
-              new Rotation3d(0, degreesToRadians(-5), degreesToRadians(20))), // -30 degree
-          VisionIO.CameraType.OV9281);
+  switch (ROBOT) {
+    case DEVBOT -> new VisionIO.CameraConstants(
+        "righttagcam",
+        new Transform3d(
+            0.2752,
+            -0.2852,
+            0.2375,
+            new Rotation3d(0, degreesToRadians(20), degreesToRadians(0))),
+        VisionIO.CameraType.OV9281);
+    case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
+        "righttagcam",
+        new Transform3d(
+            0.3006,
+            -0.3056,
+            0.245,
+            new Rotation3d(0, degreesToRadians(5), degreesToRadians(20))),
+        VisionIO.CameraType.OV9281);
+  };
 
   public static final boolean BACK_CAM_ENABLED = true;
-  public static final VisionIO.CameraConstants BACK_CAM_CONSTANTS =
-      new VisionIO.CameraConstants(
-          "backtagcam",
-          new Transform3d(
-              -0.3006,
-              0.3056,
-              0.245,
-              new Rotation3d(0, degreesToRadians(-20), degreesToRadians(180))),
-          VisionIO.CameraType.OV9281);
+  public static final VisionIO.CameraConstants BACK_CAM_CONSTANTS = 
+  switch (ROBOT) {
+    case DEVBOT -> new VisionIO.CameraConstants(
+        "backtagcam",
+        new Transform3d(
+            -0.2927,
+            0.3127,
+            0.275,
+            new Rotation3d(0, degreesToRadians(-14), degreesToRadians(205))),
+        VisionIO.CameraType.OV9281);
+    case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
+        "backtagcam",
+        new Transform3d(
+            -0.3006,
+            0.3056,
+            0.245,
+            new Rotation3d(0, degreesToRadians(-20), degreesToRadians(180))),
+        VisionIO.CameraType.OV9281);
+  };
+      
 
   public static final DoubleSupplier TRANSLATION_EULER_MULTIPLIER =
       new LoggedTunableNumber("AprilTagVision/EulerMultipliers/Translation", 0.02);
