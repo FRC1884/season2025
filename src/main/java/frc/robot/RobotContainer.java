@@ -280,7 +280,9 @@ public class RobotContainer {
         .onTrue(superstructure.setSuperStateCmd(LEVEL_THREE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.LevelFour().onTrue(superstructure.lFScore());
+    operator.LevelFour()
+        .onTrue(superstructure.lFScore())
+        .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator.StopIntake()
         .onTrue(superstructure.setSuperStateCmd(STOP_INTAKE))

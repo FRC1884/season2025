@@ -57,6 +57,9 @@ public class DriveCommands {
   private static final DoubleSupplier kp1 = new LoggedTunableNumber("swervealign/kp1", 0.7);
   private static final DoubleSupplier kp2 = new LoggedTunableNumber("swervealign/kp2", 0.7);
   private static final DoubleSupplier kp3 = new LoggedTunableNumber("swervealign/kp3", 0.08);
+  private static final DoubleSupplier kd1 = new LoggedTunableNumber("swervealign/kd1", 0.0);
+  private static final DoubleSupplier kd2 = new LoggedTunableNumber("swervealign/kd2", 0.0);
+  private static final DoubleSupplier kd3 = new LoggedTunableNumber("swervealign/kd3", 0.0);
   // characterization
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
@@ -181,14 +184,14 @@ public class DriveCommands {
     // TrapezoidProfile.Constraints OMEGA_CONSTRAINTS =   new TrapezoidProfile.Constraints(1, 1.5);
 
     ProfiledPIDController xController =
-        new ProfiledPIDController(kp1.getAsDouble(), 0, 0, X_CONSTRAINTS);
+        new ProfiledPIDController(kp1.getAsDouble(), 0, kd1.getAsDouble(), X_CONSTRAINTS);
     ProfiledPIDController yController =
-        new ProfiledPIDController(kp2.getAsDouble(), 0, 0, Y_CONSTRAINTS);
-    PIDController omegaPID = new PIDController(kp3.getAsDouble(), 0, 0);
+        new ProfiledPIDController(kp2.getAsDouble(), 0, kd2.getAsDouble(), Y_CONSTRAINTS);
+    PIDController omegaPID = new PIDController(kp3.getAsDouble(), 0, kd3.getAsDouble());
 
     xController.setTolerance(0.03);
-    yController.setTolerance(0.03);
-    omegaPID.setTolerance(0.5);
+    yController.setTolerance(0.02);
+    omegaPID.setTolerance(0.2);
     omegaPID.enableContinuousInput(-180, 180);
 
     return new DeferredCommand(

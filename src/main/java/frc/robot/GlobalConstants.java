@@ -112,8 +112,8 @@ public final class GlobalConstants {
     public static final double BUMPER_TO_CENTER_OFFSET =
         Units.inchesToMeters(ROBOT == RobotType.DEVBOT ? -(26.0 / 2 + 3) : -(28.0 / 2 + 3));
 
-    public static final double REEF_TO_BUMPER_OFFSET = -32.0 / 100;
-    public static final double REEF_TO_BRANCH_OFFSET = Units.inchesToMeters(15.0 / 2);
+    public static final double REEF_TO_BUMPER_OFFSET = -31.0 / 100;
+    public static final double REEF_TO_BRANCH_OFFSET = Units.inchesToMeters(13.0 / 2);
   }
 
   /** PID + FF gains, with overloaded constructors for disabling each term. */
