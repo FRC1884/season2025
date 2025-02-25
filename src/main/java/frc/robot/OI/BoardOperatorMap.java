@@ -35,12 +35,12 @@ public class BoardOperatorMap extends CommandGenericHID implements OperatorMap {
 
   @Override
   public Trigger Intake() {
-    return button(3);
+    return button(2);
   }
 
   @Override
   public Trigger Outake() {
-    return button(2);
+    return button(3);
   }
 
   @Override

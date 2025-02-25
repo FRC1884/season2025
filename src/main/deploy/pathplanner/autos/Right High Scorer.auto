@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side Preload 3L.0"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Right Side 3L - Intake"
+            "pathName": "Right Side Preload 3R"
           }
         },
         {
@@ -23,21 +17,27 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Right Side Intake - 2L"
+            "name": "Right Align 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Score"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Right Side 2L - Intake"
+            "pathName": "Right Side 3R - Intake"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.5
+            "name": "Source Align"
           }
         },
         {
@@ -47,21 +47,34 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Right Side 2R - Intake"
-          }
-        },
-        {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.0
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Right Side Intake - 3R"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4 Elevator"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Right Align 2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Score"
           }
         }
       ]

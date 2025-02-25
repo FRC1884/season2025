@@ -12,7 +12,7 @@ public interface VisionIO {
    */
   enum CameraType {
     OV2311(7.5),
-    OV9281(2.5),
+    OV9281(4.5),
     LIMELIGHT(5.0),
     LIMELIGHT_3G(12.0),
     A1920(8.0),

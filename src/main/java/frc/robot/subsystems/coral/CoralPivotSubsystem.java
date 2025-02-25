@@ -14,7 +14,7 @@ public class CoralPivotSubsystem extends GenericPositionArmSystem<CoralPivotSubs
   @Getter
   public enum PivotGoal implements GenericPositionArmSystem.PivotGoal {
     IDLING(() -> 0.48),
-    SOURCE(() -> 0.33),
+    SOURCE(() -> 0.35),
     LEVEL_ONE(() -> 0.24),
     LEVEL_TWO(() -> 0.195),
     LEVEL_THREE(() -> 0.205),

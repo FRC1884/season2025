@@ -29,6 +29,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorGoal;
 import frc.robot.subsystems.leds.LEDIOPWM;
 import frc.robot.subsystems.leds.LEDIOSim;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -57,7 +58,7 @@ public class Superstructure extends SubsystemBase {
           leds.ledCommand(
               DriverStation::isEnabled,
               DriverStation::isFMSAttached,
-              () -> (DriverStation.getMatchTime() <= 30),
+              () -> true, // (DriverStation.getMatchTime() <= 30),
               () -> true,
               () -> false,
               ALGAE_INTAKE_ENABLED ? rollers.getAlgaeIntake().hasAlgae() : () -> false,
@@ -244,10 +245,16 @@ public class Superstructure extends SubsystemBase {
     return new Trigger(() -> false);
   }
 
-  public Command lFScore() {
+  public Command lFScore(BooleanSupplier elev) {
     return Commands.sequence(
         setSuperStateCmd(LEVEL_FOUR),
-        Commands.waitSeconds(1.1),
+        // Commands.waitUntil(
+        //     () ->
+        //         (elevators.getElevator().inputs.positionMeters
+        //             >=
+        // (ElevatorSubsystem.ElevatorGoal.LEVEL_FOUR.getHeightSupplier().getAsDouble()
+        //                 - 0.5))),
+        Commands.waitUntil(elev),
         setSuperStateCmd(LFOUTAKE),
         Commands.waitSeconds(0.38),
         setSuperStateCmd(LF_FLICK));

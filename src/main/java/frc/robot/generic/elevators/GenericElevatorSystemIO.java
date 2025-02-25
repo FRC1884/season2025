@@ -15,6 +15,7 @@ public interface GenericElevatorSystemIO {
     public double tempCelsius = 0.0;
     public double tempEncod = 0.0;
     public double goal = 0.0;
+    public boolean limitSwitch = false;
   }
 
   default void updateInputs(GenericElevatorSystemIOInputs inputs) {}
@@ -23,5 +24,5 @@ public interface GenericElevatorSystemIO {
   /** update first run */
   default void updatePID() {}
   /** Stop elevator system */
-  default void resetEncoder() {}
+  default void resetEncoder(boolean limitsi) {}
 }

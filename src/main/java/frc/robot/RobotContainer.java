@@ -131,7 +131,7 @@ public class RobotContainer {
                   new ModuleIO() {});
           };
 
-      AutoCommands.registerAutoCommands(superstructure);
+      AutoCommands.registerAutoCommands(superstructure, drive);
 
       // Set up auto routines
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -281,12 +281,12 @@ public class RobotContainer {
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator.LevelFour()
-        .onTrue(superstructure.lFScore())
+        .onTrue(superstructure.lFScore(operator.Outake()))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.StopIntake()
-        .onTrue(superstructure.setSuperStateCmd(STOP_INTAKE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+    // operator.StopIntake()
+    //     .onTrue(superstructure.setSuperStateCmd(STOP_INTAKE))
+    //     .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator.DeAlgaefyL2()
         .onTrue(superstructure.setSuperStateCmd(DEALGAEFY_L2))
@@ -316,7 +316,9 @@ public class RobotContainer {
         .onTrue(superstructure.setSuperStateCmd(OUTAKE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    // operator.Testing().onTrue(superstructure.setSuperStateCmd(TESTING));
+    operator.Testing()
+        .onTrue(superstructure.setSuperStateCmd(TESTING))
+        .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator.Source()
         .onTrue(superstructure.setSuperStateCmd(SOURCE))
