@@ -1,9 +1,9 @@
 package frc.robot.subsystems.vision;
 
 import static frc.robot.GlobalConstants.FieldMap.APRIL_TAG_FIELD_LAYOUT;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.MAX_AMBIGUITY_CUTOFF;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.MAX_Z_ERROR;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionHelpers.generateDynamicStdDevs;
+import static frc.robot.subsystems.vision.AprilTagVisionConstants.MAX_AMBIGUITY_CUTOFF;
+import static frc.robot.subsystems.vision.AprilTagVisionConstants.MAX_Z_ERROR;
+import static frc.robot.subsystems.vision.AprilTagVisionHelpers.generateDynamicStdDevs;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;

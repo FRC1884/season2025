@@ -1,4 +1,4 @@
-package frc.robot.subsystems.vision.gamepiecevision;
+package frc.robot.subsystems.vision;
 
 import static edu.wpi.first.math.util.Units.degreesToRadians;
 
@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.vision.VisionIO;
 
 public final class GamePieceVisionConstants {
 

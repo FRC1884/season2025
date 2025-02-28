@@ -1,6 +1,7 @@
-package frc.robot.subsystems.vision.apriltagvision;
+package frc.robot.subsystems.vision;
 
-import java.util.function.DoubleSupplier;
+import static edu.wpi.first.math.util.Units.degreesToRadians;
+import static frc.robot.GlobalConstants.ROBOT;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
@@ -9,10 +10,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import static edu.wpi.first.math.util.Units.degreesToRadians;
-import static frc.robot.GlobalConstants.ROBOT;
-import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.util.LoggedTunableNumber;
+import java.util.function.DoubleSupplier;
 
 // TODO tune all of these!! Make sure that the robot-relative coords are correct - this will cause
 // rapid pose oscillation

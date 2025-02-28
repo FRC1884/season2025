@@ -24,12 +24,12 @@ import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
 import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_LEFT;
 import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_RIGHT;
 import static frc.robot.subsystems.swerve.SwerveConstants.GYRO_TYPE;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.BACK_CAM_CONSTANTS;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.BACK_CAM_ENABLED;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.LEFT_CAM_CONSTANTS;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.LEFT_CAM_ENABLED;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.RIGHT_CAM_CONSTANTS;
-import static frc.robot.subsystems.vision.apriltagvision.AprilTagVisionConstants.RIGHT_CAM_ENABLED;
+import static frc.robot.subsystems.vision.AprilTagVisionConstants.BACK_CAM_CONSTANTS;
+import static frc.robot.subsystems.vision.AprilTagVisionConstants.BACK_CAM_ENABLED;
+import static frc.robot.subsystems.vision.AprilTagVisionConstants.LEFT_CAM_CONSTANTS;
+import static frc.robot.subsystems.vision.AprilTagVisionConstants.LEFT_CAM_ENABLED;
+import static frc.robot.subsystems.vision.AprilTagVisionConstants.RIGHT_CAM_CONSTANTS;
+import static frc.robot.subsystems.vision.AprilTagVisionConstants.RIGHT_CAM_ENABLED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;

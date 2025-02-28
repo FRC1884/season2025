@@ -1,4 +1,4 @@
-package frc.robot.subsystems.vision.apriltagvision;
+package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.numbers.N1;
