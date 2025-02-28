@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.util.RotationalAllianceFlipUtil;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -62,7 +63,7 @@ public final class GlobalConstants {
    */
   public static void main(String... args) {
     if (ROBOT == RobotType.SIMBOT) {
-      new Alert("SIM robot loaded in REAL mode, gains likely breaking!", Alert.AlertType.kWarning)
+      new Alert("SIM robot loaded in REAL mode, gains likely breaking!", AlertType.kWarning)
           .set(true);
     }
   }
@@ -112,18 +113,6 @@ public final class GlobalConstants {
 
     public static final double FIELD_WIDTH_METERS = Units.feetToMeters(26 + (5.0 / 12));
     public static final double FIELD_LENGTH_METERS = Units.feetToMeters(57 + (6.875 / 12));
-
-    public static AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
-
-    static {
-      try {
-        // Path reads from the working directory, and splices at `/src/main/deploy/`
-        APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(Path.of("tagfields/home_testing_1.json"));
-      } catch (IOException e) {
-        System.err.println("Custom tag map not found, using default layout!");
-        APRIL_TAG_FIELD_LAYOUT = loadField(AprilTagFields.kDefaultField);
-      }
-    }
   }
 
   public static final class AlignOffsets {

@@ -4,8 +4,8 @@ import static frc.robot.Config.Subsystems.*;
 import static frc.robot.GlobalConstants.MODE;
 import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
 import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_FOUR;
-import static frc.robot.subsystems.Superstructure.SuperStates.LF_OUTTAKE;
 import static frc.robot.subsystems.Superstructure.SuperStates.LF_FLICK;
+import static frc.robot.subsystems.Superstructure.SuperStates.LF_OUTTAKE;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -145,13 +145,12 @@ public class Superstructure extends SubsystemBase {
           arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.LEVEL_ONE);
       }
       case LEVEL_TWO -> {
-        if(coralMode) {
+        if (coralMode) {
           if (ELEVATOR_ENABLED)
             elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.LEVEL_TWO);
           if (CORAL_PIVOT_ENABLED)
             arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.LEVEL_TWO);
-        }
-        else {
+        } else {
 
           if (CORAL_PIVOT_ENABLED)
             arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.DEALGAEFY_L3);
@@ -160,13 +159,12 @@ public class Superstructure extends SubsystemBase {
         }
       }
       case LEVEL_THREE -> {
-        if(coralMode) {
+        if (coralMode) {
           if (ELEVATOR_ENABLED)
             elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.LEVEL_THREE);
           if (CORAL_PIVOT_ENABLED)
             arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.LEVEL_THREE);
-        }
-        else {
+        } else {
           if (CORAL_PIVOT_ENABLED)
             arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.DEALGAEFY_L3);
           if (CORAL_INTAKE_ENABLED) rollers.getCoralIntake().setGoal(CoralIntakeGoal.FORWARD);
