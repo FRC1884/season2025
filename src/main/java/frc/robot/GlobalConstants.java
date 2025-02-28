@@ -62,33 +62,51 @@ public final class GlobalConstants {
    */
   public static void main(String... args) {
     if (ROBOT == RobotType.SIMBOT) {
-      Alert alert =
-          new Alert(
-              "SIM robot loaded in REAL mode, gains likely breaking!", Alert.AlertType.kWarning);
-      alert.set(true);
+      new Alert("SIM robot loaded in REAL mode, gains likely breaking!", Alert.AlertType.kWarning)
+          .set(true);
     }
   }
 
-  // Blue origin, so we use blue side coords
+  // Blue origin, so we use blue side coords and tags
   public static final class FieldMap {
-    // TODO Change coordinates based on robot offset
+    public static AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
+    public static final boolean WELDED_FIELD = false;
+
+    static {
+      try {
+        // Path reads from the working directory, and splices at `/src/main/deploy/`
+        APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(Path.of("tagfields/home_testing_1.json"));
+      } catch (IOException e) {
+        new Alert("Custom tag map not found, using default layout!", AlertType.kWarning).set(true);
+        APRIL_TAG_FIELD_LAYOUT =
+            loadField(
+                WELDED_FIELD
+                    ? AprilTagFields.k2025ReefscapeWelded
+                    : AprilTagFields.k2025ReefscapeAndyMark);
+      }
+    }
+
+    // TODO set all alignment offsets from tags
     @Getter
     public static enum Coordinates {
-      REEF_1(new Pose2d(3.6576, 4.0259, Rotation2d.fromDegrees(0))),
-      REEF_2(new Pose2d(4.073905999999999, 3.3063179999999996, Rotation2d.fromDegrees(60))),
-      REEF_3(new Pose2d(4.904739999999999, 3.3063179999999996, Rotation2d.fromDegrees(120))),
-      REEF_4(new Pose2d(5.321046, 4.0259, Rotation2d.fromDegrees(180))),
-      REEF_5(new Pose2d(4.904739999999999, 4.745482, Rotation2d.fromDegrees(240))),
-      REEF_6(new Pose2d(4.073905999999999, 4.745482, Rotation2d.fromDegrees(300))),
-      LEFT_CORAL_STATION(
-          new Pose2d(0.851154, 7.3964799999999995, Rotation2d.fromDegrees(-54.011392 + 180))),
-      RIGHT_CORAL_STATION(new Pose2d(0.851154, 0.65532, Rotation2d.fromDegrees(54.011392 + 180))),
-      PROCESSOR(new Pose2d(5.9875419999999995, -0.0038099999999999996, Rotation2d.fromDegrees(90)));
+      REEF_1(APRIL_TAG_FIELD_LAYOUT.getTagPose(18).get().toPose2d()),
+      REEF_2(APRIL_TAG_FIELD_LAYOUT.getTagPose(17).get().toPose2d()),
+      REEF_3(APRIL_TAG_FIELD_LAYOUT.getTagPose(22).get().toPose2d()),
+      REEF_4(APRIL_TAG_FIELD_LAYOUT.getTagPose(21).get().toPose2d()),
+      REEF_5(APRIL_TAG_FIELD_LAYOUT.getTagPose(20).get().toPose2d()),
+      REEF_6(APRIL_TAG_FIELD_LAYOUT.getTagPose(19).get().toPose2d()),
+      LEFT_CORAL_STATION(APRIL_TAG_FIELD_LAYOUT.getTagPose(13).get().toPose2d()),
+      RIGHT_CORAL_STATION(APRIL_TAG_FIELD_LAYOUT.getTagPose(12).get().toPose2d()),
+      PROCESSOR(APRIL_TAG_FIELD_LAYOUT.getTagPose(16).get().toPose2d()),
+      LEFT_BARGE(APRIL_TAG_FIELD_LAYOUT.getTagPose(14).get().toPose2d()),
+      RIGHT_BARGE(APRIL_TAG_FIELD_LAYOUT.getTagPose(15).get().toPose2d());
 
       private final Pose2d pose;
 
       Coordinates(Pose2d pose) {
-        this.pose = RotationalAllianceFlipUtil.apply(pose);
+        this.pose =
+            RotationalAllianceFlipUtil.apply(
+                pose.rotateAround(pose.getTranslation(), Rotation2d.k180deg));
       }
     }
 
