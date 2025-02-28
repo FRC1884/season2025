@@ -268,62 +268,63 @@ public class RobotContainer {
 
   private void configureOperatorButtonBindings() {
 
-    operator.LevelOne()
+    operator
+        .levelOne()
         .onTrue(superstructure.setSuperStateCmd(LEVEL_ONE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.LevelTwo()
+    operator
+        .levelTwo()
         .onTrue(superstructure.setSuperStateCmd(LEVEL_TWO))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.LevelThree()
+    operator
+        .levelThree()
         .onTrue(superstructure.setSuperStateCmd(LEVEL_THREE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.LevelFour()
+    operator
+        .levelFour()
         .onTrue(superstructure.lFScore())
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.StopIntake()
+    operator
+        .stopIntake()
         .onTrue(superstructure.setSuperStateCmd(STOP_INTAKE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.DeAlgaefyL2()
-        .onTrue(superstructure.setSuperStateCmd(DEALGAEFY_L2))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator.DeAlgaefyL3()
-        .onTrue(superstructure.setSuperStateCmd(DEALGAEFY_L3))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator.ClimberUp()
+    operator
+        .climberUp()
         .onTrue(superstructure.setSuperStateCmd(CLIMBER_UP))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.ClimberDown()
+    operator
+        .climberDown()
         .onTrue(superstructure.setSuperStateCmd(CLIMBER_DOWN))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    new Trigger(
-            () -> !operator.ClimberDown().getAsBoolean() && !operator.ClimberUp().getAsBoolean())
+    operator
+        .climberDown().negate().and(operator.climberUp().negate())
         .onTrue(superstructure.setSuperStateCmd(IDLING));
 
-    operator.Intake()
+    operator
+        .intake()
         .onTrue(superstructure.setSuperStateCmd(INTAKE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.Outake()
-        .onTrue(superstructure.setSuperStateCmd(OUTAKE))
+    operator
+        .outtake()
+        .onTrue(superstructure.setSuperStateCmd(OUTTAKE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     // operator.Testing().onTrue(superstructure.setSuperStateCmd(TESTING));
 
-    operator.Source()
+    operator
+        .source()
         .onTrue(superstructure.setSuperStateCmd(SOURCE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
-    operator.ModeSwitch()
-        .onTrue(superstructure.switchCoralMode())
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+
+    operator.modeSwitch().onTrue(superstructure.switchMode());
   }
 
   /**

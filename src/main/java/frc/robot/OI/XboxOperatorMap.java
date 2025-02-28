@@ -25,103 +25,103 @@ public class XboxOperatorMap extends CommandXboxController implements OperatorMa
   }
 
   @Override
-  public Trigger Idle() {
+  public Trigger idle() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'Idle'");
   }
 
   @Override
-  public Trigger LevelOne() {
+  public Trigger levelOne() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'LevelOne'");
   }
 
   @Override
-  public Trigger LevelTwo() {
+  public Trigger levelTwo() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'LevelTwo'");
   }
 
   @Override
-  public Trigger LevelThree() {
+  public Trigger levelThree() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'LevelThree'");
   }
 
   @Override
-  public Trigger LevelFour() {
+  public Trigger levelFour() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'LevelFour'");
   }
 
   @Override
-  public Trigger Intake() {
+  public Trigger intake() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'Intake'");
   }
 
   @Override
-  public Trigger Outake() {
+  public Trigger outtake() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'Outake'");
   }
 
   @Override
-  public Trigger Testing() {
+  public Trigger testing() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'Testing'");
   }
 
   @Override
-  public Trigger WantsCoral() {
+  public Trigger wantsCoral() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'WantsCoral'");
   }
 
   @Override
-  public Trigger WantsAlgae() {
+  public Trigger wantsAlgae() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'WantsAlgae'");
   }
 
   @Override
-  public Trigger Source() {
+  public Trigger source() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'Source'");
   }
 
   @Override
-  public Trigger ModeSwitch() {
+  public Trigger modeSwitch() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'ModeSwitch'");
   }
 
   @Override
-  public Trigger StopIntake() {
+  public Trigger stopIntake() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'StopIntake'");
   }
 
   @Override
-  public Trigger DeAlgaefyL2() {
+  public Trigger deAlgaefyL2() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'DeAlgaefyL2'");
   }
 
   @Override
-  public Trigger DeAlgaefyL3() {
+  public Trigger deAlgaefyL3() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'DeAlgaefyL3'");
   }
 
   @Override
-  public Trigger ClimberUp() {
+  public Trigger climberUp() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'ClimberUp'");
   }
 
   @Override
-  public Trigger ClimberDown() {
+  public Trigger climberDown() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'ClimberDown'");
   }

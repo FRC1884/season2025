@@ -9,86 +9,86 @@ public class BoardOperatorMap extends CommandGenericHID implements OperatorMap {
   }
 
   @Override
-  public Trigger Idle() {
+  public Trigger idle() {
     return button(4);
   }
 
   @Override
-  public Trigger LevelOne() {
+  public Trigger levelOne() {
     return button(7);
   }
 
   @Override
-  public Trigger LevelTwo() {
+  public Trigger levelTwo() {
     return button(9);
   }
 
   @Override
-  public Trigger LevelThree() {
+  public Trigger levelThree() {
     return button(10);
   }
 
   @Override
-  public Trigger LevelFour() {
+  public Trigger levelFour() {
     return button(11);
   }
 
   @Override
-  public Trigger Intake() {
+  public Trigger intake() {
     return button(3);
   }
 
   @Override
-  public Trigger Outake() {
+  public Trigger outtake() {
     return button(2);
   }
 
   @Override
-  public Trigger Testing() {
+  public Trigger testing() {
     return button(6);
   }
 
   @Override
-  public Trigger WantsCoral() {
+  public Trigger wantsCoral() {
     return button(8);
   }
 
   @Override
-  public Trigger WantsAlgae() {
+  public Trigger wantsAlgae() {
     return button(12);
   }
 
   @Override
-  public Trigger Source() {
+  public Trigger source() {
     return button(5);
   }
 
   @Override
-  public Trigger ModeSwitch() {
+  public Trigger modeSwitch() {
     return button(1);
   }
 
   @Override
-  public Trigger StopIntake() {
+  public Trigger stopIntake() {
     return button(6);
   }
 
   @Override
-  public Trigger DeAlgaefyL3() {
+  public Trigger deAlgaefyL3() {
     return button(8);
   }
 
-  public Trigger DeAlgaefyL2() {
+  public Trigger deAlgaefyL2() {
     return button(12);
   }
 
   @Override
-  public Trigger ClimberUp() {
+  public Trigger climberUp() {
     return axisGreaterThan(0, 0.5);
   }
 
   @Override
-  public Trigger ClimberDown() {
+  public Trigger climberDown() {
     return axisLessThan(0, -0.5);
   }
 }

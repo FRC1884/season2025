@@ -10,37 +10,37 @@ public interface OperatorMap {
     return none();
   }
 
-  Trigger Idle();
+  Trigger idle();
 
-  Trigger LevelOne();
+  Trigger levelOne();
 
-  Trigger LevelTwo();
+  Trigger levelTwo();
 
-  Trigger LevelThree();
+  Trigger levelThree();
 
-  Trigger LevelFour();
+  Trigger levelFour();
 
-  Trigger Intake();
+  Trigger intake();
 
-  Trigger Outake();
+  Trigger outtake();
 
-  Trigger WantsCoral();
+  Trigger wantsCoral();
 
-  Trigger WantsAlgae();
+  Trigger wantsAlgae();
 
-  Trigger Testing();
+  Trigger testing();
 
-  Trigger Source();
+  Trigger source();
 
-  Trigger StopIntake();
+  Trigger stopIntake();
 
-  Trigger DeAlgaefyL2();
+  Trigger deAlgaefyL2();
 
-  Trigger DeAlgaefyL3();
+  Trigger deAlgaefyL3();
 
-  Trigger ModeSwitch();
+  Trigger modeSwitch();
 
-  Trigger ClimberUp();
+  Trigger climberUp();
 
-  Trigger ClimberDown();
+  Trigger climberDown();
 }
