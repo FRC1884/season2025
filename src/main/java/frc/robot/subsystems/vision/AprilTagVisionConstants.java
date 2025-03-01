@@ -22,10 +22,10 @@ public final class AprilTagVisionConstants {
         case DEVBOT -> new VisionIO.CameraConstants(
             "lefttagcam",
             new Transform3d(
-                0.2752,
-                0.2852,
-                0.2375,
-                new Rotation3d(0, degreesToRadians(-20), degreesToRadians(-20))),
+                0.2498,
+                0.2598,
+                0.245,
+                new Rotation3d(0, degreesToRadians(-5), degreesToRadians(-20))),
             VisionIO.CameraType.OV9281);
         case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(
             "lefttagcam",

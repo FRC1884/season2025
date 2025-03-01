@@ -10,8 +10,6 @@ public interface OperatorMap {
     return none();
   }
 
-  Trigger idle();
-
   Trigger levelOne();
 
   Trigger levelTwo();
@@ -23,20 +21,6 @@ public interface OperatorMap {
   Trigger intake();
 
   Trigger outtake();
-
-  Trigger wantsCoral();
-
-  Trigger wantsAlgae();
-
-  Trigger testing();
-
-  Trigger source();
-
-  Trigger stopIntake();
-
-  Trigger deAlgaefyL2();
-
-  Trigger deAlgaefyL3();
 
   Trigger modeSwitch();
 

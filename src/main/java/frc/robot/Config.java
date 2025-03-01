@@ -16,12 +16,12 @@ public final class Config {
     public static final boolean VISION_ENABLED = true;
     public static final boolean GAME_PIECE_VISION_ENABLED = false;
     public static final boolean ALGAE_INTAKE_ENABLED = false;
-    public static final boolean CORAL_INTAKE_ENABLED = true;
-    public static final boolean CORAL_PIVOT_ENABLED = true;
+    public static final boolean CORAL_INTAKE_ENABLED = false;
+    public static final boolean CORAL_PIVOT_ENABLED = false;
     public static final boolean ALGAE_PIVOT_ENABLED = false;
-    public static final boolean CLIMBER_ENABLED = true;
-    public static final boolean LEDS_ENABLED = true;
-    public static final boolean ELEVATOR_ENABLED = true;
+    public static final boolean CLIMBER_ENABLED = false;
+    public static final boolean LEDS_ENABLED = false;
+    public static final boolean ELEVATOR_ENABLED = false;
   }
 
   public static final class Controllers {
@@ -29,7 +29,7 @@ public final class Config {
 
     public static final int OPERATOR_PORT = 1;
     public static final boolean JOYSTICK_OPERATOR_ENABLED = false;
-    public static final boolean BOARD_OPERATOR_ENABLED = !JOYSTICK_OPERATOR_ENABLED;
+    public static final boolean BOARD_OPERATOR_ENABLED = false && !JOYSTICK_OPERATOR_ENABLED;
 
     public static DriverMap getDriverController() {
       return switch (ROBOT) {

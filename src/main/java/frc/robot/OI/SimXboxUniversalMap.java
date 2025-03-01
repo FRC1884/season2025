@@ -81,12 +81,6 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
   }
 
   @Override
-  public Trigger idle() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'Idle'");
-  }
-
-  @Override
   public Trigger levelOne() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'LevelOne'");
@@ -123,51 +117,9 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
   }
 
   @Override
-  public Trigger testing() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'Testing'");
-  }
-
-  @Override
-  public Trigger wantsCoral() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'WantsCoral'");
-  }
-
-  @Override
-  public Trigger wantsAlgae() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'WantsAlgae'");
-  }
-
-  @Override
-  public Trigger source() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'Source'");
-  }
-
-  @Override
   public Trigger modeSwitch() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'ModeSwitch'");
-  }
-
-  @Override
-  public Trigger stopIntake() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'StopIntake'");
-  }
-
-  @Override
-  public Trigger deAlgaefyL2() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'DeAlgaefyL2'");
-  }
-
-  @Override
-  public Trigger deAlgaefyL3() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'DeAlgaefyL3'");
   }
 
   @Override

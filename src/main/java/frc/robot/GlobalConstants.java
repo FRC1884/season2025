@@ -37,7 +37,7 @@ import lombok.Getter;
  */
 public final class GlobalConstants {
   public static final RobotMode MODE = RobotMode.REAL;
-  public static final RobotType ROBOT = RobotType.COMPBOT;
+  public static final RobotType ROBOT = RobotType.DEVBOT;
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
   public static boolean TUNING_MODE = true;

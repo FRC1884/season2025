@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import frc.robot.GlobalConstants.Gains;
+import frc.robot.GlobalConstants.RobotType;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
@@ -60,52 +61,52 @@ public final class SwerveConstants {
     }
   }
 
-  // Device CAN IDs
   static final int PIGEON_ID =
-          switch (ROBOT) {
-            case DEVBOT -> 30;
-            case COMPBOT, SIMBOT -> 60;
-          };;
+      switch (ROBOT) {
+        case DEVBOT -> 60;
+        case COMPBOT, SIMBOT -> 60;
+      };
+  ;
   private static final int FRD_ID =
-          switch (ROBOT) {
-              case DEVBOT -> 42;
-              case COMPBOT, SIMBOT -> 11;
-          };
+      switch (ROBOT) {
+        case DEVBOT -> 31;
+        case COMPBOT, SIMBOT -> 11;
+      };
   private static final int FRR_ID =
-          switch (ROBOT) {
-            case DEVBOT -> 13;
-            case COMPBOT, SIMBOT -> 21;
-          };
+      switch (ROBOT) {
+        case DEVBOT -> 13;
+        case COMPBOT, SIMBOT -> 21;
+      };
   private static final int FLD_ID =
-          switch (ROBOT) {
-            case DEVBOT -> 32;
-            case COMPBOT, SIMBOT -> 12;
-          };;
+      switch (ROBOT) {
+        case DEVBOT -> 32;
+        case COMPBOT, SIMBOT -> 12;
+      };
   private static final int FLR_ID =
-          switch (ROBOT) {
-            case DEVBOT -> 11;
-            case COMPBOT, SIMBOT -> 22;
-          };;
+      switch (ROBOT) {
+        case DEVBOT -> 11;
+        case COMPBOT, SIMBOT -> 22;
+      };
   private static final int BRD_ID =
-          switch (ROBOT) {
-            case DEVBOT -> 33;
-            case COMPBOT, SIMBOT -> 14;
-          };;
+      switch (ROBOT) {
+        case DEVBOT -> 33;
+        case COMPBOT, SIMBOT -> 14;
+      };
   private static final int BRR_ID =
-          switch (ROBOT) {
-            case DEVBOT -> 14;
-            case COMPBOT, SIMBOT -> 24;
-          };;
+      switch (ROBOT) {
+        case DEVBOT -> 14;
+        case COMPBOT, SIMBOT -> 24;
+      };
   private static final int BLD_ID =
-          switch (ROBOT) {
-            case DEVBOT -> 34;
-            case COMPBOT, SIMBOT -> 13;
-          };;
+      switch (ROBOT) {
+        case DEVBOT -> 34;
+        case COMPBOT, SIMBOT -> 13;
+      };
   private static final int BLR_ID =
-          switch (ROBOT) {
-            case DEVBOT -> 12;
-            case COMPBOT, SIMBOT -> 23;
-          };;
+      switch (ROBOT) {
+        case DEVBOT -> 12;
+        case COMPBOT, SIMBOT -> 23;
+      };
 
   // Zeroed rotation values for each module, see setup instructions
   private static final Rotation2d FLR_ZERO = Rotation2d.fromRadians(-PI / 2);
@@ -141,7 +142,7 @@ public final class SwerveConstants {
 
   public static final double DRIVE_GEAR_RATIO = 5.08;
 
-  static final boolean DRIVE_INVERTED = false;
+  static final boolean DRIVE_INVERTED = ROBOT == RobotType.DEVBOT;
 
   /** Amps */
   static final int DRIVE_MOTOR_CURRENT_LIMIT = 40;

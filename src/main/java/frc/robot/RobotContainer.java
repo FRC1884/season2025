@@ -18,7 +18,14 @@ import static frc.robot.Config.Controllers.getOperatorController;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.Config.Subsystems.VISION_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
-import static frc.robot.subsystems.Superstructure.SuperStates.*;
+import static frc.robot.subsystems.Superstructure.SuperStates.CLIMBER_DOWN;
+import static frc.robot.subsystems.Superstructure.SuperStates.CLIMBER_UP;
+import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
+import static frc.robot.subsystems.Superstructure.SuperStates.INTAKE;
+import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_ONE;
+import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_THREE;
+import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_TWO;
+import static frc.robot.subsystems.Superstructure.SuperStates.OUTTAKE;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_LEFT;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
 import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_LEFT;
@@ -284,12 +291,7 @@ public class RobotContainer {
 
     operator
         .levelFour()
-        .onTrue(superstructure.lFScore())
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .stopIntake()
-        .onTrue(superstructure.setSuperStateCmd(STOP_INTAKE))
+        .onTrue(superstructure.lFScore(() -> true))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator
@@ -316,15 +318,6 @@ public class RobotContainer {
     operator
         .outtake()
         .onTrue(superstructure.setSuperStateCmd(OUTTAKE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator.Testing()
-        .onTrue(superstructure.setSuperStateCmd(TESTING))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .source()
-        .onTrue(superstructure.setSuperStateCmd(SOURCE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator.modeSwitch().onTrue(superstructure.switchMode());
