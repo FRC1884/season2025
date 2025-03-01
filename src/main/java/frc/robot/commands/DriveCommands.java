@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.GlobalConstants;
 import frc.robot.subsystems.swerve.SwerveConstants;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
-import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.RotationalAllianceFlipUtil;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -54,12 +53,6 @@ public class DriveCommands {
   private static final double DEADBAND = 0.1;
   private static final double ANGLE_MAX_VELOCITY = 8.0;
   private static final double ANGLE_MAX_ACCELERATION = 20.0;
-  private static final DoubleSupplier kp1 = new LoggedTunableNumber("swervealign/kp1", 0.7);
-  private static final DoubleSupplier kp2 = new LoggedTunableNumber("swervealign/kp2", 0.7);
-  private static final DoubleSupplier kp3 = new LoggedTunableNumber("swervealign/kp3", 0.08);
-  private static final DoubleSupplier kd1 = new LoggedTunableNumber("swervealign/kd1", 0.0);
-  private static final DoubleSupplier kd2 = new LoggedTunableNumber("swervealign/kd2", 0.0);
-  private static final DoubleSupplier kd3 = new LoggedTunableNumber("swervealign/kd3", 0.0);
   // characterization
   private static final double FF_START_DELAY = 2.0; // Secs
   private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
@@ -183,15 +176,13 @@ public class DriveCommands {
     TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(10, 10);
     // TrapezoidProfile.Constraints OMEGA_CONSTRAINTS =   new TrapezoidProfile.Constraints(1, 1.5);
 
-    ProfiledPIDController xController =
-        new ProfiledPIDController(kp1.getAsDouble(), 0, kd1.getAsDouble(), X_CONSTRAINTS);
-    ProfiledPIDController yController =
-        new ProfiledPIDController(kp2.getAsDouble(), 0, kd2.getAsDouble(), Y_CONSTRAINTS);
-    PIDController omegaPID = new PIDController(kp3.getAsDouble(), 0, kd3.getAsDouble());
+    ProfiledPIDController xController = new ProfiledPIDController(2, 0, 0.0, X_CONSTRAINTS);
+    ProfiledPIDController yController = new ProfiledPIDController(1.5, 0, 0.0, Y_CONSTRAINTS);
+    PIDController omegaPID = new PIDController(0.03, 0, 0.0);
 
-    xController.setTolerance(0.03);
-    yController.setTolerance(0.02);
-    omegaPID.setTolerance(0.2);
+    xController.setTolerance(0.01);
+    yController.setTolerance(0.01);
+    omegaPID.setTolerance(0.05);
     omegaPID.enableContinuousInput(-180, 180);
 
     return new DeferredCommand(
@@ -230,13 +221,13 @@ public class DriveCommands {
     TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(10, 10);
     // TrapezoidProfile.Constraints OMEGA_CONSTRAINTS =   new TrapezoidProfile.Constraints(1, 1.5);
 
-    ProfiledPIDController xController = new ProfiledPIDController(1, 0, 0, X_CONSTRAINTS);
-    ProfiledPIDController yController = new ProfiledPIDController(1, 0, 0, Y_CONSTRAINTS);
-    PIDController omegaPID = new PIDController(0.03, 0, 0);
+    ProfiledPIDController xController = new ProfiledPIDController(0.5, 0, 0.0, X_CONSTRAINTS);
+    ProfiledPIDController yController = new ProfiledPIDController(0.5, 0, 0.0, Y_CONSTRAINTS);
+    PIDController omegaPID = new PIDController(0.03, 0, 0.0);
 
     xController.setTolerance(0.05);
     yController.setTolerance(0.03);
-    omegaPID.setTolerance(0.5);
+    omegaPID.setTolerance(0.2);
     omegaPID.enableContinuousInput(-180, 180);
 
     return new DeferredCommand(
@@ -311,24 +302,24 @@ public class DriveCommands {
 
   /** code for reef alignment */
   public static Command leftAlignToReefCommand(SwerveSubsystem drive) {
-    return alignToReefCommand(drive, () -> true, () -> false);
+    return alignToReefCommand(drive, () -> true, () -> 0);
   }
 
   public static Command rightAlignToReefCommand(SwerveSubsystem drive) {
-    return alignToReefCommand(drive, () -> false, () -> false);
+    return alignToReefCommand(drive, () -> false, () -> 0);
   }
 
   /** helper methods for alignment */
 
   // align to target face
   public static Command alignToReefCommand(
-      SwerveSubsystem drive, BooleanSupplier leftInput, BooleanSupplier algaeMode) {
+      SwerveSubsystem drive, BooleanSupplier leftInput, Supplier<Integer> targetReefFace) {
     return Commands.defer(
         () -> {
           // find the coordinates of the selected face
           Supplier<Pose2d> targetFace;
           targetFace =
-              switch (targetReefFace) {
+              switch (targetReefFace.get()) {
                 case 1 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_1.getPose();
                 case 2 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_2.getPose();
                 case 3 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_3.getPose();
@@ -341,11 +332,11 @@ public class DriveCommands {
           double xOffset =
               GlobalConstants.AlignOffsets.BUMPER_TO_CENTER_OFFSET
                   + GlobalConstants.AlignOffsets.REEF_TO_BUMPER_OFFSET;
+
+          BooleanSupplier leftAlign = isFieldRelativeLeftAlign(targetFace, leftInput);
           double yOffset =
-              algaeMode.getAsBoolean()
-                  ? 0
-                  : GlobalConstants.AlignOffsets.REEF_TO_BRANCH_OFFSET
-                      * (isFieldRelativeLeftAlign(targetFace, leftInput).getAsBoolean() ? 1 : -1);
+              GlobalConstants.AlignOffsets.REEF_TO_BRANCH_OFFSET
+                  * (leftAlign.getAsBoolean() ? 1 : -1);
           Rotation2d rotation = targetFace.get().getRotation();
           Translation2d branchTransform = new Translation2d(xOffset, yOffset).rotateBy(rotation);
           Supplier<Pose2d> target =
@@ -356,16 +347,26 @@ public class DriveCommands {
 
           Supplier<Transform2d> targetOffset = () -> target.get().minus(drive.getPose());
 
-          return chasePoseRobotRelativeCommand(drive, targetOffset);
+          boolean outsideApproach =
+              leftAlign.getAsBoolean()
+                  ? targetOffset.get().getMeasureY().magnitude() < 0
+                  : targetOffset.get().getMeasureY().magnitude() > 0;
+
+          // this number is the offset for approaching from the inside
+          double directionalIncrease =
+              outsideApproach ? 0 : leftAlign.getAsBoolean() ? 0.05 : -0.05;
+
+          Supplier<Transform2d> correctedTargetOffset =
+              () ->
+                  new Transform2d(
+                      new Translation2d(
+                          targetOffset.get().getMeasureX().magnitude(),
+                          targetOffset.get().getMeasureY().magnitude() + directionalIncrease),
+                      targetOffset.get().getRotation());
+
+          return chasePoseRobotRelativeCommand(drive, correctedTargetOffset);
         },
         Set.of(drive));
-  }
-
-  // store the reef face target
-  private static int targetReefFace = 0;
-
-  public static void setTargetReefFace(int targetReefFace) {
-    DriveCommands.targetReefFace = targetReefFace;
   }
 
   private static BooleanSupplier isFieldRelativeLeftAlign(

@@ -17,7 +17,7 @@ public class ClimberSubsystem {
   public enum ClimberGoal {
     IDLING(() -> 0.0), // Intake is off
     FORWARD(new LoggedTunableNumber("Climber/FOR", 4)), // Maximum forward voltage
-    REVERSE(new LoggedTunableNumber("Climber/REV", -4)); // Maximum reverse voltage
+    REVERSE(new LoggedTunableNumber("Climber/REV", -12)); // Maximum reverse voltage
     private final DoubleSupplier voltageSupplier;
   }
 

@@ -84,7 +84,7 @@ public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO 
   }
 
   @Override
-  public void resetEncoder() {
+  public void resetEncoder(boolean limitSwitch) {
     encoder.setPosition(0.0);
   }
 }

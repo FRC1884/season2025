@@ -130,7 +130,7 @@ public class RobotContainer {
                   new ModuleIO() {});
           };
 
-      AutoCommands.registerAutoCommands(superstructure);
+      AutoCommands.registerAutoCommands(superstructure, drive);
 
       // Set up auto routines
       autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -318,7 +318,9 @@ public class RobotContainer {
         .onTrue(superstructure.setSuperStateCmd(OUTTAKE))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    // operator.Testing().onTrue(superstructure.setSuperStateCmd(TESTING));
+    operator.Testing()
+        .onTrue(superstructure.setSuperStateCmd(TESTING))
+        .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator
         .source()

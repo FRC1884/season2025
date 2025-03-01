@@ -20,6 +20,7 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
   private DoubleSupplier kpUp, kiUp, kdUp, kpDown, kiDown, kdDown;
   private boolean[] inverted;
   private boolean firstRun;
+  private boolean limitSwitch = false;
 
   public GenericElevatorSystemIOSparkFlex(
       int[] id,
@@ -74,6 +75,7 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
     inputs.supplyCurrentAmps = motors[0].getOutputCurrent();
     inputs.tempCelsius = motors[0].getMotorTemperature();
     inputs.goal = goal;
+    inputs.limitSwitch = limitSwitch;
   }
 
   @Override
@@ -100,8 +102,9 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
   }
 
   @Override
-  public void resetEncoder() {
-    encoder.setPosition(0.0);
+  public void resetEncoder(boolean limitSwitch) {
+    // encoder.setPosition(0.0);
+    this.limitSwitch = limitSwitch;
   }
 
   @Override

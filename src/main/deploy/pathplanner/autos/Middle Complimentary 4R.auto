@@ -9,6 +9,18 @@
           "data": {
             "pathName": "Middle Side Preload 4R"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Right Align 4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L4 Score"
+          }
         }
       ]
     }

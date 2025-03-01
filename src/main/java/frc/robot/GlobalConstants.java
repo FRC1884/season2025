@@ -38,7 +38,7 @@ import lombok.Getter;
 public final class GlobalConstants {
   public static final RobotMode MODE = RobotMode.REAL;
   public static final RobotType ROBOT = RobotType.COMPBOT;
-  public static final double ODOMETRY_FREQUENCY = 100.0;
+  public static final double ODOMETRY_FREQUENCY = 250.0;
 
   public static boolean TUNING_MODE = true;
 
@@ -85,6 +85,7 @@ public final class GlobalConstants {
                     ? AprilTagFields.k2025ReefscapeWelded
                     : AprilTagFields.k2025ReefscapeAndyMark);
       }
+      // APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(Path.of("tagfields/home_testing_1.json"));
     }
 
     // TODO set all alignment offsets from tags
@@ -117,9 +118,9 @@ public final class GlobalConstants {
 
   public static final class AlignOffsets {
     public static final double BUMPER_TO_CENTER_OFFSET =
-        Units.inchesToMeters(ROBOT == RobotType.DEVBOT ? -(26.0 / 2 + 3) : -(28.0 / 2 + 3));
+        Units.inchesToMeters(ROBOT == RobotType.DEVBOT ? -(26.0 / 2 + 3) : -(28.0 / 2 + 3.5));
 
-    public static final double REEF_TO_BUMPER_OFFSET = -31.0 / 100;
+    public static final double REEF_TO_BUMPER_OFFSET = -27.0 / 100;
     public static final double REEF_TO_BRANCH_OFFSET = Units.inchesToMeters(13.0 / 2);
   }
 

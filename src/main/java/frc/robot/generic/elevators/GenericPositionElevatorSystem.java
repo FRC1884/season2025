@@ -17,7 +17,7 @@ public abstract class GenericPositionElevatorSystem<
 
   private final String name;
   public final GenericElevatorSystemIO io;
-  protected final GenericElevatorSystemIOInputsAutoLogged inputs =
+  public final GenericElevatorSystemIOInputsAutoLogged inputs =
       new GenericElevatorSystemIOInputsAutoLogged();
   private final Alert disconnected;
   protected final Timer stateTimer = new Timer();
@@ -49,7 +49,7 @@ public abstract class GenericPositionElevatorSystem<
       io.updatePID();
     }
 
-    // if (limitSwitch.get()) io.resetEncoder();
+    // io.resetEncoder(limitSwitch.get());
 
     io.runPosition(getGoal().getHeight().getAsDouble());
     Logger.recordOutput("Elevators/" + name + "Goal", getGoal().toString());

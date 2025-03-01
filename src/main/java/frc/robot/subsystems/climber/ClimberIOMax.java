@@ -51,6 +51,7 @@ public class ClimberIOMax implements ClimberIO {
     inputs.supplyCurrentAmps = motors[0].getOutputCurrent();
     inputs.tempCelsius = motors[0].getMotorTemperature();
     inputs.limitSwitch = limitSwitch.get();
+    inputs.appliedVoltage2 = motors[1].getAppliedOutput() * motors[1].getBusVoltage();
   }
 
   @Override
@@ -58,6 +59,8 @@ public class ClimberIOMax implements ClimberIO {
     if (limitSwitch.get()) {
       motors[0].stopMotor();
       motors[1].stopMotor();
-    } else motors[0].setVoltage(volts);
+    } else {
+      motors[0].setVoltage(volts);
+    }
   }
 }
