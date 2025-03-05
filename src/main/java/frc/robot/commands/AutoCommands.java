@@ -1,10 +1,10 @@
 package frc.robot.commands;
 
 import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
+import static frc.robot.subsystems.Superstructure.SuperStates.INTAKE;
 import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_FOUR;
 import static frc.robot.subsystems.Superstructure.SuperStates.LF_FLICK;
 import static frc.robot.subsystems.Superstructure.SuperStates.LF_OUTTAKE;
-import static frc.robot.subsystems.Superstructure.SuperStates.SOURCE;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,7 +37,7 @@ public class AutoCommands {
     NamedCommands.registerCommand(
         "Source Align", DriveCommands.alignToNearestCoralStationCommand(drive, () -> 0));
 
-    NamedCommands.registerCommand("Source", superstructure.setSuperStateCmd(SOURCE));
+    NamedCommands.registerCommand("Source", superstructure.setSuperStateCmd(INTAKE));
 
     NamedCommands.registerCommand("Stow", superstructure.setSuperStateCmd(IDLING));
 

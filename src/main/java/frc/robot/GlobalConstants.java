@@ -13,9 +13,11 @@
 
 package frc.robot;
 
-import static edu.wpi.first.apriltag.AprilTagFieldLayout.loadField;
+import java.io.IOException;
+import java.nio.file.Path;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import static edu.wpi.first.apriltag.AprilTagFieldLayout.loadField;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,8 +25,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.util.RotationalAllianceFlipUtil;
-import java.io.IOException;
-import java.nio.file.Path;
 import lombok.Getter;
 
 /**
@@ -37,7 +37,7 @@ import lombok.Getter;
  */
 public final class GlobalConstants {
   public static final RobotMode MODE = RobotMode.REAL;
-  public static final RobotType ROBOT = RobotType.DEVBOT;
+  public static final RobotType ROBOT = RobotType.COMPBOT;
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
   public static boolean TUNING_MODE = true;
@@ -71,12 +71,17 @@ public final class GlobalConstants {
   // Blue origin, so we use blue side coords and tags
   public static final class FieldMap {
     public static AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT;
-    public static final boolean WELDED_FIELD = false;
+    public static final boolean WELDED_FIELD = true;
+    public static final boolean COMP_FIELD = true;
 
     static {
       try {
         // Path reads from the working directory, and splices at `/src/main/deploy/`
-        APRIL_TAG_FIELD_LAYOUT = new AprilTagFieldLayout(Path.of("tagfields/home_testing_1.json"));
+        APRIL_TAG_FIELD_LAYOUT = COMP_FIELD? loadField(
+          WELDED_FIELD
+              ? AprilTagFields.k2025ReefscapeWelded
+              : AprilTagFields.k2025ReefscapeAndyMark)
+              : new AprilTagFieldLayout(Path.of("tagfields/home_testing_1.json"));
       } catch (IOException e) {
         new Alert("Custom tag map not found, using default layout!", AlertType.kWarning).set(true);
         APRIL_TAG_FIELD_LAYOUT =
