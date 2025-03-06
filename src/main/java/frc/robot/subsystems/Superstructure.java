@@ -125,7 +125,7 @@ public class Superstructure extends SubsystemBase {
           rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.IDLING);
         if (ALGAE_PIVOT_ENABLED) arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.IDLING);
         if (ELEVATOR_ENABLED)
-          elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.IDLING);
+          elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.SOURCE);
         if (CLIMBER_ENABLED) elevators.getClimber().setGoal(ClimberGoal.IDLING);
         if (CORAL_PIVOT_ENABLED) arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.IDLING);
         if (ALGAE_PIVOT_ENABLED) arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.IDLING);
