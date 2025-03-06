@@ -3,16 +3,16 @@ package frc.robot.generic.elevators;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 public class GenericElevatorSystemIOSim implements GenericElevatorSystemIO {
-  private SingleJointedArmSim sim;
+  private ElevatorSim sim;
 
   private double height = 0.0;
 
   public GenericElevatorSystemIOSim(int numMotors, double startingAngle) {
     sim =
-        new SingleJointedArmSim(
+        new ElevatorSim(
             DCMotor.getNeoVortex(numMotors),
             (10 / Units.metersToInches(0.012) / 0.5),
             1,
@@ -30,8 +30,8 @@ public class GenericElevatorSystemIOSim implements GenericElevatorSystemIO {
     }
 
     sim.update(0.02);
-    inputs.positionMeters = Units.radiansToDegrees(sim.getAngleRads());
-    inputs.velocityMetersPerSec = sim.getVelocityRadPerSec();
+    inputs.positionMeters = Units.radiansToDegrees(sim.getPositionMeters());
+    inputs.velocityMetersPerSec = sim.getVelocityMetersPerSecond();
   }
 
   @Override
