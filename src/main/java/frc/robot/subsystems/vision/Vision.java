@@ -128,6 +128,8 @@ public class Vision extends SubsystemBase {
                         .getCameraConstants()
                         .cameraType()
                         .noisyDistance // Must be reliably detectable by this camera
+                || Math.abs(observation.pose().getRotation().getY())
+                    > 5 // Y-value makes sense -> camera mount isn't broken
                 // Must be within the field boundaries
                 || observation.pose().getX() < 0.0
                 || observation.pose().getX() > APRIL_TAG_FIELD_LAYOUT.getFieldLength()

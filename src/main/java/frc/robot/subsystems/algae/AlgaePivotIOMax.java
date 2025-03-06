@@ -18,6 +18,6 @@ public class AlgaePivotIOMax extends GenericArmSystemIOSparkMax implements Algae
         AlgaePivotConstants.kP,
         AlgaePivotConstants.kI,
         AlgaePivotConstants.kD,
-        false);
+        true);
   }
 }

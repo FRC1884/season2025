@@ -16,7 +16,7 @@ public class CoralPivotSubsystem extends GenericPositionArmSystem<CoralPivotSubs
     IDLING(() -> 0.48),
     SOURCE(() -> 0.35),
     LEVEL_ONE(() -> 0.24),
-    LEVEL_TWO(() -> 0.195),
+    LEVEL_TWO(() -> 0.205),
     LEVEL_THREE(() -> 0.205),
     LEVEL_FOUR(() -> 0.25),
     LEVEL_FOUR_FLICK(() -> 0.48),
