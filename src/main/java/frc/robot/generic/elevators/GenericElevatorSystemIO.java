@@ -22,8 +22,6 @@ public interface GenericElevatorSystemIO {
   default void updateInputs(GenericElevatorSystemIOInputs inputs) {}
   /** Run elevator system to a height */
   default void runPosition(double height) {}
-  /** update first run */
-  default void updatePID() {}
   /** Stop elevator system */
   default void resetEncoder(boolean limitsi) {}
 }
