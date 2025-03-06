@@ -13,11 +13,9 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
+import static edu.wpi.first.apriltag.AprilTagFieldLayout.loadField;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import static edu.wpi.first.apriltag.AprilTagFieldLayout.loadField;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,6 +23,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.util.RotationalAllianceFlipUtil;
+import java.io.IOException;
+import java.nio.file.Path;
 import lombok.Getter;
 
 /**
@@ -40,7 +40,7 @@ public final class GlobalConstants {
   public static final RobotType ROBOT = RobotType.COMPBOT;
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
-  public static boolean TUNING_MODE = true;
+  public static boolean TUNING_MODE = false;
 
   public static enum RobotMode {
     /** Running on a real robot. */
@@ -77,11 +77,13 @@ public final class GlobalConstants {
     static {
       try {
         // Path reads from the working directory, and splices at `/src/main/deploy/`
-        APRIL_TAG_FIELD_LAYOUT = COMP_FIELD? loadField(
-          WELDED_FIELD
-              ? AprilTagFields.k2025ReefscapeWelded
-              : AprilTagFields.k2025ReefscapeAndyMark)
-              : new AprilTagFieldLayout(Path.of("tagfields/home_testing_1.json"));
+        APRIL_TAG_FIELD_LAYOUT =
+            COMP_FIELD
+                ? loadField(
+                    WELDED_FIELD
+                        ? AprilTagFields.k2025ReefscapeWelded
+                        : AprilTagFields.k2025ReefscapeAndyMark)
+                : new AprilTagFieldLayout(Path.of("tagfields/home_testing_1.json"));
       } catch (IOException e) {
         new Alert("Custom tag map not found, using default layout!", AlertType.kWarning).set(true);
         APRIL_TAG_FIELD_LAYOUT =
@@ -127,6 +129,8 @@ public final class GlobalConstants {
 
     public static final double REEF_TO_BUMPER_OFFSET = -27.0 / 100;
     public static final double REEF_TO_BRANCH_OFFSET = Units.inchesToMeters(13.0 / 2);
+
+    public static final double SIDE_TO_SIDE_OFFSET_AUTO = Units.feetToMeters(1);
   }
 
   /** PID + FF gains, with overloaded constructors for disabling each term. */

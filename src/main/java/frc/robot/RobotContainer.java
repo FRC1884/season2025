@@ -18,7 +18,15 @@ import static frc.robot.Config.Controllers.getOperatorController;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.Config.Subsystems.VISION_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
-import static frc.robot.subsystems.Superstructure.SuperStates.*;
+import static frc.robot.subsystems.Superstructure.SuperStates.CLIMBER_DOWN;
+import static frc.robot.subsystems.Superstructure.SuperStates.CLIMBER_UP;
+import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
+import static frc.robot.subsystems.Superstructure.SuperStates.INTAKE;
+import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_ONE;
+import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_THREE;
+import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_TWO;
+import static frc.robot.subsystems.Superstructure.SuperStates.OUTTAKE;
+import static frc.robot.subsystems.Superstructure.SuperStates.TESTING;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_LEFT;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
 import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_LEFT;
@@ -46,7 +54,6 @@ import frc.robot.OI.OperatorMap;
 import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Superstructure.SuperStates;
 import frc.robot.subsystems.swerve.GyroIO;
 import frc.robot.subsystems.swerve.GyroIONavX;
 import frc.robot.subsystems.swerve.GyroIOPigeon2;
@@ -268,18 +275,16 @@ public class RobotContainer {
 
   private void configureOperatorButtonBindings() {
 
-
-    if (GlobalConstants.TUNING_MODE){
-        operator
-            .levelOne()
-            .onTrue(superstructure.setSuperStateCmd(TESTING))
-            .onFalse(superstructure.setSuperStateCmd(IDLING));
-    }
-    else{
-        operator
-            .levelOne()
-            .onTrue(superstructure.setSuperStateCmd(LEVEL_ONE))
-            .onFalse(superstructure.setSuperStateCmd(IDLING));
+    if (GlobalConstants.TUNING_MODE) {
+      operator
+          .levelOne()
+          .onTrue(superstructure.setSuperStateCmd(TESTING))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
+    } else {
+      operator
+          .levelOne()
+          .onTrue(superstructure.setSuperStateCmd(LEVEL_ONE))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
     }
 
     operator
@@ -294,7 +299,9 @@ public class RobotContainer {
 
     operator
         .levelFour()
-        .onTrue(superstructure.lFScore(() -> true))
+        .onTrue(
+            superstructure.lFScore(
+                operator.outtake()::getAsBoolean, () -> !operator.levelFour().getAsBoolean()))
         .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator
@@ -312,7 +319,7 @@ public class RobotContainer {
         .negate()
         .and(operator.climberUp().negate())
         .onTrue(superstructure.setSuperStateCmd(IDLING));
-        
+
     operator
         .intake()
         .onTrue(superstructure.setSuperStateCmd(INTAKE))

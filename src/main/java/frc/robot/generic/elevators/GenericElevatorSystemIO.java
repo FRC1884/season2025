@@ -16,6 +16,7 @@ public interface GenericElevatorSystemIO {
     public double tempEncod = 0.0;
     public double goal = 0.0;
     public boolean limitSwitch = false;
+    public boolean atGoal = false;
   }
 
   default void updateInputs(GenericElevatorSystemIOInputs inputs) {}

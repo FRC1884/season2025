@@ -14,14 +14,6 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class AutoCommands {
   public static void registerAutoCommands(Superstructure superstructure, SwerveSubsystem drive) {
     /** Write all the auto named commands here */
-    /** Overriding commands */
-
-    // overrides the x axis
-    NamedCommands.registerCommand(
-        "Override Coral Offset", DriveCommands.overridePathplannerCoralOffset(() -> 2.0));
-
-    // clears all override commands in the x and y direction
-    NamedCommands.registerCommand("Clear XY Override", DriveCommands.clearXYOverrides());
 
     /** Subsystem commands */
     NamedCommands.registerCommand("L4 Elevator", superstructure.setSuperStateCmd(LEVEL_FOUR));
@@ -34,12 +26,14 @@ public class AutoCommands {
             superstructure.setSuperStateCmd(LF_FLICK),
             Commands.waitSeconds(0.2)));
 
-    NamedCommands.registerCommand(
-        "Source Align", DriveCommands.alignToNearestCoralStationCommand(drive, () -> 0));
-
     NamedCommands.registerCommand("Source", superstructure.setSuperStateCmd(INTAKE));
 
     NamedCommands.registerCommand("Stow", superstructure.setSuperStateCmd(IDLING));
+
+    NamedCommands.registerCommand(
+        "Source Align",
+        Commands.deadline(
+            Commands.waitSeconds(1), DriveCommands.alignToNearestCoralStationCommandAuto(drive)));
 
     NamedCommands.registerCommand(
         "Left Align 1",

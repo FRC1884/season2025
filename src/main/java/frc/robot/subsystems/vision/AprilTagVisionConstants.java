@@ -37,7 +37,7 @@ public final class AprilTagVisionConstants {
             VisionIO.CameraType.OV9281);
       };
 
-  public static final boolean RIGHT_CAM_ENABLED = false;
+  public static final boolean RIGHT_CAM_ENABLED = true;
   public static final VisionIO.CameraConstants RIGHT_CAM_CONSTANTS =
       switch (ROBOT) {
         case DEVBOT -> new VisionIO.CameraConstants(

@@ -450,6 +450,34 @@ public class DriveCommands {
         Set.of(drive));
   }
 
+  public static Command alignToNearestCoralStationCommandAuto(SwerveSubsystem drive) {
+    return Commands.defer(
+        () -> {
+          Supplier<Pose2d> target = () -> findClosestCoralStation(drive);
+          Supplier<Transform2d> bumperOffset =
+              () ->
+                  new Transform2d(
+                      new Translation2d(0, GlobalConstants.AlignOffsets.BUMPER_TO_CENTER_OFFSET)
+                          .rotateBy(target.get().getRotation()),
+                      new Rotation2d());
+          Supplier<Transform2d> sideToSideOffset =
+              () ->
+                  new Transform2d(
+                      new Translation2d(GlobalConstants.AlignOffsets.SIDE_TO_SIDE_OFFSET_AUTO, 0)
+                          .rotateBy(target.get().getRotation()),
+                      new Rotation2d());
+          Supplier<Transform2d> robotRelativeOffset =
+              () ->
+                  target
+                      .get()
+                      .minus(drive.getPose())
+                      .plus(bumperOffset.get())
+                      .plus(sideToSideOffset.get());
+          return chasePoseRobotRelativeCommand(drive, robotRelativeOffset);
+        },
+        Set.of(drive));
+  }
+
   /** helper methods for alignment */
 
   // returns the coordinates of the nearest coral station

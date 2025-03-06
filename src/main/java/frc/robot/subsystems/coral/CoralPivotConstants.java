@@ -1,7 +1,6 @@
 package frc.robot.subsystems.coral;
 
 import frc.robot.util.LoggedTunableNumber;
-
 import java.util.function.DoubleSupplier;
 
 public final class CoralPivotConstants {

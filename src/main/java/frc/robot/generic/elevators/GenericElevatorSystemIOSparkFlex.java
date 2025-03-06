@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO {
   private final SparkFlex[] motors;
@@ -76,6 +77,8 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
     inputs.tempCelsius = motors[0].getMotorTemperature();
     inputs.goal = goal;
     inputs.limitSwitch = limitSwitch;
+
+    Logger.recordOutput("Elevator/AtGoal", Math.abs(goal - encoder.getPosition()) < 0.5);
   }
 
   @Override

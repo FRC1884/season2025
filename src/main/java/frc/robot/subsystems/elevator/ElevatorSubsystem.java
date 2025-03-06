@@ -16,13 +16,14 @@ public class ElevatorSubsystem
   @Getter
   public enum ElevatorGoal implements ExtensionGoal {
     IDLING(() -> 0.5),
-    SOURCE(() -> 7),
+    SOURCE(() -> 4),
     LEVEL_ONE(() -> 1),
     LEVEL_TWO(() -> 11.5),
     LEVEL_THREE(() -> 24),
     LEVEL_FOUR(() -> 38.5),
     DEALGAEFY_L2(() -> 8),
     DEALGAEFY_L3(() -> 21),
+    BARGE(() -> 38.5),
     TESTING(new LoggedTunableNumber("Elevator/Test", 10.0));
 
     private final DoubleSupplier heightSupplier;
