@@ -13,6 +13,8 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.util.Units;
 import java.util.function.DoubleSupplier;
 
+import static frc.robot.GlobalConstants.TUNING_MODE;
+
 public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
   private final SparkMax[] motors;
   private final AbsoluteEncoder encoder;
@@ -84,13 +86,13 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
 
   @Override
   public void runToDegree(double angle) {
-    // if (TUNING_MODE) {
-    //   config.closedLoop.pid(kp.getAsDouble(), ki.getAsDouble(), kd.getAsDouble());
-    //   motors[0].configure(
-    //       config.inverted(inverted[0]),
-    //       ResetMode.kNoResetSafeParameters,
-    //       PersistMode.kNoPersistParameters);
-    // }
+     if (TUNING_MODE) {
+       config.closedLoop.pid(kp.getAsDouble(), ki.getAsDouble(), kd.getAsDouble());
+       motors[0].configure(
+           config.inverted(inverted[0]),
+           ResetMode.kNoResetSafeParameters,
+           PersistMode.kNoPersistParameters);
+     }
     controller.setReference(angle, ControlType.kPosition);
     goal = angle;
   }
