@@ -16,7 +16,9 @@ public final class ElevatorConstants {
       new LoggedTunableNumber("Elevator/kPUp", 0.14); // 0.4 pid for neo
   public static final DoubleSupplier kIUp = new LoggedTunableNumber("Elevator/kIUp", 0.0000005);
   public static final DoubleSupplier kDUp = new LoggedTunableNumber("Elevator/kDUp", 8.0);
-  public static final DoubleSupplier kPDown = new LoggedTunableNumber("Elevator/kPDown", 0.018);
-  public static final DoubleSupplier kIDown = new LoggedTunableNumber("Elevator/kIDown", 0.0);
-  public static final DoubleSupplier kDDown = new LoggedTunableNumber("Elevator/kDDown", 3);
+  public static final DoubleSupplier kPDown =
+      new LoggedTunableNumber("Elevator/kPDown", 0.03); // 0.125
+  public static final DoubleSupplier kIDown =
+      new LoggedTunableNumber("Elevator/kIDown", 0.0); // 0.000001
+  public static final DoubleSupplier kDDown = new LoggedTunableNumber("Elevator/kDDown", 3); // 10
 }

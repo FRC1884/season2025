@@ -26,7 +26,6 @@ import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_ONE;
 import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_THREE;
 import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_TWO;
 import static frc.robot.subsystems.Superstructure.SuperStates.OUTTAKE;
-import static frc.robot.subsystems.Superstructure.SuperStates.TESTING;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_LEFT;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
 import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_LEFT;
@@ -275,17 +274,10 @@ public class RobotContainer {
 
   private void configureOperatorButtonBindings() {
 
-    if (GlobalConstants.TUNING_MODE) {
-      operator
-          .levelOne()
-          .onTrue(superstructure.setSuperStateCmd(TESTING))
-          .onFalse(superstructure.setSuperStateCmd(IDLING));
-    } else {
-      operator
-          .levelOne()
-          .onTrue(superstructure.setSuperStateCmd(LEVEL_ONE))
-          .onFalse(superstructure.setSuperStateCmd(IDLING));
-    }
+    operator
+        .levelOne()
+        .onTrue(superstructure.setSuperStateCmd(LEVEL_ONE))
+        .onFalse(superstructure.setSuperStateCmd(IDLING));
 
     operator
         .levelTwo()

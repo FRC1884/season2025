@@ -15,7 +15,7 @@ public class ElevatorSubsystem
   @RequiredArgsConstructor
   @Getter
   public enum ElevatorGoal implements ExtensionGoal {
-    IDLING(() -> 0.5),
+    IDLING(() -> 1),
     SOURCE(() -> 6),
     LEVEL_ONE(() -> 1),
     LEVEL_TWO(() -> 12),

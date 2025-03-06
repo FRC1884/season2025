@@ -40,7 +40,7 @@ public final class GlobalConstants {
   public static final RobotType ROBOT = RobotType.COMPBOT;
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
-  public static boolean TUNING_MODE = false;
+  public static boolean TUNING_MODE = true;
 
   public static enum RobotMode {
     /** Running on a real robot. */
