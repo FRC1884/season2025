@@ -22,7 +22,7 @@ public class CoralPivotSubsystem extends GenericPositionArmSystem<CoralPivotSubs
     LEVEL_FOUR_FLICK(() -> 0.5),
     DEALGAEFY_L2(() -> 0.26),
     DEALGAEFY_L3(() -> 0.26),
-    TESTING(new LoggedTunableNumber("Pivot/TESTING", 0.0));
+    TESTING(new LoggedTunableNumber("CoralPivot/TESTING", 0.2));
 
     private final DoubleSupplier angleSupplier;
 

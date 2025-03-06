@@ -48,7 +48,7 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
             .idleMode(brake ? SparkBaseConfig.IdleMode.kBrake : SparkBaseConfig.IdleMode.kCoast);
     config.absoluteEncoder.inverted(absInverted);
     config.closedLoop.pid(kP.getAsDouble(), 0, 0).feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-    config.softLimit.forwardSoftLimit(forwardLimit).reverseSoftLimit(reverseLimit);
+    config.softLimit.forwardSoftLimit(forwardLimit).reverseSoftLimit(reverseLimit).forwardSoftLimitEnabled(true).reverseSoftLimitEnabled(true);
 
     for (int i = 0; i < id.length; i++) {
       motors[i] = new SparkMax(id[i], SparkLowLevel.MotorType.kBrushless);
