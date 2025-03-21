@@ -152,8 +152,8 @@ public final class SwerveConstants {
   // Drive motor PID configuration
   static final Gains DRIVE_MOTOR_GAINS =
       switch (ROBOT) {
-        case DEVBOT, COMPBOT -> new Gains(0.0, 0.0, 0.0, 0.1);
-        case SIMBOT -> new Gains(0.05, 0.0, 0.0, 0.0789);
+        case DEVBOT, COMPBOT -> new Gains(0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0);
+        case SIMBOT -> new Gains(0.05, 0.0, 0.0, 0.0, 0.0789, 0.0, 0.0);
       };
 
   // Drive encoder configuration
@@ -174,8 +174,8 @@ public final class SwerveConstants {
   // Rotator PID configuration
   static final Gains ROTATOR_GAINS =
       switch (ROBOT) {
-        case DEVBOT, COMPBOT -> new Gains(2.0, 0.0);
-        case SIMBOT -> new Gains(8.0, 0.0);
+        case DEVBOT, COMPBOT -> new Gains(2.0, 0.0, 0.0);
+        case SIMBOT -> new Gains(8.0, 0.0, 0.0);
       };
   /** Radians */
   static final double ROTATOR_PID_MIN_INPUT = 0;

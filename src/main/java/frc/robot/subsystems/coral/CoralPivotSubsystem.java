@@ -36,6 +36,6 @@ public class CoralPivotSubsystem extends GenericPositionArmSystem<CoralPivotSubs
   private PivotGoal goal = PivotGoal.IDLING;
 
   public CoralPivotSubsystem(String name, CoralPivotIO io) {
-    super(name, io);
+    super(name, io, CoralPivotConstants.GAINS);
   }
 }
