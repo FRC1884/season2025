@@ -1,4 +1,4 @@
-package frc.robot.generic.elevators;
+package frc.robot.generic.arms;
 
 import static com.revrobotics.spark.config.SparkBaseConfig.IdleMode.*;
 
@@ -6,32 +6,34 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
-public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO {
-  private final SparkMax[] motors;
+public class GenericArmSystemIOSparkFlex implements GenericArmSystemIO {
+  private final SparkFlex[] motors;
   private final AbsoluteEncoder absoluteEncoder;
   private final RelativeEncoder relativeEncoder;
   private SparkBaseConfig config;
-  private final SparkMax leader;
+  private final SparkFlex leader;
 
-  public GenericElevatorSystemIOSparkMax(int[] ids, int currentLimitAmps, boolean brake) {
+  public GenericArmSystemIOSparkFlex(
+      int[] ids, int currentLimitAmps, boolean brake, double forwardLimit, double reverseLimit) {
 
-    motors = new SparkMax[ids.length];
+    motors = new SparkFlex[ids.length];
     config =
-        new SparkMaxConfig().smartCurrentLimit(currentLimitAmps).idleMode(brake ? kBrake : kCoast);
+        new SparkFlexConfig().smartCurrentLimit(currentLimitAmps).idleMode(brake ? kBrake : kCoast);
+    config.softLimit.forwardSoftLimit(forwardLimit).reverseSoftLimit(reverseLimit);
 
-    leader = motors[0] = new SparkMax(ids[0], SparkLowLevel.MotorType.kBrushless);
+    leader = motors[0] = new SparkFlex(ids[0], SparkLowLevel.MotorType.kBrushless);
     leader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     if (ids.length > 1) {
       for (int i = 1; i < ids.length; i++) {
-        motors[i] = new SparkMax(ids[i], SparkLowLevel.MotorType.kBrushless);
+        motors[i] = new SparkFlex(ids[i], SparkLowLevel.MotorType.kBrushless);
         motors[i].configure(
-            new SparkMaxConfig().apply(config).follow(leader),
+            new SparkFlexConfig().apply(config).follow(leader),
             ResetMode.kResetSafeParameters,
             PersistMode.kPersistParameters);
       }
@@ -40,7 +42,7 @@ public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO 
     relativeEncoder = leader.getEncoder();
   }
 
-  public void updateInputs(GenericElevatorSystemIOInputs inputs) {
+  public void updateInputs(GenericArmSystemIOInputs inputs) {
     if (motors != null) {
       inputs.encoderPosition =
           (absoluteEncoder != null) ? absoluteEncoder.getPosition() : relativeEncoder.getPosition();
@@ -59,7 +61,7 @@ public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO 
 
   protected void invert(int id) {
     motors[id].configure(
-        new SparkMaxConfig().inverted(true),
+        new SparkFlexConfig().inverted(true),
         ResetMode.kNoResetSafeParameters,
         PersistMode.kNoPersistParameters);
   }

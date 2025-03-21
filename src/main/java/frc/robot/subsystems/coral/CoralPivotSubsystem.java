@@ -1,6 +1,6 @@
 package frc.robot.subsystems.coral;
 
-import frc.robot.generic.arm.GenericPositionArmSystem;
+import frc.robot.generic.arms.GenericPositionArmSystem;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -36,6 +36,6 @@ public class CoralPivotSubsystem extends GenericPositionArmSystem<CoralPivotSubs
   private PivotGoal goal = PivotGoal.IDLING;
 
   public CoralPivotSubsystem(String name, CoralPivotIO io) {
-    super(name, io);
+    super(name, io, CoralPivotConstants.GAINS);
   }
 }

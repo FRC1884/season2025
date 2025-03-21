@@ -1,5 +1,5 @@
 package frc.robot.subsystems.coral;
 
-import frc.robot.generic.arm.GenericArmSystemIO;
+import frc.robot.generic.arms.GenericArmSystemIO;
 
 public interface CoralPivotIO extends GenericArmSystemIO {}

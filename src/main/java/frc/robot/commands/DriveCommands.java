@@ -13,6 +13,8 @@
 
 package frc.robot.commands;
 
+import static frc.robot.GlobalConstants.FieldMap.*;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
@@ -289,7 +291,7 @@ public class DriveCommands {
   /** align to processor */
   public static Command alignToProcessorCommand() {
     PathConstraints constraints = new PathConstraints(10, 5, 5, 5);
-    Pose2d target = GlobalConstants.FieldMap.Coordinates.PROCESSOR.getPose();
+    Pose2d target = Coordinates.PROCESSOR.getPose();
     Transform2d offset =
         new Transform2d(
             new Translation2d(0, GlobalConstants.AlignOffsets.BUMPER_TO_CENTER_OFFSET)
@@ -320,12 +322,12 @@ public class DriveCommands {
           Supplier<Pose2d> targetFace;
           targetFace =
               switch (targetReefFace.get()) {
-                case 1 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_1.getPose();
-                case 2 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_2.getPose();
-                case 3 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_3.getPose();
-                case 4 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_4.getPose();
-                case 5 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_5.getPose();
-                case 6 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_6.getPose();
+                case 1 -> () -> Coordinates.REEF_1.getPose();
+                case 2 -> () -> Coordinates.REEF_2.getPose();
+                case 3 -> () -> Coordinates.REEF_3.getPose();
+                case 4 -> () -> Coordinates.REEF_4.getPose();
+                case 5 -> () -> Coordinates.REEF_5.getPose();
+                case 6 -> () -> Coordinates.REEF_6.getPose();
                 default -> findClosestReefFace(drive);
               };
 
@@ -385,44 +387,26 @@ public class DriveCommands {
   // returns the nearest face of the reef
   private static Supplier<Pose2d> findClosestReefFace(SwerveSubsystem drive) {
     double reef1 =
-        drive
-            .getPose()
-            .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_1.getPose().getTranslation());
+        drive.getPose().getTranslation().getDistance(Coordinates.REEF_1.getPose().getTranslation());
     double reef2 =
-        drive
-            .getPose()
-            .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_2.getPose().getTranslation());
+        drive.getPose().getTranslation().getDistance(Coordinates.REEF_2.getPose().getTranslation());
     double reef3 =
-        drive
-            .getPose()
-            .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_3.getPose().getTranslation());
+        drive.getPose().getTranslation().getDistance(Coordinates.REEF_3.getPose().getTranslation());
     double reef4 =
-        drive
-            .getPose()
-            .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_4.getPose().getTranslation());
+        drive.getPose().getTranslation().getDistance(Coordinates.REEF_4.getPose().getTranslation());
     double reef5 =
-        drive
-            .getPose()
-            .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_5.getPose().getTranslation());
+        drive.getPose().getTranslation().getDistance(Coordinates.REEF_5.getPose().getTranslation());
     double reef6 =
-        drive
-            .getPose()
-            .getTranslation()
-            .getDistance(GlobalConstants.FieldMap.Coordinates.REEF_6.getPose().getTranslation());
+        drive.getPose().getTranslation().getDistance(Coordinates.REEF_6.getPose().getTranslation());
 
     double closestFace =
         Math.min(Math.min(Math.min(reef1, reef2), Math.min(reef3, reef4)), Math.min(reef5, reef6));
-    if (reef1 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_1.getPose();
-    if (reef2 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_2.getPose();
-    if (reef3 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_3.getPose();
-    if (reef4 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_4.getPose();
-    if (reef5 == closestFace) return () -> GlobalConstants.FieldMap.Coordinates.REEF_5.getPose();
-    return () -> GlobalConstants.FieldMap.Coordinates.REEF_6.getPose();
+    if (reef1 == closestFace) return () -> Coordinates.REEF_1.getPose();
+    if (reef2 == closestFace) return () -> Coordinates.REEF_2.getPose();
+    if (reef3 == closestFace) return () -> Coordinates.REEF_3.getPose();
+    if (reef4 == closestFace) return () -> Coordinates.REEF_4.getPose();
+    if (reef5 == closestFace) return () -> Coordinates.REEF_5.getPose();
+    return () -> Coordinates.REEF_6.getPose();
   }
   /**
    * Command to align to the nearest coral station
@@ -483,19 +467,16 @@ public class DriveCommands {
   // returns the coordinates of the nearest coral station
   private static Pose2d findClosestCoralStation(SwerveSubsystem drive) {
     if (RotationalAllianceFlipUtil.apply(drive.getPose()).getTranslation().getY()
-        < GlobalConstants.FieldMap.FIELD_WIDTH_METERS / 2) {
-      return GlobalConstants.FieldMap.Coordinates.RIGHT_CORAL_STATION.getPose();
+        < FIELD_WIDTH_METERS / 2) {
+      return Coordinates.RIGHT_CORAL_STATION.getPose();
     } else {
-      return GlobalConstants.FieldMap.Coordinates.LEFT_CORAL_STATION.getPose();
+      return Coordinates.LEFT_CORAL_STATION.getPose();
     }
   }
 
   // returns whether the driver y-input for aligning should be flipped for the current coral station
   private static boolean shouldFlipDriverOverride(SwerveSubsystem drive) {
-    return findClosestCoralStation(drive)
-            .equals(GlobalConstants.FieldMap.Coordinates.RIGHT_CORAL_STATION.getPose())
-        ? false
-        : true;
+    return !findClosestCoralStation(drive).equals(Coordinates.RIGHT_CORAL_STATION.getPose());
   }
 
   /**
