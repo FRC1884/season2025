@@ -1,4 +1,4 @@
-package frc.robot.generic.arm;
+package frc.robot.generic.arms;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -30,8 +30,8 @@ public class GenericArmSystemIOSim implements GenericArmSystemIO {
     }
 
     sim.update(0.02);
-    inputs.degrees = Units.radiansToDegrees(sim.getAngleRads());
-    inputs.velocityRadsPerSec = sim.getVelocityRadPerSec();
+    inputs.encoderPosition = Units.radiansToDegrees(sim.getAngleRads());
+    inputs.velocity = sim.getVelocityRadPerSec();
   }
 
   @Override

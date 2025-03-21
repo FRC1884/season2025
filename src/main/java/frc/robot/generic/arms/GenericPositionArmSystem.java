@@ -1,4 +1,4 @@
-package frc.robot.generic.elevators;
+package frc.robot.generic.arms;
 
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -15,20 +15,19 @@ import java.util.function.DoubleSupplier;
 import lombok.Getter;
 import org.littletonrobotics.junction.Logger;
 
-public abstract class GenericPositionElevatorSystem<
-        G extends GenericPositionElevatorSystem.ExtensionGoal>
+public abstract class GenericPositionArmSystem<G extends GenericPositionArmSystem.PivotGoal>
     extends SubsystemBase {
   // Goals
-  public interface ExtensionGoal {
-    DoubleSupplier getHeight();
+  public interface PivotGoal {
+    DoubleSupplier getAngle();
   }
 
   public abstract G getGoal();
 
   private final String name;
-  public final GenericElevatorSystemIO io;
-  public final GenericElevatorSystemIOInputsAutoLogged inputs =
-      new GenericElevatorSystemIOInputsAutoLogged();
+  public final GenericArmSystemIO io;
+  protected final GenericArmSystemIOInputsAutoLogged inputs =
+      new GenericArmSystemIOInputsAutoLogged();
   private final Alert disconnected;
   protected final Timer stateTimer = new Timer();
   private G lastGoal;
@@ -41,8 +40,7 @@ public abstract class GenericPositionElevatorSystem<
 
   private double kS, kG, kV, kA;
 
-  public GenericPositionElevatorSystem(
-      String name, GenericElevatorSystemIO io, GlobalConstants.Gains gains) {
+  public GenericPositionArmSystem(String name, GenericArmSystemIO io, GlobalConstants.Gains gains) {
     this.name = name;
     this.io = io;
     this.pidController = new PIDController(gains.kP(), gains.kI(), gains.kD());
@@ -57,8 +55,7 @@ public abstract class GenericPositionElevatorSystem<
                 null,
                 null,
                 Seconds.of(4),
-                state ->
-                    Logger.recordOutput("Elevators/" + name + "/SysIdState", state.toString())),
+                state -> Logger.recordOutput("Arms/" + name + "/SysIdState", state.toString())),
             new SysIdRoutine.Mechanism(voltage -> io.setVoltage(voltage.in(Volts)), null, this));
 
     disconnected = new Alert("Motor(s) disconnected on arm: " + name + "!", Alert.AlertType.kError);
@@ -106,7 +103,7 @@ public abstract class GenericPositionElevatorSystem<
 
     io.setVoltage(outputVoltage);
 
-    Logger.recordOutput("Elevators/" + name + "Goal", getGoal().toString());
-    Logger.recordOutput("Elevators/" + name + "/Feedforward", feedforwardOutput);
+    Logger.recordOutput("Arms/" + name + "/Goal", getGoal().toString());
+    Logger.recordOutput("Arms/" + name + "/Feedforward", feedforwardOutput);
   }
 }

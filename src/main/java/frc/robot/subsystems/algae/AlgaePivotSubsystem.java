@@ -1,6 +1,6 @@
 package frc.robot.subsystems.algae;
 
-import frc.robot.generic.arm.GenericPositionArmSystem;
+import frc.robot.generic.arms.GenericPositionArmSystem;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -29,6 +29,6 @@ public class AlgaePivotSubsystem extends GenericPositionArmSystem<AlgaePivotSubs
   private PivotGoal goal = PivotGoal.IDLING;
 
   public AlgaePivotSubsystem(String name, AlgaePivotIO io) {
-    super(name, io);
+    super(name, io, AlgaePivotConstants.GAINS);
   }
 }

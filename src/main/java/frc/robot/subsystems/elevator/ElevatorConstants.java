@@ -1,7 +1,6 @@
 package frc.robot.subsystems.elevator;
 
-import frc.robot.util.LoggedTunableNumber;
-import java.util.function.DoubleSupplier;
+import frc.robot.GlobalConstants;
 
 public final class ElevatorConstants {
   public static final int LEFT_ELEVATOR = 31; // TODO: Change to correct Motor ID's
@@ -12,13 +11,14 @@ public final class ElevatorConstants {
 
   public static final boolean isFlex = true; // if the motors on the Elevator are flex motors
 
-  public static final DoubleSupplier kPUp =
-      new LoggedTunableNumber("Elevator/kPUp", 0.14); // 0.4 pid for neo
-  public static final DoubleSupplier kIUp = new LoggedTunableNumber("Elevator/kIUp", 0.0000005);
-  public static final DoubleSupplier kDUp = new LoggedTunableNumber("Elevator/kDUp", 8.0);
-  public static final DoubleSupplier kPDown =
-      new LoggedTunableNumber("Elevator/kPDown", 0.03); // 0.125
-  public static final DoubleSupplier kIDown =
-      new LoggedTunableNumber("Elevator/kIDown", 0.0); // 0.000001
-  public static final DoubleSupplier kDDown = new LoggedTunableNumber("Elevator/kDDown", 3); // 10
+  // Tuned in REV Hardware Client for real bots, but should we use LTNs?
+  public static final double kP = 0.0;
+  public static final double kI = 0.0;
+  public static final double kD = 0.0;
+  public static final double kS = 0.0;
+  public static final double kV = 0.0;
+  public static final double kA = 0.0;
+  public static final double kG = 0.0;
+  public static final GlobalConstants.Gains GAINS =
+      new GlobalConstants.Gains(kP, kI, kD, kS, kV, kA, kG);
 }

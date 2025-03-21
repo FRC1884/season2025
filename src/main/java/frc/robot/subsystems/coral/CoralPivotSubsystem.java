@@ -1,6 +1,6 @@
 package frc.robot.subsystems.coral;
 
-import frc.robot.generic.arm.GenericPositionArmSystem;
+import frc.robot.generic.arms.GenericPositionArmSystem;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;

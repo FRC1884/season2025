@@ -26,16 +26,16 @@ public class GenericElevatorSystemIOSim implements GenericElevatorSystemIO {
   @Override
   public void updateInputs(GenericElevatorSystemIOInputs inputs) {
     if (DriverStation.isDisabled()) {
-      runPosition(height);
+      setVoltage(height);
     }
 
     sim.update(0.02);
-    inputs.positionMeters = Units.radiansToDegrees(sim.getPositionMeters());
-    inputs.velocityMetersPerSec = sim.getVelocityMetersPerSecond();
+    inputs.encoderPosition = Units.radiansToDegrees(sim.getPositionMeters());
+    inputs.velocity = sim.getVelocityMetersPerSecond();
   }
 
   @Override
-  public void runPosition(double height) {
+  public void setVoltage(double height) {
     this.height = height;
   }
 }

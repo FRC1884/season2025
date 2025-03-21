@@ -134,17 +134,9 @@ public final class GlobalConstants {
   }
 
   /** PID + FF gains, with overloaded constructors for disabling each term. */
-  public record Gains(double kP, double kD, double kS, double kV, double kA, double kG) {
-    public Gains(double kP, double kD, double kS, double kV, double kA) {
-      this(kP, kD, kS, kV, kA, 0.0);
-    }
-
-    public Gains(double kP, double kD, double kS, double kV) {
-      this(kP, kD, kS, kV, 0.0);
-    }
-
-    public Gains(double kP, double kD) {
-      this(kP, kD, 0.0, 0.0);
+  public record Gains(double kP, double kI, double kD, double kS, double kV, double kA, double kG) {
+    public Gains(double kP, double kI, double kD) {
+      this(kP, kI, kD, 0, 0, 0, 0);
     }
   }
 }

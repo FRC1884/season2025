@@ -18,14 +18,6 @@ import static frc.robot.Config.Controllers.getOperatorController;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.Config.Subsystems.VISION_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
-import static frc.robot.subsystems.Superstructure.SuperStates.CLIMBER_DOWN;
-import static frc.robot.subsystems.Superstructure.SuperStates.CLIMBER_UP;
-import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
-import static frc.robot.subsystems.Superstructure.SuperStates.INTAKE;
-import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_ONE;
-import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_THREE;
-import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_TWO;
-import static frc.robot.subsystems.Superstructure.SuperStates.OUTTAKE;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_LEFT;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
 import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_LEFT;
@@ -272,58 +264,7 @@ public class RobotContainer {
     }
   }
 
-  private void configureOperatorButtonBindings() {
-
-    operator
-        .levelOne()
-        .onTrue(superstructure.setSuperStateCmd(LEVEL_ONE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .levelTwo()
-        .onTrue(superstructure.setSuperStateCmd(LEVEL_TWO))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .levelThree()
-        .onTrue(superstructure.setSuperStateCmd(LEVEL_THREE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .levelFour()
-        .onTrue(
-            superstructure.lFScore(
-                operator.outtake()::getAsBoolean, () -> !operator.levelFour().getAsBoolean()))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .climberUp()
-        .onTrue(superstructure.setSuperStateCmd(CLIMBER_UP))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .climberDown()
-        .onTrue(superstructure.setSuperStateCmd(CLIMBER_DOWN))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .climberDown()
-        .negate()
-        .and(operator.climberUp().negate())
-        .onTrue(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .intake()
-        .onTrue(superstructure.setSuperStateCmd(INTAKE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator
-        .outtake()
-        .onTrue(superstructure.setSuperStateCmd(OUTTAKE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
-
-    operator.modeSwitch().onTrue(superstructure.switchMode());
-  }
+  private void configureOperatorButtonBindings() {}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
