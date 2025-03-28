@@ -133,4 +133,9 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'ClimberDown'");
   }
+
+  @Override
+  public Trigger resetElevator() {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

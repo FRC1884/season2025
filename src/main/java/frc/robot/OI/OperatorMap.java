@@ -27,4 +27,6 @@ public interface OperatorMap {
   Trigger climberUp();
 
   Trigger climberDown();
+
+  Trigger resetElevator();
 }

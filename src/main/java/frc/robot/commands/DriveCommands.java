@@ -199,7 +199,7 @@ public class DriveCommands {
                   double omegaSpeed =
                       omegaPID.calculate(0, targetOffset.get().getRotation().getDegrees());
                   DriveCommands.robotRelativeChassisSpeedDrive(
-                      drive, new ChassisSpeeds(xSpeed, ySpeed, omegaSpeed));
+                      drive, new ChassisSpeeds(xSpeed * 1.2, ySpeed * 1.2, omegaSpeed * 1.2));
                 },
                 interrupted -> {
                   DriveCommands.robotRelativeChassisSpeedDrive(drive, new ChassisSpeeds());
@@ -303,18 +303,72 @@ public class DriveCommands {
   }
 
   /** code for reef alignment */
-  public static Command leftAlignToReefCommand(SwerveSubsystem drive) {
-    return alignToReefCommand(drive, () -> true, () -> 0);
+  public static Command leftAlignToReefCommandTeleop(SwerveSubsystem drive) {
+    return alignToReefCommandTeleop(drive, () -> true, () -> 0);
   }
 
-  public static Command rightAlignToReefCommand(SwerveSubsystem drive) {
-    return alignToReefCommand(drive, () -> false, () -> 0);
+  public static Command rightAlignToReefCommandTeleop(SwerveSubsystem drive) {
+    return alignToReefCommandTeleop(drive, () -> false, () -> 0);
   }
 
   /** helper methods for alignment */
 
   // align to target face
-  public static Command alignToReefCommand(
+  public static Command alignToReefCommandAuto(
+      SwerveSubsystem drive, BooleanSupplier leftInput, Supplier<Integer> targetReefFace) {
+    return Commands.defer(
+        () -> {
+          // find the coordinates of the selected face
+          Supplier<Pose2d> targetFace;
+          targetFace =
+              switch (targetReefFace.get()) {
+                case 1 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_1.getPose();
+                case 2 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_2.getPose();
+                case 3 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_3.getPose();
+                case 4 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_4.getPose();
+                case 5 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_5.getPose();
+                case 6 -> () -> GlobalConstants.FieldMap.Coordinates.REEF_6.getPose();
+                default -> findClosestReefFace(drive);
+              };
+
+          double xOffset =
+              GlobalConstants.AlignOffsets.BUMPER_TO_CENTER_OFFSET
+                  + GlobalConstants.AlignOffsets.REEF_TO_BUMPER_OFFSET;
+
+          BooleanSupplier leftAlign = isFieldRelativeLeftAlign(targetFace, leftInput);
+          double yOffset =
+              GlobalConstants.AlignOffsets.REEF_TO_BRANCH_OFFSET
+                  * (leftAlign.getAsBoolean() ? 1 : -1);
+          Rotation2d rotation = targetFace.get().getRotation();
+          Translation2d branchTransform = new Translation2d(xOffset, yOffset).rotateBy(rotation);
+          Supplier<Pose2d> target =
+              () ->
+                  new Pose2d(
+                      targetFace.get().getTranslation().plus(branchTransform),
+                      targetFace.get().getRotation());
+
+          Supplier<Transform2d> targetOffset = () -> target.get().minus(drive.getPose());
+
+          boolean outsideApproach =
+              leftAlign.getAsBoolean()
+                  ? targetOffset.get().getMeasureY().magnitude() < 0
+                  : targetOffset.get().getMeasureY().magnitude() > 0;
+
+          Supplier<Transform2d> correctedTargetOffset =
+              () ->
+                  new Transform2d(
+                      new Translation2d(
+                          targetOffset.get().getMeasureX().magnitude(),
+                          targetOffset.get().getMeasureY().magnitude()),
+                      targetOffset.get().getRotation());
+
+          return chasePoseRobotRelativeCommand(drive, correctedTargetOffset);
+        },
+        Set.of(drive));
+  }
+
+  // align to target face
+  public static Command alignToReefCommandTeleop(
       SwerveSubsystem drive, BooleanSupplier leftInput, Supplier<Integer> targetReefFace) {
     return Commands.defer(
         () -> {
@@ -355,10 +409,9 @@ public class DriveCommands {
                   : targetOffset.get().getMeasureY().magnitude() > 0;
 
           // this number is the offset for approaching from the inside
-          double directionalIncrease =
-              outsideApproach ? 0 : leftAlign.getAsBoolean() ? 0.05 : -0.05;
-
-          Supplier<Transform2d> correctedTargetOffset =
+          double directionalIncrease = 0.15;
+          Supplier<Transform2d> correctedTargetOffset;
+          correctedTargetOffset =
               () ->
                   new Transform2d(
                       new Translation2d(
@@ -385,7 +438,7 @@ public class DriveCommands {
   }
 
   // returns the nearest face of the reef
-  private static Supplier<Pose2d> findClosestReefFace(SwerveSubsystem drive) {
+  public static Supplier<Pose2d> findClosestReefFace(SwerveSubsystem drive) {
     double reef1 =
         drive.getPose().getTranslation().getDistance(Coordinates.REEF_1.getPose().getTranslation());
     double reef2 =

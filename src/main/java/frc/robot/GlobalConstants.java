@@ -40,7 +40,7 @@ public final class GlobalConstants {
   public static final RobotType ROBOT = RobotType.COMPBOT;
   public static final double ODOMETRY_FREQUENCY = 250.0;
 
-  public static boolean TUNING_MODE = true;
+  public static boolean TUNING_MODE = false;
 
   public static enum RobotMode {
     /** Running on a real robot. */
@@ -127,7 +127,7 @@ public final class GlobalConstants {
     public static final double BUMPER_TO_CENTER_OFFSET =
         Units.inchesToMeters(ROBOT == RobotType.DEVBOT ? -(26.0 / 2 + 3) : -(28.0 / 2 + 3.5));
 
-    public static final double REEF_TO_BUMPER_OFFSET = -26.0 / 100;
+    public static final double REEF_TO_BUMPER_OFFSET = -32.0 / 100;
     public static final double REEF_TO_BRANCH_OFFSET = Units.inchesToMeters(13.0 / 2);
 
     public static final double SIDE_TO_SIDE_OFFSET_AUTO = Units.feetToMeters(1);

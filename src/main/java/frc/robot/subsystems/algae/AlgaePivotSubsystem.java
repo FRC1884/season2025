@@ -14,8 +14,9 @@ public class AlgaePivotSubsystem extends GenericPositionArmSystem<AlgaePivotSubs
   @Getter
   public enum PivotGoal implements GenericPositionArmSystem.PivotGoal {
     IDLING(() -> 0.07),
-    PROCESSOR(() -> 0.247),
-    INTAKE(() -> 0.283),
+    L2(() -> 0.3),
+    L3(() -> 0.3),
+    BARGE(() -> 0.38),
     TESTING(new LoggedTunableNumber("AlgaePivot/TESTING", 0.1));
 
     private final DoubleSupplier angleSupplier;
