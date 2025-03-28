@@ -17,12 +17,14 @@ public class ElevatorSubsystem
   public enum ElevatorGoal implements ExtensionGoal {
     IDLING(() -> 1),
     SOURCE(() -> 6),
-    LEVEL_ONE(() -> 1),
-    LEVEL_TWO(() -> 12),
-    LEVEL_THREE(() -> 25),
+    LEVEL_ONE(() -> 1), // 1
+    LEVEL_TWO(() -> 10), // 12
+    LEVEL_THREE(() -> 23), // 25
     LEVEL_FOUR(() -> 38.5),
-    DEALGAEFY_L2(() -> 8),
-    DEALGAEFY_L3(() -> 21),
+    DEALGAEFY_L2(() -> 8), // with coral intake 8
+    DEALGAEFY_L3(() -> 21), // with coral intake 21
+    ALGAE_L2(() -> 8),
+    ALGAE_L3(() -> 21),
     BARGE(() -> 38.5),
     TESTING(new LoggedTunableNumber("Elevator/Test", 10.0));
 

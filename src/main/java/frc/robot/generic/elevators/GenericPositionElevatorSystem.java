@@ -3,6 +3,7 @@ package frc.robot.generic.elevators;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -47,11 +48,13 @@ public abstract class GenericPositionElevatorSystem<
       stateTimer.reset();
       lastGoal = getGoal();
       io.updatePID();
+      io.runPosition(getGoal().getHeight().getAsDouble());
     }
 
-    // io.resetEncoder(limitSwitch.get());
-
-    io.runPosition(getGoal().getHeight().getAsDouble());
     Logger.recordOutput("Elevators/" + name + "Goal", getGoal().toString());
+  }
+
+  public Command resetEncoderSequence() {
+    return io.resetEncoderSequence();
   }
 }

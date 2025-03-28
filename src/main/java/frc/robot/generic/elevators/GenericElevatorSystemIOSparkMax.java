@@ -10,6 +10,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.function.DoubleSupplier;
 
 public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO {
@@ -84,7 +86,7 @@ public class GenericElevatorSystemIOSparkMax implements GenericElevatorSystemIO 
   }
 
   @Override
-  public void resetEncoder(boolean limitSwitch) {
-    encoder.setPosition(0.0);
+  public Command resetEncoderSequence() {
+    return Commands.runOnce(() -> encoder.setPosition(0.0));
   }
 }

@@ -77,4 +77,10 @@ public class XboxOperatorMap extends CommandXboxController implements OperatorMa
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'ClimberDown'");
   }
+
+  @Override
+  public Trigger resetElevator() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'resetElevator'");
+  }
 }

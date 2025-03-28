@@ -9,6 +9,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -73,7 +75,9 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
     inputs.positionMeters = encoder.getPosition();
     inputs.velocityMetersPerSec = encoder.getVelocity();
     inputs.appliedVoltage = motors[0].getAppliedOutput() * motors[0].getBusVoltage();
+    inputs.appliedVoltageTwo = motors[1].getAppliedOutput() * motors[1].getBusVoltage();
     inputs.supplyCurrentAmps = motors[0].getOutputCurrent();
+    inputs.supplyCurrentAmpstwo = motors[1].getOutputCurrent();
     inputs.tempCelsius = motors[0].getMotorTemperature();
     inputs.goal = goal;
     inputs.limitSwitch = limitSwitch;
@@ -105,9 +109,15 @@ public class GenericElevatorSystemIOSparkFlex implements GenericElevatorSystemIO
   }
 
   @Override
-  public void resetEncoder(boolean limitSwitch) {
-    // encoder.setPosition(0.0);
-    this.limitSwitch = limitSwitch;
+  public Command resetEncoderSequence() {
+    return Commands.sequence(
+        Commands.runOnce(() -> controller.setReference(-0.1, ControlType.kVoltage)),
+        Commands.waitSeconds(1.0),
+        Commands.runOnce(
+            () -> {
+              controller.setReference(0, ControlType.kVoltage);
+              encoder.setPosition(0.0);
+            }));
   }
 
   @Override

@@ -41,6 +41,7 @@ public class ClimberIOMax implements ClimberIO {
             PersistMode.kPersistParameters);
     }
     encoder = motors[0].getEncoder();
+    encoder.setPosition(0.0);
   }
 
   @Override
@@ -56,9 +57,20 @@ public class ClimberIOMax implements ClimberIO {
 
   @Override
   public void runVolts(double volts) {
-    if (limitSwitch.get()) {
-      motors[0].stopMotor();
-      motors[1].stopMotor();
+    if (encoder.getPosition() > 0) {
+      if (volts <= 0) {
+        motors[0].setVoltage(volts);
+      }
+      if (volts > 0) {
+        motors[0].setVoltage(0.0);
+      }
+    } else if (encoder.getPosition() < -70) {
+      if (volts >= 0) {
+        motors[0].setVoltage(volts);
+      }
+      if (volts < 0) {
+        motors[0].setVoltage(0.0);
+      }
     } else {
       motors[0].setVoltage(volts);
     }

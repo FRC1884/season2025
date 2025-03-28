@@ -1,7 +1,5 @@
 package frc.robot.generic.arm;
 
-import static frc.robot.GlobalConstants.TUNING_MODE;
-
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -91,13 +89,13 @@ public class GenericArmSystemIOSparkMax implements GenericArmSystemIO {
 
   @Override
   public void runToDegree(double angle) {
-    if (TUNING_MODE) {
-      config.closedLoop.pid(kp.getAsDouble(), ki.getAsDouble(), kd.getAsDouble());
-      motors[0].configure(
-          config.inverted(inverted[0]),
-          ResetMode.kNoResetSafeParameters,
-          PersistMode.kNoPersistParameters);
-    }
+    // if (TUNING_MODE) {
+    //   config.closedLoop.pid(kp.getAsDouble(), ki.getAsDouble(), kd.getAsDouble());
+    //   motors[0].configure(
+    //       config.inverted(inverted[0]),
+    //       ResetMode.kNoResetSafeParameters,
+    //       PersistMode.kNoPersistParameters);
+    // }
     controller.setReference(angle, ControlType.kPosition);
     goal = angle;
   }

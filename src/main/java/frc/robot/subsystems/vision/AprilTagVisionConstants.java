@@ -45,7 +45,7 @@ public final class AprilTagVisionConstants {
             new Transform3d(
                 0.2752,
                 -0.2852,
-                0.2375,
+                0.2405,
                 new Rotation3d(0, degreesToRadians(-20), degreesToRadians(20))),
             VisionIO.CameraType.OV9281);
         case COMPBOT, SIMBOT -> new VisionIO.CameraConstants(

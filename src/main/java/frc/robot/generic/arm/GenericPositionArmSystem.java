@@ -50,9 +50,8 @@ public abstract class GenericPositionArmSystem<G extends GenericPositionArmSyste
     if (getGoal() != lastGoal) {
       stateTimer.reset();
       lastGoal = getGoal();
+      io.runToDegree(getGoal().getAngle().getAsDouble());
     }
-
-    io.runToDegree(getGoal().getAngle().getAsDouble());
 
     Logger.recordOutput(name + "/Goal", getGoal().toString());
   }

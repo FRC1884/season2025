@@ -45,10 +45,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.GlobalConstants;
+import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -254,6 +256,17 @@ public class SwerveSubsystem extends SubsystemBase implements Vision.VisionConsu
       states[i] = modules[i].getState();
     }
     return states;
+  }
+
+  @AutoLogOutput(key = "Distance/Robot distance to face")
+  public double targetFaceDistance() {
+    Supplier<Pose2d> target = DriveCommands.findClosestReefFace(this);
+    return target.get().minus(getPose()).getX();
+  }
+
+  @AutoLogOutput(key = "Distance/Reef Target")
+  public Pose2d targetReefFace() {
+    return DriveCommands.findClosestReefFace(this).get();
   }
 
   /** Returns the module positions (turn angles and drive positions) for all of the modules. */

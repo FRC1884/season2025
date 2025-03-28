@@ -83,7 +83,8 @@ public class Superstructure extends SubsystemBase {
     LF_OUTTAKE,
     LF_FLICK,
     CLIMBER_DOWN,
-    CLIMBER_UP
+    CLIMBER_UP,
+    STOP_INTAKE
   }
 
   /**
@@ -97,7 +98,7 @@ public class Superstructure extends SubsystemBase {
     REQ_SHOOT
   }
 
-  private boolean coralMode = true;
+  private boolean coralMode = !ALGAE_PIVOT_ENABLED;
 
   public Command switchMode() {
     return Commands.runOnce(() -> coralMode = !coralMode);
@@ -131,10 +132,6 @@ public class Superstructure extends SubsystemBase {
         if (ALGAE_PIVOT_ENABLED) arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.IDLING);
       }
       case TESTING -> {
-        if (CORAL_INTAKE_ENABLED)
-          rollers.getCoralIntake().setGoal(CoralIntakeSubsystem.CoralIntakeGoal.FORWARD);
-        if (ALGAE_INTAKE_ENABLED)
-          rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.FORWARD);
         if (ELEVATOR_ENABLED)
           elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.TESTING);
         if (CORAL_PIVOT_ENABLED)
@@ -143,10 +140,12 @@ public class Superstructure extends SubsystemBase {
           arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.TESTING);
       }
       case LEVEL_ONE -> {
-        if (ELEVATOR_ENABLED)
-          elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.LEVEL_ONE);
-        if (CORAL_PIVOT_ENABLED)
-          arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.LEVEL_ONE);
+        if (coralMode) {
+          if (ELEVATOR_ENABLED)
+            elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.LEVEL_ONE);
+          if (CORAL_PIVOT_ENABLED)
+            arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.LEVEL_ONE);
+        }
       }
       case LEVEL_TWO -> {
         if (coralMode) {
@@ -155,11 +154,14 @@ public class Superstructure extends SubsystemBase {
           if (CORAL_PIVOT_ENABLED)
             arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.LEVEL_TWO);
         } else {
-
           if (CORAL_PIVOT_ENABLED)
             arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.DEALGAEFY_L2);
           if (CORAL_INTAKE_ENABLED) rollers.getCoralIntake().setGoal(CoralIntakeGoal.FORWARD);
-          if (ELEVATOR_ENABLED) elevators.getElevator().setGoal(ElevatorGoal.DEALGAEFY_L2);
+          if (ELEVATOR_ENABLED && CORAL_PIVOT_ENABLED)
+            elevators.getElevator().setGoal(ElevatorGoal.DEALGAEFY_L2);
+          if (ALGAE_PIVOT_ENABLED) arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.L2);
+          if (ELEVATOR_ENABLED && ALGAE_PIVOT_ENABLED)
+            elevators.getElevator().setGoal(ElevatorGoal.ALGAE_L2);
         }
       }
       case LEVEL_THREE -> {
@@ -172,7 +174,11 @@ public class Superstructure extends SubsystemBase {
           if (CORAL_PIVOT_ENABLED)
             arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.DEALGAEFY_L3);
           if (CORAL_INTAKE_ENABLED) rollers.getCoralIntake().setGoal(CoralIntakeGoal.FORWARD);
-          if (ELEVATOR_ENABLED) elevators.getElevator().setGoal(ElevatorGoal.DEALGAEFY_L3);
+          if (ELEVATOR_ENABLED && CORAL_PIVOT_ENABLED)
+            elevators.getElevator().setGoal(ElevatorGoal.DEALGAEFY_L3);
+          if (ALGAE_PIVOT_ENABLED) arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.L3);
+          if (ELEVATOR_ENABLED && ALGAE_PIVOT_ENABLED)
+            elevators.getElevator().setGoal(ElevatorGoal.ALGAE_L3);
         }
       }
       case LEVEL_FOUR -> {
@@ -182,10 +188,10 @@ public class Superstructure extends SubsystemBase {
           if (CORAL_PIVOT_ENABLED)
             arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.LEVEL_FOUR);
         } else {
-          if (ELEVATOR_ENABLED)
+          if (ELEVATOR_ENABLED && ALGAE_PIVOT_ENABLED)
             elevators.getElevator().setGoal(ElevatorSubsystem.ElevatorGoal.BARGE);
-          if (CORAL_PIVOT_ENABLED)
-            arms.getCoralPivot().setGoal(CoralPivotSubsystem.PivotGoal.BARGE);
+          if (ALGAE_PIVOT_ENABLED)
+            arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.BARGE);
         }
       }
       case INTAKE -> {
@@ -198,8 +204,6 @@ public class Superstructure extends SubsystemBase {
         } else {
           if (ALGAE_INTAKE_ENABLED)
             rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.FORWARD);
-          if (ALGAE_PIVOT_ENABLED)
-            arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.INTAKE);
         }
       }
       case OUTTAKE -> {
@@ -209,8 +213,6 @@ public class Superstructure extends SubsystemBase {
         } else {
           if (ALGAE_INTAKE_ENABLED)
             rollers.getAlgaeIntake().setGoal(AlgaeIntakeSubsystem.AlgaeIntakeGoal.REVERSE);
-          if (ALGAE_PIVOT_ENABLED)
-            arms.getAlgaePivot().setGoal(AlgaePivotSubsystem.PivotGoal.PROCESSOR);
         }
       }
       case LF_OUTTAKE -> {
@@ -227,6 +229,10 @@ public class Superstructure extends SubsystemBase {
       case CLIMBER_UP -> {
         if (CLIMBER_ENABLED) elevators.getClimber().setGoal(ClimberGoal.REVERSE);
       }
+      case STOP_INTAKE -> {
+        if (CORAL_INTAKE_ENABLED) rollers.getCoralIntake().setGoal(CoralIntakeGoal.IDLING);
+        ;
+      }
     }
   }
 
@@ -235,11 +241,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Trigger hasGamePiece() {
-    if (CORAL_INTAKE_ENABLED) {
-      if (coralMode) return new Trigger(rollers.getCoralIntake().hasCoral());
-    } else if (ALGAE_INTAKE_ENABLED) {
-      return new Trigger(rollers.getAlgaeIntake().hasAlgae());
-    } else return new Trigger(() -> false);
+    if (CORAL_INTAKE_ENABLED) return new Trigger(rollers.getCoralIntake().hasCoral());
     return new Trigger(() -> false);
   }
 
@@ -258,6 +260,11 @@ public class Superstructure extends SubsystemBase {
                 Commands.waitSeconds(0.38),
                 setSuperStateCmd(LF_FLICK))
             .until(idling));
+  }
+
+  public Command resetElevator() {
+    if (ELEVATOR_ENABLED) return elevators.getElevator().resetEncoderSequence();
+    return Commands.none();
   }
 
   public void registerSuperstructureCharacterization(

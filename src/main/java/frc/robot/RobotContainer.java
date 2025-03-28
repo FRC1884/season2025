@@ -15,17 +15,21 @@ package frc.robot;
 
 import static frc.robot.Config.Controllers.getDriverController;
 import static frc.robot.Config.Controllers.getOperatorController;
+import static frc.robot.Config.Subsystems.ALGAE_PIVOT_ENABLED;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.Config.Subsystems.VISION_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
+import static frc.robot.GlobalConstants.TUNING_MODE;
 import static frc.robot.subsystems.Superstructure.SuperStates.CLIMBER_DOWN;
 import static frc.robot.subsystems.Superstructure.SuperStates.CLIMBER_UP;
 import static frc.robot.subsystems.Superstructure.SuperStates.IDLING;
 import static frc.robot.subsystems.Superstructure.SuperStates.INTAKE;
+import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_FOUR;
 import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_ONE;
 import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_THREE;
 import static frc.robot.subsystems.Superstructure.SuperStates.LEVEL_TWO;
 import static frc.robot.subsystems.Superstructure.SuperStates.OUTTAKE;
+import static frc.robot.subsystems.Superstructure.SuperStates.STOP_INTAKE;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_LEFT;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
 import static frc.robot.subsystems.swerve.SwerveConstants.FRONT_LEFT;
@@ -46,6 +50,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.GlobalConstants.RobotMode;
 import frc.robot.OI.DriverMap;
@@ -53,6 +58,7 @@ import frc.robot.OI.OperatorMap;
 import frc.robot.commands.AutoCommands;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.SuperStates;
 import frc.robot.subsystems.swerve.GyroIO;
 import frc.robot.subsystems.swerve.GyroIONavX;
 import frc.robot.subsystems.swerve.GyroIOPigeon2;
@@ -228,15 +234,13 @@ public class RobotContainer {
       driver.stopWithX().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
       // right align to reef face when right bumper is pressed and the robot is in coral mode
-      driver.rightAlign().whileTrue(DriveCommands.rightAlignToReefCommand(drive));
+      driver.rightAlign().whileTrue(DriveCommands.rightAlignToReefCommandTeleop(drive));
 
       // left align to reef face when right numper is pressed and the robot is in coral mode
-      driver.leftAlign().whileTrue(DriveCommands.leftAlignToReefCommand(drive));
+      driver.leftAlign().whileTrue(DriveCommands.leftAlignToReefCommandTeleop(drive));
 
       // align to coral station with position customization when right trigger is pressed
-      driver
-          .coralStation()
-          .whileTrue(DriveCommands.alignToNearestCoralStationCommand(drive, driver.getYAxis()));
+      driver.coralStation().whileTrue(DriveCommands.alignToNearestCoralStationCommandAuto(drive));
 
       PathConstraints constraints = new PathConstraints(0.5, 1, 0.5, 0.5);
 
@@ -273,56 +277,108 @@ public class RobotContainer {
   }
 
   private void configureOperatorButtonBindings() {
+    if (ALGAE_PIVOT_ENABLED) {
+      if (TUNING_MODE) {
+        operator.levelOne().onTrue(superstructure.setSuperStateCmd(SuperStates.TESTING));
+      } else {
+        operator.levelOne().onTrue(superstructure.setSuperStateCmd(LEVEL_ONE));
+      }
 
-    operator
-        .levelOne()
-        .onTrue(superstructure.setSuperStateCmd(LEVEL_ONE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+      operator.levelTwo().onTrue(superstructure.setSuperStateCmd(LEVEL_TWO));
 
-    operator
-        .levelTwo()
-        .onTrue(superstructure.setSuperStateCmd(LEVEL_TWO))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+      operator.levelThree().onTrue(superstructure.setSuperStateCmd(LEVEL_THREE));
 
-    operator
-        .levelThree()
-        .onTrue(superstructure.setSuperStateCmd(LEVEL_THREE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+      operator.levelFour().onTrue(superstructure.setSuperStateCmd(LEVEL_FOUR));
 
-    operator
-        .levelFour()
-        .onTrue(
-            superstructure.lFScore(
-                operator.outtake()::getAsBoolean, () -> !operator.levelFour().getAsBoolean()))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+      operator
+          .climberUp()
+          .onTrue(superstructure.setSuperStateCmd(CLIMBER_UP))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator
-        .climberUp()
-        .onTrue(superstructure.setSuperStateCmd(CLIMBER_UP))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+      operator
+          .climberDown()
+          .onTrue(superstructure.setSuperStateCmd(CLIMBER_DOWN))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator
-        .climberDown()
-        .onTrue(superstructure.setSuperStateCmd(CLIMBER_DOWN))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+      operator
+          .intake()
+          .onTrue(
+              Commands.sequence(
+                  superstructure.setSuperStateCmd(INTAKE),
+                  Commands.waitUntil(
+                      new Trigger(
+                          () ->
+                              (superstructure.hasGamePiece().getAsBoolean()
+                                  || !operator.intake().getAsBoolean()))),
+                  superstructure.setSuperStateCmd(STOP_INTAKE)));
 
-    operator
-        .climberDown()
-        .negate()
-        .and(operator.climberUp().negate())
-        .onTrue(superstructure.setSuperStateCmd(IDLING));
+      operator
+          .outtake()
+          .onTrue(
+              Commands.sequence(
+                  superstructure.setSuperStateCmd(OUTTAKE),
+                  Commands.waitUntil(
+                      new Trigger(
+                          () ->
+                              (superstructure.hasGamePiece().getAsBoolean()
+                                  || !operator.outtake().getAsBoolean()))),
+                  superstructure.setSuperStateCmd(STOP_INTAKE)));
 
-    operator
-        .intake()
-        .onTrue(superstructure.setSuperStateCmd(INTAKE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+      operator.modeSwitch().onTrue(superstructure.setSuperStateCmd(IDLING));
+    } else {
+      if (TUNING_MODE) {
+        operator
+            .levelOne()
+            .onTrue(superstructure.setSuperStateCmd(SuperStates.TESTING))
+            .onFalse(superstructure.setSuperStateCmd(IDLING));
+      } else {
+        operator
+            .levelOne()
+            .onTrue(superstructure.setSuperStateCmd(LEVEL_ONE))
+            .onFalse(superstructure.setSuperStateCmd(IDLING));
+      }
 
-    operator
-        .outtake()
-        .onTrue(superstructure.setSuperStateCmd(OUTTAKE))
-        .onFalse(superstructure.setSuperStateCmd(IDLING));
+      operator
+          .levelTwo()
+          .onTrue(superstructure.setSuperStateCmd(LEVEL_TWO))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
 
-    operator.modeSwitch().onTrue(superstructure.switchMode());
+      operator
+          .levelThree()
+          .onTrue(superstructure.setSuperStateCmd(LEVEL_THREE))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
+
+      operator
+          .levelFour()
+          .onTrue(
+              superstructure.lFScore(
+                  () -> operator.outtake().getAsBoolean(),
+                  () -> !operator.levelFour().getAsBoolean()))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
+
+      operator
+          .climberUp()
+          .onTrue(superstructure.setSuperStateCmd(CLIMBER_UP))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
+
+      operator
+          .climberDown()
+          .onTrue(superstructure.setSuperStateCmd(CLIMBER_DOWN))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
+
+      operator
+          .intake()
+          .onTrue(superstructure.setSuperStateCmd(INTAKE))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
+
+      operator
+          .outtake()
+          .onTrue(superstructure.setSuperStateCmd(OUTTAKE))
+          .onFalse(superstructure.setSuperStateCmd(IDLING));
+
+      operator.modeSwitch().onTrue(superstructure.switchMode());
+      operator.resetElevator().onTrue(superstructure.resetElevator());
+    }
   }
 
   /**

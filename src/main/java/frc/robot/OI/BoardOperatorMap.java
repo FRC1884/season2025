@@ -52,4 +52,9 @@ public class BoardOperatorMap extends CommandGenericHID implements OperatorMap {
   public Trigger climberDown() {
     return axisLessThan(1, -0.5);
   }
+
+  @Override
+  public Trigger resetElevator() {
+    return axisLessThan(0, -0.5);
+  }
 }
