@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import static frc.robot.Config.Subsystems.AUTONOMOUS_ENABLED;
 import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
 
@@ -120,7 +121,7 @@ public class Robot extends LoggedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    if (DRIVETRAIN_ENABLED) {
+    if (AUTONOMOUS_ENABLED) {
       autonomousCommand = robotContainer.getAutonomousCommand();
 
       // schedule the autonomous command (example)

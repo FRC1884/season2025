@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Timer;
@@ -35,7 +36,7 @@ public abstract class GenericPositionElevatorSystem<
 
   // Movement
   private final PIDController pidController;
-  private final ArmFeedforward feedforward;
+  private final ElevatorFeedforward feedforward;
   private final SysIdRoutine sysIdRoutine;
   @Getter private double goalPosition;
 
@@ -46,8 +47,9 @@ public abstract class GenericPositionElevatorSystem<
     this.name = name;
     this.io = io;
     this.pidController = new PIDController(gains.kP(), gains.kI(), gains.kD());
-    this.feedforward = new ArmFeedforward(kS, kG, kV, kA);
+    this.feedforward = new ElevatorFeedforward(kS, kG, kV, kA);
     this.kS = gains.kS();
+    this.kG = gains.kG();
     this.kV = gains.kV();
     this.kA = gains.kA();
 
@@ -101,7 +103,7 @@ public abstract class GenericPositionElevatorSystem<
     double velocity = inputs.velocity;
 
     double pidOutput = pidController.calculate(currentPosition, goalPosition);
-    double feedforwardOutput = feedforward.calculate(currentPosition, velocity);
+    double feedforwardOutput = feedforward.calculate(velocity);
     double outputVoltage = pidOutput + feedforwardOutput;
 
     io.setVoltage(outputVoltage);

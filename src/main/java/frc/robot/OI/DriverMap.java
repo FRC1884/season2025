@@ -17,13 +17,9 @@ public interface DriverMap {
 
   DoubleSupplier getRotAxis();
 
-  Trigger pathToAmp();
-
   Trigger resetOdometry();
 
   Trigger stopWithX();
-
-  Trigger testButton();
 
   Trigger coralStation();
 

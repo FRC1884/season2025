@@ -15,8 +15,7 @@ package frc.robot;
 
 import static frc.robot.Config.Controllers.getDriverController;
 import static frc.robot.Config.Controllers.getOperatorController;
-import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
-import static frc.robot.Config.Subsystems.VISION_ENABLED;
+import static frc.robot.Config.Subsystems.*;
 import static frc.robot.GlobalConstants.MODE;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_LEFT;
 import static frc.robot.subsystems.swerve.SwerveConstants.BACK_RIGHT;
@@ -89,45 +88,55 @@ public class RobotContainer {
   public RobotContainer() {
     if (DRIVETRAIN_ENABLED) {
       drive =
-          switch (MODE) {
-            case REAL:
-              // Real robot, instantiate hardware IO implementations
-              yield new SwerveSubsystem(
-                  switch (GYRO_TYPE) {
-                    case PIGEON -> new GyroIOPigeon2();
-                    case NAVX -> new GyroIONavX();
-                    case ADIS -> new GyroIO() {};
-                  },
-                  new ModuleIOSpark(FRONT_LEFT),
-                  new ModuleIOSpark(FRONT_RIGHT),
-                  new ModuleIOSpark(BACK_LEFT),
-                  new ModuleIOSpark(BACK_RIGHT));
+              switch (MODE) {
+                case REAL:
+                  // Real robot, instantiate hardware IO implementations
+                  yield new SwerveSubsystem(
+                          switch (GYRO_TYPE) {
+                            case PIGEON -> new GyroIOPigeon2();
+                            case NAVX -> new GyroIONavX();
+                            case ADIS -> new GyroIO() {
+                            };
+                          },
+                          new ModuleIOSpark(FRONT_LEFT),
+                          new ModuleIOSpark(FRONT_RIGHT),
+                          new ModuleIOSpark(BACK_LEFT),
+                          new ModuleIOSpark(BACK_RIGHT));
 
-            case SIM:
-              // Create a maple-sim swerve drive simulation instance
-              this.driveSimulation =
-                  new SwerveDriveSimulation(
-                      SwerveConstants.MAPLE_SIM_CONFIG, new Pose2d(3, 3, new Rotation2d()));
-              // Add the simulated drivetrain to the simulation field
-              SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+                case SIM:
+                  // Create a maple-sim swerve drive simulation instance
+                  this.driveSimulation =
+                          new SwerveDriveSimulation(
+                                  SwerveConstants.MAPLE_SIM_CONFIG, new Pose2d(3, 3, new Rotation2d()));
+                  // Add the simulated drivetrain to the simulation field
+                  SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
 
-              // Sim robot, instantiate physics sim IO implementations
-              yield new SwerveSubsystem(
-                  new GyroIOSim(driveSimulation.getGyroSimulation()),
-                  new ModuleIOSim(driveSimulation.getModules()[0]),
-                  new ModuleIOSim(driveSimulation.getModules()[1]),
-                  new ModuleIOSim(driveSimulation.getModules()[2]),
-                  new ModuleIOSim(driveSimulation.getModules()[3]));
+                  // Sim robot, instantiate physics sim IO implementations
+                  yield new SwerveSubsystem(
+                          new GyroIOSim(driveSimulation.getGyroSimulation()),
+                          new ModuleIOSim(driveSimulation.getModules()[0]),
+                          new ModuleIOSim(driveSimulation.getModules()[1]),
+                          new ModuleIOSim(driveSimulation.getModules()[2]),
+                          new ModuleIOSim(driveSimulation.getModules()[3]));
 
-            default:
-              // Replayed robot, disable IO implementations
-              yield new SwerveSubsystem(
-                  new GyroIO() {},
-                  new ModuleIO() {},
-                  new ModuleIO() {},
-                  new ModuleIO() {},
-                  new ModuleIO() {});
-          };
+                default:
+                  // Replayed robot, disable IO implementations
+                  yield new SwerveSubsystem(
+                          new GyroIO() {
+                          },
+                          new ModuleIO() {
+                          },
+                          new ModuleIO() {
+                          },
+                          new ModuleIO() {
+                          },
+                          new ModuleIO() {
+                          });
+              };
+    } else {
+      drive = null;
+    }
+    if (AUTONOMOUS_ENABLED) {
 
       AutoCommands.registerAutoCommands(superstructure, drive);
 
@@ -136,21 +145,20 @@ public class RobotContainer {
 
       // Set up SysId routines
       autoChooser.addOption(
-          "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+              "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
       autoChooser.addOption(
-          "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+              "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
       autoChooser.addOption(
-          "Drive SysId (Quasistatic Forward)",
-          drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+              "Drive SysId (Quasistatic Forward)",
+              drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
       autoChooser.addOption(
-          "Drive SysId (Quasistatic Reverse)",
-          drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+              "Drive SysId (Quasistatic Reverse)",
+              drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
       autoChooser.addOption(
-          "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+              "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
       autoChooser.addOption(
-          "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+              "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     } else {
-      drive = null;
       autoChooser = null;
     }
 
@@ -209,35 +217,19 @@ public class RobotContainer {
                       drive, driver.getYAxis(), driver.getXAxis(), driver.getRotAxis()),
               drive));
 
-      // Lock to 0° when A button is held
-      // driver
-      //     .alignToSpeaker()
-      //     .whileTrue(
-      //         DriveCommands.joystickDriveAtAngle(
-      //             drive, driver.getYAxis(), driver.getXAxis(), () -> new Rotation2d()));
-
       // Switch to X pattern when X button is pressed
       driver.stopWithX().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
       // right align to reef face when right bumper is pressed and the robot is in coral mode
-      driver.rightAlign().whileTrue(DriveCommands.rightAlignToReefCommand(drive));
+      driver.rightAlign().whileTrue(DriveCommands.rightAlignToReefCommandTeleop(drive));
 
       // left align to reef face when right numper is pressed and the robot is in coral mode
-      driver.leftAlign().whileTrue(DriveCommands.leftAlignToReefCommand(drive));
+      driver.leftAlign().whileTrue(DriveCommands.leftAlignToReefCommandTeleop(drive));
 
       // align to coral station with position customization when right trigger is pressed
       driver
           .coralStation()
           .whileTrue(DriveCommands.alignToNearestCoralStationCommand(drive, driver.getYAxis()));
-
-      PathConstraints constraints = new PathConstraints(0.5, 1, 0.5, 0.5);
-
-      //   driver
-      //       .leftAlign()
-      //       .and(superstructure.coralMode().negate())
-      //       .whileTrue(
-      //           AutoBuilder.pathfindToPose(
-      //               GlobalConstants.FieldMap.Coordinates.PROCESSOR.getPose(), constraints));
 
       driver
           .slowMode()

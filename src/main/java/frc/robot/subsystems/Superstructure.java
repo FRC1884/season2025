@@ -49,16 +49,6 @@ public class Superstructure extends SubsystemBase {
   public static enum SuperStates {
     IDLING,
     TESTING,
-    LEVEL_ONE,
-    LEVEL_TWO,
-    LEVEL_THREE,
-    LEVEL_FOUR,
-    OUTTAKE,
-    INTAKE,
-    LF_OUTTAKE,
-    LF_FLICK,
-    CLIMBER_DOWN,
-    CLIMBER_UP
   }
 
   /**

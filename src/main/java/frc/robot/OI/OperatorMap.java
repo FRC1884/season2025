@@ -9,24 +9,4 @@ public interface OperatorMap {
   default Command rumble() {
     return none();
   }
-
-  Trigger levelOne();
-
-  Trigger levelTwo();
-
-  Trigger levelThree();
-
-  Trigger levelFour();
-
-  Trigger intake();
-
-  Trigger outtake();
-
-  Trigger modeSwitch();
-
-  Trigger climberUp();
-
-  Trigger climberDown();
-
-  Trigger resetElevator();
 }

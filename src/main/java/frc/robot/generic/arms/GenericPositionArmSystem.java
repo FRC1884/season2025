@@ -46,6 +46,7 @@ public abstract class GenericPositionArmSystem<G extends GenericPositionArmSyste
     this.pidController = new PIDController(gains.kP(), gains.kI(), gains.kD());
     this.feedforward = new ArmFeedforward(kS, kG, kV, kA);
     this.kS = gains.kS();
+    this.kG = gains.kG();
     this.kV = gains.kV();
     this.kA = gains.kA();
 

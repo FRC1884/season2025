@@ -44,11 +44,6 @@ public class XboxDriverMap extends CommandXboxController implements DriverMap {
   }
 
   @Override
-  public Trigger pathToAmp() {
-    return a();
-  }
-
-  @Override
   public Trigger resetOdometry() {
     return back();
   }
@@ -56,11 +51,6 @@ public class XboxDriverMap extends CommandXboxController implements DriverMap {
   @Override
   public Trigger stopWithX() {
     return x();
-  }
-
-  @Override
-  public Trigger testButton() {
-    return start();
   }
 
   @Override

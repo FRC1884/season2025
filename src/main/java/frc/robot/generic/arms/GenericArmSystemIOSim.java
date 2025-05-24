@@ -25,17 +25,14 @@ public class GenericArmSystemIOSim implements GenericArmSystemIO {
 
   @Override
   public void updateInputs(GenericArmSystemIOInputs inputs) {
-    if (DriverStation.isDisabled()) {
-      runToDegree(degree);
-    }
-
     sim.update(0.02);
     inputs.encoderPosition = Units.radiansToDegrees(sim.getAngleRads());
     inputs.velocity = sim.getVelocityRadPerSec();
+    inputs.encoderPosition = sim.getAngleRads();
   }
 
   @Override
-  public void runToDegree(double degrees) {
+  public void setVoltage(double degrees) {
     this.degree = degrees;
   }
 }
