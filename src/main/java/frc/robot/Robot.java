@@ -14,7 +14,6 @@
 package frc.robot;
 
 import static frc.robot.Config.Subsystems.AUTONOMOUS_ENABLED;
-import static frc.robot.Config.Subsystems.DRIVETRAIN_ENABLED;
 import static frc.robot.GlobalConstants.MODE;
 
 import edu.wpi.first.wpilibj.Threads;

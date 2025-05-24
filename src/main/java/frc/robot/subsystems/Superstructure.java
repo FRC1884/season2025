@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Config;
 import frc.robot.GlobalConstants;
+import frc.robot.generic.arms.Arms;
+import frc.robot.generic.elevators.Elevators;
+import frc.robot.generic.rollers.Rollers;
 import frc.robot.subsystems.leds.LEDIOPWM;
 import frc.robot.subsystems.leds.LEDIOSim;
 import frc.robot.subsystems.leds.LEDSubsystem;
@@ -31,6 +34,9 @@ public class Superstructure extends SubsystemBase {
               ? new LEDSubsystem(new LEDIOPWM())
               : new LEDSubsystem(new LEDIOSim()))
           : null;
+  private final Rollers rollers = new Rollers();
+  private final Elevators elevators = new Elevators();
+  private final Arms arms = new Arms();
 
   public Superstructure(Supplier<Pose2d> drivePoseSupplier) {
     this.drivePoseSupplier = drivePoseSupplier;

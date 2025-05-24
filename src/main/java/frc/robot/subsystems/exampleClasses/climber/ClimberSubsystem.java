@@ -18,7 +18,6 @@ public class ClimberSubsystem {
     TESTING(new LoggedTunableNumber("Climber/Test", 0.0));
 
     private final DoubleSupplier voltageSupplier;
-
   }
 
   @Getter @Setter private ClimberGoal goal = ClimberGoal.IDLING;
@@ -39,8 +38,8 @@ public class ClimberSubsystem {
 
   /**
    * NOT the same as {@link edu.wpi.first.wpilibj2.command.Subsystem#periodic()}. This method will
-   * be called periodically in {@link ClimberSubsystem}, hence why this subsystem does not extend {@link
-   * SubsystemBase}.
+   * be called periodically in {@link ClimberSubsystem}, hence why this subsystem does not extend
+   * {@link SubsystemBase}.
    */
   public void periodic() {
     io.updateInputs(inputs);

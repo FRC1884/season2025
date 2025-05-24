@@ -44,11 +44,6 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
   }
 
   @Override
-  public Trigger pathToAmp() {
-    return button(14);
-  }
-
-  @Override
   public Trigger resetOdometry() {
     return button(11);
   }
@@ -57,12 +52,6 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
   public Trigger stopWithX() {
     return button(4);
   }
-
-  @Override
-  public Trigger testButton() {
-    return button(1);
-  }
-
   // would we need to mutex this through a subsys req if we switch to the maple swerve skeleton?
   @Override
   public Command rumble() {
@@ -79,5 +68,4 @@ public class SimXboxUniversalMap extends CommandXboxController implements Driver
   public Trigger slowMode() {
     return button(3);
   }
-
 }

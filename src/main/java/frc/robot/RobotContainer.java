@@ -30,7 +30,6 @@ import static frc.robot.subsystems.vision.AprilTagVisionConstants.RIGHT_CAM_CONS
 import static frc.robot.subsystems.vision.AprilTagVisionConstants.RIGHT_CAM_ENABLED;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -88,51 +87,45 @@ public class RobotContainer {
   public RobotContainer() {
     if (DRIVETRAIN_ENABLED) {
       drive =
-              switch (MODE) {
-                case REAL:
-                  // Real robot, instantiate hardware IO implementations
-                  yield new SwerveSubsystem(
-                          switch (GYRO_TYPE) {
-                            case PIGEON -> new GyroIOPigeon2();
-                            case NAVX -> new GyroIONavX();
-                            case ADIS -> new GyroIO() {
-                            };
-                          },
-                          new ModuleIOSpark(FRONT_LEFT),
-                          new ModuleIOSpark(FRONT_RIGHT),
-                          new ModuleIOSpark(BACK_LEFT),
-                          new ModuleIOSpark(BACK_RIGHT));
+          switch (MODE) {
+            case REAL:
+              // Real robot, instantiate hardware IO implementations
+              yield new SwerveSubsystem(
+                  switch (GYRO_TYPE) {
+                    case PIGEON -> new GyroIOPigeon2();
+                    case NAVX -> new GyroIONavX();
+                    case ADIS -> new GyroIO() {};
+                  },
+                  new ModuleIOSpark(FRONT_LEFT),
+                  new ModuleIOSpark(FRONT_RIGHT),
+                  new ModuleIOSpark(BACK_LEFT),
+                  new ModuleIOSpark(BACK_RIGHT));
 
-                case SIM:
-                  // Create a maple-sim swerve drive simulation instance
-                  this.driveSimulation =
-                          new SwerveDriveSimulation(
-                                  SwerveConstants.MAPLE_SIM_CONFIG, new Pose2d(3, 3, new Rotation2d()));
-                  // Add the simulated drivetrain to the simulation field
-                  SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+            case SIM:
+              // Create a maple-sim swerve drive simulation instance
+              this.driveSimulation =
+                  new SwerveDriveSimulation(
+                      SwerveConstants.MAPLE_SIM_CONFIG, new Pose2d(3, 3, new Rotation2d()));
+              // Add the simulated drivetrain to the simulation field
+              SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
 
-                  // Sim robot, instantiate physics sim IO implementations
-                  yield new SwerveSubsystem(
-                          new GyroIOSim(driveSimulation.getGyroSimulation()),
-                          new ModuleIOSim(driveSimulation.getModules()[0]),
-                          new ModuleIOSim(driveSimulation.getModules()[1]),
-                          new ModuleIOSim(driveSimulation.getModules()[2]),
-                          new ModuleIOSim(driveSimulation.getModules()[3]));
+              // Sim robot, instantiate physics sim IO implementations
+              yield new SwerveSubsystem(
+                  new GyroIOSim(driveSimulation.getGyroSimulation()),
+                  new ModuleIOSim(driveSimulation.getModules()[0]),
+                  new ModuleIOSim(driveSimulation.getModules()[1]),
+                  new ModuleIOSim(driveSimulation.getModules()[2]),
+                  new ModuleIOSim(driveSimulation.getModules()[3]));
 
-                default:
-                  // Replayed robot, disable IO implementations
-                  yield new SwerveSubsystem(
-                          new GyroIO() {
-                          },
-                          new ModuleIO() {
-                          },
-                          new ModuleIO() {
-                          },
-                          new ModuleIO() {
-                          },
-                          new ModuleIO() {
-                          });
-              };
+            default:
+              // Replayed robot, disable IO implementations
+              yield new SwerveSubsystem(
+                  new GyroIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {},
+                  new ModuleIO() {});
+          };
     } else {
       drive = null;
     }
@@ -145,19 +138,19 @@ public class RobotContainer {
 
       // Set up SysId routines
       autoChooser.addOption(
-              "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+          "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
       autoChooser.addOption(
-              "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+          "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
       autoChooser.addOption(
-              "Drive SysId (Quasistatic Forward)",
-              drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+          "Drive SysId (Quasistatic Forward)",
+          drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
       autoChooser.addOption(
-              "Drive SysId (Quasistatic Reverse)",
-              drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+          "Drive SysId (Quasistatic Reverse)",
+          drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
       autoChooser.addOption(
-              "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+          "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
       autoChooser.addOption(
-              "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+          "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     } else {
       autoChooser = null;
     }

@@ -2,7 +2,6 @@ package frc.robot.subsystems.exampleClasses.roller;
 
 import edu.wpi.first.math.filter.Debouncer;
 import frc.robot.generic.rollers.GenericVoltageRollerSystem;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import lombok.Getter;
@@ -11,8 +10,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class IntakeSubsystem
-    extends GenericVoltageRollerSystem<IntakeSubsystem.AlgaeIntakeGoal> {
+public class IntakeSubsystem extends GenericVoltageRollerSystem<IntakeSubsystem.AlgaeIntakeGoal> {
   @RequiredArgsConstructor
   @Getter
   public enum AlgaeIntakeGoal implements VoltageGoal {

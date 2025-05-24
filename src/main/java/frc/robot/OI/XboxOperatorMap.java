@@ -5,7 +5,6 @@ import static edu.wpi.first.wpilibj2.command.Commands.startEnd;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class XboxOperatorMap extends CommandXboxController implements OperatorMap {
 
