@@ -284,6 +284,14 @@ public class SwerveSubsystem extends SubsystemBase implements Vision.VisionConsu
     return kinematics.toChassisSpeeds(getModuleStates());
   }
 
+  public ChassisSpeeds getRobotRelativeSpeeds() {
+    return getChassisSpeeds();
+  }
+
+  public ChassisSpeeds getFieldRelativeSpeeds() {
+    ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), getRotation());
+  }
+
   /** Returns the position of each module in radians. */
   public double[] getWheelRadiusCharacterizationPositions() {
     double[] values = new double[4];
