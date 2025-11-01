@@ -75,6 +75,7 @@ public class AprilTagVisionIOPhotonVision implements VisionIO {
 
       if (result.multitagResult.isPresent()) {
         // Process multi-tag estimations
+
         MultiTargetPNPResult multitagResult = result.multitagResult.get();
 
         // Calculate field-relative robot pose using PnP on all tags
@@ -84,11 +85,13 @@ public class AprilTagVisionIOPhotonVision implements VisionIO {
 
         // Calculate average tag distance
         double totalTagDistance = 0.0;
+        int totalTags = 0; // Tag count for multitag
         for (PhotonTrackedTarget target : result.targets) {
           double distanceToTarget;
           if ((distanceToTarget = target.bestCameraToTarget.getTranslation().getNorm())
               < cameraConstants.cameraType().noisyDistance) {
             totalTagDistance += distanceToTarget;
+            totalTags++;
             // Add detected tag IDs
             tagIds.add((short) target.fiducialId);
           }
@@ -100,8 +103,8 @@ public class AprilTagVisionIOPhotonVision implements VisionIO {
                 result.getTimestampSeconds(), // Timestamp
                 robotPose, // 3D pose estimate
                 multitagResult.estimatedPose.ambiguity, // Ambiguity
-                tagIds.size(), // Tag count
-                totalTagDistance / tagIds.size() // Average tag distance
+                totalTags, // Tag count
+                totalTagDistance / totalTags // Average tag distance
                 ));
 
       } else if (!result.targets.isEmpty()) {
